@@ -1,6 +1,6 @@
 import { CssBaseline } from '@material-ui/core';
-import { Routes, Route} from 'react-router-dom';
-import './App.css'
+import { Routes, Route } from 'react-router-dom';
+import './App.css';
 import GamePage from './pages/GamePage';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
@@ -17,15 +17,17 @@ function App() {
 
   //   fetchServerData()
   // }, [])
-  return <>
-    <CssBaseline />
-    <Routes>
-      <Route path={BASE_URL} element={<Login />} />
-      <Route path={LOGIN_URL} element={<Login />} />
-      <Route path={SIGNUP_URL} element={<SignUp />} />
-      <Route path={GAME_URL} element={<GamePage />} />
-    </Routes>
-  </>
+  return (
+    <>
+      <CssBaseline />
+      <Routes>
+        <Route path={BASE_URL} element={<Login />} />
+        <Route path={LOGIN_URL} element={<Login />} />
+        <Route path={SIGNUP_URL} element={<SignUp />} />
+        <Route path={GAME_URL} element={<GamePage />} />
+      </Routes>
+    </>
+  );
 }
 
 export default App;
