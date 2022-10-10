@@ -1,4 +1,5 @@
 import { Button, Container, makeStyles, TextField, Typography } from '@material-ui/core';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles(() => ({
@@ -22,7 +23,13 @@ const useStyles = makeStyles(() => ({
 
 function Login() {
 
+    const [login, setLogin] = useState('');
+    const [password, setPassword] = useState('');
     const classes = useStyles();
+
+    function submit(){
+        console.log({login, password});
+    }
 
     return <Container className={classes.paper} maxWidth={'xs'}>
         <Typography variant='h5' style={{marginBottom: '12px'}}>Login</Typography>
@@ -32,18 +39,23 @@ function Login() {
                 variant='outlined'
                 label='Enter login'
                 margin='normal'
+                value={login}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLogin(e.target.value)}
                 autoFocus
                 fullWidth />
             <TextField
                 name='password'
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                 variant='outlined'
+                value={password}
+                type='password'
                 label='Enter password'
-                autoFocus
                 margin='normal'
                 fullWidth />
             <Button
                 type="submit"
                 fullWidth
+                onClick={submit}
                 variant="contained"
                 color="primary"
                 className={classes.btn}>
