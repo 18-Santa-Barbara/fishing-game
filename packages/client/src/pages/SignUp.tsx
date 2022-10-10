@@ -46,8 +46,7 @@ class SignUp extends Component {
         this.setState({[name]: value});
     }
 
-    submit(){
-
+    submit = () => {
         console.log(this.state);
     }
 
