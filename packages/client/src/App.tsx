@@ -1,4 +1,4 @@
-import { CssBaseline } from '@material-ui/core';
+
 import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import GamePage from './pages/GamePage';
@@ -19,7 +19,6 @@ function App() {
   // }, [])
   return (
     <>
-      <CssBaseline />
       <Routes>
         <Route path={BASE_URL} element={<Login />} />
         <Route path={LOGIN_URL} element={<Login />} />
