@@ -1,21 +1,17 @@
-import { TextField, Button, Avatar, Box } from '@mui/material';
+import { TextField, Button, Avatar, Box, Typography } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@mui/styles';
 import { AccountCircle } from '@mui/icons-material';
 import { apiRequestPut } from '../utils/api';
 import { API } from '../utils/constants';
+import withNavigation from '../hocs/with-navigation/WithNavigation';
 
 interface SignUpState {
   error: string;
-  user: {
-    first_name: string;
-    second_name: string;
-    display_name: string;
-    login: string;
-    email: string;
-    phone: string;
-  };
+  oldPassword: string;
+  newPassword: string;
+  confirm: string;
 }
 
 const styles = {
@@ -37,14 +33,9 @@ const styles = {
 
 class SignUp extends Component {
   state: SignUpState = {
-    user: {
-      login: '',
-      first_name: '',
-      second_name: '',
-      display_name: '',
-      email: '',
-      phone: '',
-    },
+    oldPassword: '',
+    newPassword: '',
+    confirm: '',
     error: '',
   };
 
@@ -52,28 +43,24 @@ class SignUp extends Component {
     const {
       target: { name, value },
     } = e;
-    this.setState((oldState: SignUpState) => {
-      const newState = { ...oldState };
-      newState.user[name] = value;
-      return newState;
-    });
+    this.setState({ [name]: value });
   };
 
   submit = () => {
-    apiRequestPut(`${API}/user/profile`, { ...this.state.user })
+    const { oldPassword, newPassword } = this.state;
+    apiRequestPut(`${API}/user/password`, { oldPassword, newPassword })
       .then(res => {
         if ('reason' in res) {
           this.setState({ error: res.reason });
+        } else {
+          this.props.navigate('/profile');
         }
       })
       .catch(() => this.setState({ error: 'Ошибка!' }));
   };
 
   render(): ReactNode {
-    const {
-      user: { login, first_name, second_name, email, phone, display_name },
-      error,
-    } = this.state;
+    const { oldPassword, newPassword, confirm, error } = this.state;
     const { classes } = this.props;
     return (
       <Box className={classes.paper} maxWidth={'md'}>
@@ -85,58 +72,31 @@ class SignUp extends Component {
         </div>
         <div>
           <TextField
-            name="first_name"
+            name="oldPassword"
             variant="outlined"
-            label="First name"
+            label="Old password"
             margin="normal"
-            value={first_name}
+            value={oldPassword}
             autoFocus
             onChange={this.handleChange}
             fullWidth
           />
           <TextField
-            name="second_name"
+            name="newPassword"
             onChange={this.handleChange}
             variant="outlined"
-            value={second_name}
-            label="Second name"
+            value={newPassword}
+            label="New password"
             margin="normal"
             fullWidth
           />
           <TextField
-            name="login"
+            name="confirm"
             variant="outlined"
-            label="Enter login"
+            label="Confirm password"
             margin="normal"
-            value={login}
+            value={confirm}
             onChange={this.handleChange}
-            fullWidth
-          />
-          <TextField
-            name="email"
-            variant="outlined"
-            label="E-mail"
-            margin="normal"
-            value={email}
-            onChange={this.handleChange}
-            fullWidth
-          />
-          <TextField
-            name="phone"
-            onChange={this.handleChange}
-            variant="outlined"
-            value={phone}
-            label="Phone number"
-            margin="normal"
-            fullWidth
-          />
-          <TextField
-            name="display_name"
-            onChange={this.handleChange}
-            variant="outlined"
-            value={display_name}
-            label="Display name"
-            margin="normal"
             fullWidth
           />
           {error && (
@@ -154,13 +114,10 @@ class SignUp extends Component {
             Sign Up
           </Button>
         </div>
-        <div>
-          <Link to={'/pass'}>Change password</Link>
-        </div>
-        <Link to={'/game'}>Back</Link>
+        <Link to={'/profile'}>Back to profile</Link>
       </Box>
     );
   }
 }
 
-export default withStyles(styles)(SignUp);
+export default withStyles(styles)(withNavigation(SignUp));

@@ -3,18 +3,18 @@ import {
   Typography,
   TextField,
   Button,
-  withStyles,
-} from '@material-ui/core';
+  colors,
+} from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { withStyles } from '@mui/styles';
+import { apiRequestPost } from '../utils/api';
+import { API } from '../utils/constants';
+import withNavigation from '../hocs/with-navigation/WithNavigation';
 
 interface SignUpState {
-  login: string;
-  password: string;
-  first_name: string;
-  second_name: string;
-  email: string;
-  phone: string;
+  user: User;
+  error: string;
 }
 
 const styles = {
@@ -32,32 +32,52 @@ const styles = {
     margin: '12px 0',
     width: '33%',
   },
+  err: {
+    color: 'red',
+  },
 };
 
 class SignUp extends Component {
   state: SignUpState = {
-    login: '',
-    password: '',
-    first_name: '',
-    second_name: '',
-    email: '',
-    phone: '',
+    user: {
+      login: '',
+      password: '',
+      first_name: '',
+      second_name: '',
+      email: '',
+      phone: '',
+    },
+    error: '',
   };
 
   handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { name, value },
     } = e;
-    this.setState({ [name]: value });
+    this.setState((oldState: SignUpState) => {
+      const newState = { ...oldState };
+      newState.user[name] = value;
+      return newState;
+    });
   };
 
   submit = () => {
-    console.log(this.state);
+    const { setLogged, navigate } = this.props;
+    apiRequestPost(`${API}/auth/signup`, { ...this.state.user }).then(res => {
+      if ('reason' in res) {
+        this.setState({ error: res.reason });
+      } else {
+        setLogged(true);
+        navigate('/game');
+      }
+    });
   };
 
   render(): ReactNode {
-    const { login, password, first_name, second_name, email, phone } =
-      this.state;
+    const {
+      user: { login, password, first_name, second_name, email, phone },
+      error,
+    } = this.state;
     const { classes } = this.props;
     return (
       <Container className={classes.paper} maxWidth={'xs'}>
@@ -121,6 +141,11 @@ class SignUp extends Component {
             margin="normal"
             fullWidth
           />
+          {error && (
+            <Typography variant="h6" className={classes.err}>
+              {error || 'Ошибка!'}
+            </Typography>
+          )}
           <Button
             type="submit"
             fullWidth
@@ -137,4 +162,4 @@ class SignUp extends Component {
   }
 }
 
-export default withStyles(styles)(SignUp);
+export default withStyles(styles)(withNavigation(SignUp));

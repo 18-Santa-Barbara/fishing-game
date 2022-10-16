@@ -5,24 +5,26 @@ function commonApiRequest(
 ) {
   return fetch(url, {
     method,
-    Accept: 'application/json',
-    'Content-Type': 'application/json; charset=UTF-8',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json; charset=UTF-8',
+    },
     body: JSON.stringify(body),
   })
-    // .then(checkResponseStatus)
-    .then(res => res.json())
+    .then(checkResponseStatus)
     .catch(err => {
       console.error('Reqest error', err);
-      return err.reason || err;
+      return err.response || err;
     });
 }
 
 function checkResponseStatus(response: any) {
-  if (response.status >= 200 && response.status < 300) {
-    return response;
+  if (response.status >= 200 && response.status < 400) {
+    console.log(response)
+    return response === 'OK' ? response : response.json();
   } else {
     const error: Error = new Error(response);
-    error.response = response;
+    error.response = response.json();
     throw error;
   }
 }
