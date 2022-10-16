@@ -1,4 +1,3 @@
-import { CssBaseline } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './App.css';
