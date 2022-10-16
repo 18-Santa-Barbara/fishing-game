@@ -44,7 +44,6 @@ function App() {
 
   return (
     <>
-      <CssBaseline />
       <Routes>
         <Route
           path={BASE_URL}
