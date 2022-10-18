@@ -8,7 +8,9 @@ function commonApiRequest(
     headers: {
       accept: 'application/json',
       'content-type': 'application/json; charset=UTF-8',
+      
     },
+    credentials: 'include',
     body: JSON.stringify(body),
   })
     .then(checkResponseStatus)

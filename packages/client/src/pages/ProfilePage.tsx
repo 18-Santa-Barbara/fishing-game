@@ -5,10 +5,19 @@ import { withStyles } from '@mui/styles';
 import { AccountCircle } from '@mui/icons-material';
 import { apiRequestPut } from '../utils/api';
 import { API } from '../utils/constants';
+import { validateValue } from '../utils/validator';
 
 interface SignUpState {
   error: string;
   user: {
+    first_name: string;
+    second_name: string;
+    display_name: string;
+    login: string;
+    email: string;
+    phone: string;
+  };
+  check: {
     first_name: string;
     second_name: string;
     display_name: string;
@@ -33,6 +42,9 @@ const styles = {
     margin: '12px 0',
     width: '33%',
   },
+  linkBlock: {
+    margin: '0 0 8px'
+  }
 };
 
 class SignUp extends Component {
@@ -45,8 +57,25 @@ class SignUp extends Component {
       email: '',
       phone: '',
     },
+    check: {
+      login: '',
+      first_name: '',
+      second_name: '',
+      display_name: '',
+      email: '',
+      phone: '',
+    },
     error: '',
   };
+
+  fields: { name: string; label: string }[] = [
+    { name: 'first_name', label: 'First name' },
+    { name: 'second_name', label: 'Second name' },
+    { name: 'login', label: 'Enter login' },
+    { name: 'email', label: 'E-mail' },
+    { name: 'phone', label: 'Phone number' },
+    { name: 'display_name', label: 'Display name' },
+  ];
 
   handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -59,21 +88,46 @@ class SignUp extends Component {
     });
   };
 
+  checkInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const checkValue: string = validateValue(name, value);
+    if (checkValue) {
+      this.setState((oldState: SignUpState) => {
+        const newState = { ...oldState };
+        newState.check[name] = checkValue;
+        return newState;
+      });
+    }
+  };
+
   submit = () => {
-    apiRequestPut(`${API}/user/profile`, { ...this.state.user })
-      .then(res => {
-        if ('reason' in res) {
-          this.setState({ error: res.reason });
-        }
-      })
-      .catch(() => this.setState({ error: 'Ошибка!' }));
+    const { user } = this.state;
+    let isError = false;
+    this.fields.forEach(({ name }) => {
+      const errorText: string = validateValue(name, user[name]);
+      if (errorText !== '') {
+        this.setState((oldState: SignUpState) => {
+          //Знаю, что можно собрать объект с ошибками и потом сделать один setState, да, мне стыдно :)
+          const newState = { ...oldState };
+          newState.check[name] = errorText;
+          return newState;
+        });
+        isError = true;
+      }
+    });
+    if (!isError) {
+      apiRequestPut(`${API}/user/profile`, { ...this.state.user })
+        .then(res => {
+          if ('reason' in res) {
+            this.setState({ error: res.reason });
+          }
+        })
+        .catch(() => this.setState({ error: 'Ошибка!' }));
+    }
   };
 
   render(): ReactNode {
-    const {
-      user: { login, first_name, second_name, email, phone, display_name },
-      error,
-    } = this.state;
+    const { user, check, error } = this.state;
     const { classes } = this.props;
     return (
       <Box className={classes.paper} maxWidth={'md'}>
@@ -84,61 +138,21 @@ class SignUp extends Component {
           </Avatar>
         </div>
         <div>
-          <TextField
-            name="first_name"
-            variant="outlined"
-            label="First name"
-            margin="normal"
-            value={first_name}
-            autoFocus
-            onChange={this.handleChange}
-            fullWidth
-          />
-          <TextField
-            name="second_name"
-            onChange={this.handleChange}
-            variant="outlined"
-            value={second_name}
-            label="Second name"
-            margin="normal"
-            fullWidth
-          />
-          <TextField
-            name="login"
-            variant="outlined"
-            label="Enter login"
-            margin="normal"
-            value={login}
-            onChange={this.handleChange}
-            fullWidth
-          />
-          <TextField
-            name="email"
-            variant="outlined"
-            label="E-mail"
-            margin="normal"
-            value={email}
-            onChange={this.handleChange}
-            fullWidth
-          />
-          <TextField
-            name="phone"
-            onChange={this.handleChange}
-            variant="outlined"
-            value={phone}
-            label="Phone number"
-            margin="normal"
-            fullWidth
-          />
-          <TextField
-            name="display_name"
-            onChange={this.handleChange}
-            variant="outlined"
-            value={display_name}
-            label="Display name"
-            margin="normal"
-            fullWidth
-          />
+          {this.fields.map(({ name, label }, index: number) => (
+            <TextField
+              name={name}
+              variant="outlined"
+              label={label}
+              margin="normal"
+              onBlur={this.checkInput}
+              error={!!check[name]}
+              helperText={check[name]}
+              value={user[name]}
+              autoFocus={index === 0}
+              onChange={this.handleChange}
+              fullWidth
+            />
+          ))}
           {error && (
             <Typography className={classes.err} variant="h6">
               {error || 'Ошибка!'}
@@ -151,13 +165,18 @@ class SignUp extends Component {
             variant="contained"
             color="primary"
             className={classes.btn}>
-            Sign Up
+            Change
           </Button>
         </div>
-        <div>
+        <div className={classes.linkBlock}>
           <Link to={'/pass'}>Change password</Link>
         </div>
-        <Link to={'/game'}>Back</Link>
+        <div className={classes.linkBlock}>
+          <Link to={'/game'}>Back to the game</Link>
+        </div>
+        <div>
+          <Link to={'/game'}>Log out</Link>
+        </div>
       </Box>
     );
   }

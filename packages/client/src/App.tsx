@@ -21,9 +21,13 @@ import {
 function App() {
   const [isLogged, setLogged] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
   function checkLoggedIn() {
     apiRequestGet(`${API}/auth/user`)
       .then(res => {
+        if (!('reason' in res)) {
+          setLogged(true);
+        }
         setLoading(false);
         console.log(res);
       })
@@ -56,8 +60,18 @@ function App() {
             <Login checkLoggedIn={checkLoggedIn} setLogged={setLogged} />
           }
         />
-        <Route path={SIGNUP_URL} element={<SignUp setLogged={setLogged} />} />
-        <Route path={PROFILE_URL} element={<ProfilePage />} />
+        <Route
+          path={SIGNUP_URL}
+          element={<SignUp checkLoggedIn={checkLoggedIn} />}
+        />
+        <Route
+          path={PROFILE_URL}
+          element={
+            <ProtectedRoute loggedIn={isLogged}>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
         <Route path={CHANGE_PASS_URL} element={<ChangePassPage />} />
         <Route
           path={GAME_URL}

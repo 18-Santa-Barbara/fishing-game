@@ -1,19 +1,15 @@
-import {
-  Container,
-  Typography,
-  TextField,
-  Button,
-  colors,
-} from '@mui/material';
+import { Container, Typography, TextField, Button } from '@mui/material';
 import { Component, ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { withStyles } from '@mui/styles';
 import { apiRequestPost } from '../utils/api';
-import { API } from '../utils/constants';
+import { API, GAME_URL } from '../utils/constants';
 import withNavigation from '../hocs/with-navigation/WithNavigation';
+import { validateValue } from '../utils/validator';
 
 interface SignUpState {
   user: User;
+  check: User;
   error: string;
 }
 
@@ -47,8 +43,25 @@ class SignUp extends Component {
       email: '',
       phone: '',
     },
+    check: {
+      login: '',
+      password: '',
+      first_name: '',
+      second_name: '',
+      email: '',
+      phone: '',
+    },
     error: '',
   };
+
+  names: { name: string; label: string }[] = [
+    { name: 'first_name', label: 'First name' },
+    { name: 'second_name', label: 'Second name' },
+    { name: 'login', label: 'Enter login' },
+    { name: 'email', label: 'E-mail' },
+    { name: 'phone', label: 'Phone number' },
+    { name: 'password', label: 'Enter password' },
+  ];
 
   handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -57,90 +70,80 @@ class SignUp extends Component {
     this.setState((oldState: SignUpState) => {
       const newState = { ...oldState };
       newState.user[name] = value;
+      newState.check[name] = '';
       return newState;
     });
   };
 
+  checkInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const checkValue: string = validateValue(name, value);
+    if (checkValue) {
+      this.setState((oldState: SignUpState) => {
+        const newState = { ...oldState };
+        newState.check[name] = checkValue;
+        return newState;
+      });
+    }
+  };
+
   submit = () => {
     const { setLogged, navigate } = this.props;
-    apiRequestPost(`${API}/auth/signup`, { ...this.state.user }).then(res => {
-      if ('reason' in res) {
-        this.setState({ error: res.reason });
-      } else {
-        setLogged(true);
-        navigate('/game');
+    const { user } = this.state;
+    let isError = false;
+    this.names.forEach(({ name }) => {
+      const errorText: string = validateValue(name, user[name]);
+      if (errorText !== '') {
+        this.setState((oldState: SignUpState) => {
+          //Знаю, что можно собрать объект с ошибками и потом сделать один setState, да, мне стыдно :)
+          const newState = { ...oldState };
+          newState.check[name] = errorText;
+          return newState;
+        });
+        isError = true;
       }
     });
+    if (!isError) {
+      apiRequestPost(`${API}/auth/signup`, { ...this.state.user }).then(res => {
+        if ('reason' in res) {
+          this.setState({ error: res.reason });
+        } else {
+          setLogged(true);
+          navigate('/game');
+        }
+      });
+    }
   };
 
   render(): ReactNode {
-    const {
-      user: { login, password, first_name, second_name, email, phone },
-      error,
-    } = this.state;
-    const { classes } = this.props;
+    const { classes, checkLoggedIn } = this.props;
+    if (checkLoggedIn) {
+      return <Navigate to={GAME_URL} replace />;
+    }
+    const { user, check, error } = this.state;
+
     return (
       <Container className={classes.paper} maxWidth={'xs'}>
         <Typography variant="h5" style={{ marginBottom: '12px' }}>
           Sign Up
         </Typography>
         <div>
-          <TextField
-            name="first_name"
-            variant="outlined"
-            label="First name"
-            margin="normal"
-            value={first_name}
-            autoFocus
-            onChange={this.handleChange}
-            fullWidth
-          />
-          <TextField
-            name="second_name"
-            onChange={this.handleChange}
-            variant="outlined"
-            value={second_name}
-            label="Second name"
-            margin="normal"
-            fullWidth
-          />
-          <TextField
-            name="login"
-            variant="outlined"
-            label="Enter login"
-            margin="normal"
-            value={login}
-            onChange={this.handleChange}
-            fullWidth
-          />
-          <TextField
-            name="email"
-            variant="outlined"
-            label="E-mail"
-            margin="normal"
-            value={email}
-            onChange={this.handleChange}
-            fullWidth
-          />
-          <TextField
-            name="phone"
-            onChange={this.handleChange}
-            variant="outlined"
-            value={phone}
-            label="Phone number"
-            margin="normal"
-            fullWidth
-          />
-          <TextField
-            name="password"
-            onChange={this.handleChange}
-            variant="outlined"
-            value={password}
-            type="password"
-            label="Enter password"
-            margin="normal"
-            fullWidth
-          />
+          {this.names.map(({ name, label }, index: number) => (
+            <TextField
+              name={name}
+              variant="outlined"
+              label={label}
+              margin="normal"
+              autoFocus={index === 0}
+              value={user[name]}
+              helperText={check[name]}
+              error={check[name]}
+              type={name === 'password' ? 'password' : 'text'}
+              onBlur={this.checkInput}
+              onChange={this.handleChange}
+              fullWidth
+            />
+          ))}
           {error && (
             <Typography variant="h6" className={classes.err}>
               {error || 'Ошибка!'}

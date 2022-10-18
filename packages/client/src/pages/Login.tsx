@@ -1,9 +1,9 @@
 import { Button, Container, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { makeStyles } from '@mui/styles';
 import { apiRequestPost } from '../utils/api';
-import { API } from '../utils/constants';
+import { API, GAME_URL } from '../utils/constants';
 
 const useStyles = makeStyles(() => ({
   paper: {
@@ -28,6 +28,9 @@ const useStyles = makeStyles(() => ({
 }));
 
 function Login({ setLogged, checkLoggedIn }) {
+  if(checkLoggedIn){
+    return <Navigate to={GAME_URL} replace />;
+  }
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
