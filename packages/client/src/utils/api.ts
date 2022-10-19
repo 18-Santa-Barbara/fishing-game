@@ -31,7 +31,7 @@ function checkResponseStatus(response: any) {
   }
 }
 
-function apiRequestGet(url: string, data: Record<string, any>) {
+function apiRequestGet(url: string) {
   return commonApiRequest(url, 'GET');
 }
 function apiRequestPost(url: string, data: Record<string, any>) {

@@ -51,24 +51,32 @@ function App() {
         <Route
           path={BASE_URL}
           element={
-            <Login checkLoggedIn={checkLoggedIn} setLogged={setLogged} />
+            <Login
+              checkLogged={isLogged}
+              checkLoggedIn={checkLoggedIn}
+              setLogged={setLogged}
+            />
           }
         />
         <Route
           path={LOGIN_URL}
           element={
-            <Login checkLoggedIn={checkLoggedIn} setLogged={setLogged} />
+            <Login
+              checkLogged={isLogged}
+              checkLoggedIn={checkLoggedIn}
+              setLogged={setLogged}
+            />
           }
         />
         <Route
           path={SIGNUP_URL}
-          element={<SignUp checkLoggedIn={checkLoggedIn} />}
+          element={<SignUp checkLoggedIn={isLogged} />}
         />
         <Route
           path={PROFILE_URL}
           element={
             <ProtectedRoute loggedIn={isLogged}>
-              <ProfilePage />
+              <ProfilePage setLogged={setLogged} />
             </ProtectedRoute>
           }
         />

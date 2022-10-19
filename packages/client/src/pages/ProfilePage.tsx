@@ -1,11 +1,12 @@
-import { TextField, Button, Avatar, Box } from '@mui/material';
+import { TextField, Button, Avatar, Box, Link as LinkM } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@mui/styles';
 import { AccountCircle } from '@mui/icons-material';
-import { apiRequestPut } from '../utils/api';
-import { API } from '../utils/constants';
+import { apiRequestPost, apiRequestPut } from '../utils/api';
+import { API, LOGIN_URL } from '../utils/constants';
 import { validateValue } from '../utils/validator';
+import withNavigation from '../hocs/with-navigation/WithNavigation';
 
 interface SignUpState {
   error: string;
@@ -44,6 +45,10 @@ const styles = {
   },
   linkBlock: {
     margin: '0 0 8px'
+  },
+  a: {
+    color: 'red',
+    cursor: 'pointer'
   }
 };
 
@@ -126,6 +131,19 @@ class SignUp extends Component {
     }
   };
 
+  logOut = () => {
+    apiRequestPost(`${API}/auth/logout`, {})
+    .then(res => {
+      if ('reason' in res) {
+        this.setState({ error: res.reason });
+      } else {
+        this.props.setLogged(false);
+        this.props.navigate(LOGIN_URL);
+      }
+    })
+    .catch(() => this.setState({ error: 'Ошибка!' }));
+  }
+
   render(): ReactNode {
     const { user, check, error } = this.state;
     const { classes } = this.props;
@@ -141,6 +159,7 @@ class SignUp extends Component {
           {this.fields.map(({ name, label }, index: number) => (
             <TextField
               name={name}
+              key={name}
               variant="outlined"
               label={label}
               margin="normal"
@@ -175,11 +194,11 @@ class SignUp extends Component {
           <Link to={'/game'}>Back to the game</Link>
         </div>
         <div>
-          <Link to={'/game'}>Log out</Link>
+          <LinkM className={classes.a} onClick={this.logOut}>Log out</LinkM>
         </div>
       </Box>
     );
   }
 }
 
-export default withStyles(styles)(SignUp);
+export default withStyles(styles)(withNavigation(SignUp));

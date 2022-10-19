@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { makeStyles } from '@mui/styles';
 import { apiRequestPost } from '../utils/api';
-import { API, GAME_URL } from '../utils/constants';
+import { API, GAME_URL, SIGNUP_URL } from '../utils/constants';
 
 const useStyles = makeStyles(() => ({
   paper: {
@@ -27,8 +27,8 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function Login({ setLogged, checkLoggedIn }) {
-  if(checkLoggedIn){
+function Login({ setLogged, checkLoggedIn, checkLogged }) {
+  if (checkLogged) {
     return <Navigate to={GAME_URL} replace />;
   }
   const [login, setLogin] = useState('');
@@ -38,6 +38,14 @@ function Login({ setLogged, checkLoggedIn }) {
   const navigator = useNavigate();
 
   function submit() {
+    if (login === '') {
+      setError("Login can't be empty");
+      return;
+    }
+    if (password === '') {
+      setError("Password can't be empty");
+      return;
+    }
     apiRequestPost(`${API}/auth/signin`, { login, password })
       .then(res => {
         if ('reason' in res) {
@@ -46,7 +54,7 @@ function Login({ setLogged, checkLoggedIn }) {
           console.log(res);
           checkLoggedIn();
           setLogged(true);
-          navigator('/game');
+          navigator(GAME_URL);
         }
       })
       .catch(err => {
@@ -100,7 +108,7 @@ function Login({ setLogged, checkLoggedIn }) {
           Sign In
         </Button>
       </div>
-      <Link to={'/signup'}>Don't have account? Sign up!</Link>
+      <Link to={SIGNUP_URL}>Don't have account? Sign up!</Link>
     </Container>
   );
 }
