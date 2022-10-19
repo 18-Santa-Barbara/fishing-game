@@ -1,16 +1,31 @@
-import { Container, Typography, TextField, Button } from '@mui/material';
+import { TextField, Button, Avatar, Box, Link as LinkM } from '@mui/material';
 import { Component, ReactNode } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { withStyles } from '@mui/styles';
-import { apiRequestPost } from '../utils/api';
-import { API, GAME_URL } from '../utils/constants';
-import withNavigation from '../hocs/with-navigation/WithNavigation';
+import { AccountCircle } from '@mui/icons-material';
+import { apiRequestPost, apiRequestPut } from '../utils/api';
+import { API, LOGIN_URL } from '../utils/constants';
 import { validateValue } from '../utils/validator';
+import withNavigation from '../hocs/with-navigation/WithNavigation';
 
 interface SignUpState {
-  user: User;
-  check: User;
   error: string;
+  user: {
+    first_name: string;
+    second_name: string;
+    display_name: string;
+    login: string;
+    email: string;
+    phone: string;
+  };
+  check: {
+    first_name: string;
+    second_name: string;
+    display_name: string;
+    login: string;
+    email: string;
+    phone: string;
+  };
 }
 
 const styles = {
@@ -28,39 +43,43 @@ const styles = {
     margin: '12px 0',
     width: '33%',
   },
-  err: {
-    color: 'red',
+  linkBlock: {
+    margin: '0 0 8px'
   },
+  a: {
+    color: 'red',
+    cursor: 'pointer'
+  }
 };
 
 class SignUp extends Component {
   state: SignUpState = {
     user: {
       login: '',
-      password: '',
       first_name: '',
       second_name: '',
+      display_name: '',
       email: '',
       phone: '',
     },
     check: {
       login: '',
-      password: '',
       first_name: '',
       second_name: '',
+      display_name: '',
       email: '',
       phone: '',
     },
     error: '',
   };
 
-  names: { name: string; label: string }[] = [
+  fields: { name: string; label: string }[] = [
     { name: 'first_name', label: 'First name' },
     { name: 'second_name', label: 'Second name' },
     { name: 'login', label: 'Enter login' },
     { name: 'email', label: 'E-mail' },
     { name: 'phone', label: 'Phone number' },
-    { name: 'password', label: 'Enter password' },
+    { name: 'display_name', label: 'Display name' },
   ];
 
   handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +89,6 @@ class SignUp extends Component {
     this.setState((oldState: SignUpState) => {
       const newState = { ...oldState };
       newState.user[name] = value;
-      newState.check[name] = '';
       return newState;
     });
   };
@@ -88,10 +106,9 @@ class SignUp extends Component {
   };
 
   submit = () => {
-    const { setLogged, navigate } = this.props;
     const { user } = this.state;
     let isError = false;
-    this.names.forEach(({ name }) => {
+    this.fields.forEach(({ name }) => {
       const errorText: string = validateValue(name, user[name]);
       if (errorText !== '') {
         this.setState((oldState: SignUpState) => {
@@ -104,48 +121,59 @@ class SignUp extends Component {
       }
     });
     if (!isError) {
-      apiRequestPost(`${API}/auth/signup`, { ...this.state.user }).then(res => {
-        if ('reason' in res) {
-          this.setState({ error: res.reason });
-        } else {
-          setLogged(true);
-          navigate('/game');
-        }
-      });
+      apiRequestPut(`${API}/user/profile`, { ...this.state.user })
+        .then(res => {
+          if ('reason' in res) {
+            this.setState({ error: res.reason });
+          }
+        })
+        .catch(() => this.setState({ error: 'Ошибка!' }));
     }
   };
 
-  render(): ReactNode {
-    const { classes, checkLoggedIn } = this.props;
-    if (checkLoggedIn) {
-      return <Navigate to={GAME_URL} replace />;
-    }
-    const { user, check, error } = this.state;
+  logOut = () => {
+    apiRequestPost(`${API}/auth/logout`, {})
+    .then(res => {
+      if ('reason' in res) {
+        this.setState({ error: res.reason });
+      } else {
+        this.props.setLogged(false);
+        this.props.navigate(LOGIN_URL);
+      }
+    })
+    .catch(() => this.setState({ error: 'Ошибка!' }));
+  }
 
+  render(): ReactNode {
+    const { user, check, error } = this.state;
+    const { classes } = this.props;
     return (
-      <Container className={classes.paper} maxWidth={'xs'}>
-        <Typography variant="h5" style={{ marginBottom: '12px' }}>
-          Sign Up
-        </Typography>
+      <Box className={classes.paper} maxWidth={'md'}>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Avatar
+            sx={{ m: 1, bgcolor: 'primary', width: '60px', height: '60px' }}>
+            <AccountCircle />
+          </Avatar>
+        </div>
         <div>
-          {this.names.map(({ name, label }, index: number) => (
+          {this.fields.map(({ name, label }, index: number) => (
             <TextField
               name={name}
+              key={name}
               variant="outlined"
               label={label}
               margin="normal"
-              autoFocus={index === 0}
-              value={user[name]}
-              helperText={check[name]}
-              error={check[name]}
-              type={name === 'password' ? 'password' : 'text'}
               onBlur={this.checkInput}
+              error={!!check[name]}
+              helperText={check[name]}
+              value={user[name]}
+              autoFocus={index === 0}
               onChange={this.handleChange}
               fullWidth
             />
           ))}
           {error && (
-            <Typography variant="h6" className={classes.err}>
+            <Typography className={classes.err} variant="h6">
               {error || 'Ошибка!'}
             </Typography>
           )}
@@ -156,11 +184,19 @@ class SignUp extends Component {
             variant="contained"
             color="primary"
             className={classes.btn}>
-            Sign Up
+            Change
           </Button>
         </div>
-        <Link to={'/'}>Log in</Link>
-      </Container>
+        <div className={classes.linkBlock}>
+          <Link to={'/pass'}>Change password</Link>
+        </div>
+        <div className={classes.linkBlock}>
+          <Link to={'/game'}>Back to the game</Link>
+        </div>
+        <div>
+          <LinkM className={classes.a} onClick={this.logOut}>Log out</LinkM>
+        </div>
+      </Box>
     );
   }
 }
