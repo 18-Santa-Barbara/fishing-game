@@ -1,9 +1,11 @@
 import { Avatar, Card, CardContent, CardHeader, IconButton, Typography } from '@mui/material';
 import { red } from '@mui/material/colors';
+import { Player } from '../../leaderboard';
 
 import '../leaderboard/styles/profile.css'
 
-const Profiles = ({ Players }: any) => {
+// eslint-disable-next-line no-use-before-define
+const Profiles = ({ Players }: Player[]) => {
 
   return (
         <div id="profile">
@@ -12,7 +14,8 @@ const Profiles = ({ Players }: any) => {
   )
 }
 
-function Item(data: any[]){
+// eslint-disable-next-line no-use-before-define
+function Item(data: Player[]){
     return (
 
         <>

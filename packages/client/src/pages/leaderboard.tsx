@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { apiRequestPost } from "../utils/api";
 import { API } from "../utils/constants";
 import Board from "./components/leaderboard/board";

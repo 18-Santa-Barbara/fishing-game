@@ -5,7 +5,7 @@ type Props = {
   waitBeforeShow?: number;
 };
 
-const Delayed = ({ children, waitBeforeShow = 500 }: any) => {
+const Delayed = ({ children, waitBeforeShow = 500 }: Props) => {
   const [isShown, setIsShown] = useState(false);
 
   useEffect(() => {
