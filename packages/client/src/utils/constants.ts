@@ -1,4 +1,4 @@
-export const BASE_URL = '/';
+export const LEADERBOARD_URL = '/leaderboard';
 export const LOGIN_URL = '/login';
 export const SIGNUP_URL = '/signup';
 export const GAME_URL = '/game';
