@@ -37,7 +37,8 @@ function Login({ setLogged, checkLoggedIn, checkLogged }) {
   const classes = useStyles();
   const navigator = useNavigate();
 
-  function submit() {
+  function submit(e) {
+    e.preventDefault();
     if (login === '') {
       setError("Login can't be empty");
       return;
@@ -68,7 +69,7 @@ function Login({ setLogged, checkLoggedIn, checkLogged }) {
       <Typography variant="h5" style={{ marginBottom: '12px' }}>
         Login
       </Typography>
-      <div>
+      <form onSubmit={submit}>
         <TextField
           name="login"
           variant="outlined"
@@ -107,7 +108,7 @@ function Login({ setLogged, checkLoggedIn, checkLogged }) {
           className={classes.btn}>
           Sign In
         </Button>
-      </div>
+      </form>
       <Link to={SIGNUP_URL}>Don't have account? Sign up!</Link>
     </Container>
   );

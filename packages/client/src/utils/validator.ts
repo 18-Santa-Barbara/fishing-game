@@ -40,8 +40,8 @@ const validationRules: { [key: string]: (value: string) => string } = {
         return '';
     },
     email: (value: string) => {
-        if (!/^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/.test(value)) {
-            return 'Invalid email!';
+        if (!/.+@.+\..+/i.test(value)) {
+          return 'Invalid email!';
         }
         return '';
     },
