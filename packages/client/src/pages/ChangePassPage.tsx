@@ -29,6 +29,9 @@ const styles = {
     margin: '12px 0',
     width: '33%',
   },
+  err: {
+    color: 'red'
+  }
 };
 
 class SignUp extends Component {
@@ -46,7 +49,8 @@ class SignUp extends Component {
     this.setState({ [name]: value });
   };
 
-  submit = () => {
+  submit = (e) => {
+    e.preventDefault();
     const { oldPassword, newPassword } = this.state;
     apiRequestPut(`${API}/user/password`, { oldPassword, newPassword })
       .then(res => {
@@ -70,7 +74,7 @@ class SignUp extends Component {
             <AccountCircle />
           </Avatar>
         </div>
-        <div>
+        <form onSubmit={this.submit}>
           <TextField
             name="oldPassword"
             variant="outlined"
@@ -113,7 +117,7 @@ class SignUp extends Component {
             className={classes.btn}>
             Sign Up
           </Button>
-        </div>
+        </form>
         <Link to={'/profile'}>Back to profile</Link>
       </Box>
     );

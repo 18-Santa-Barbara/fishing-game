@@ -87,7 +87,8 @@ class SignUp extends Component {
     }
   };
 
-  submit = () => {
+  submit = (e: React.FormEventHandler<HTMLFormElement>) => {
+    e.preventDefault();
     const { setLogged, navigate } = this.props;
     const { user } = this.state;
     let isError = false;
@@ -127,17 +128,18 @@ class SignUp extends Component {
         <Typography variant="h5" style={{ marginBottom: '12px' }}>
           Sign Up
         </Typography>
-        <div>
+        <form onSubmit={this.submit}>
           {this.names.map(({ name, label }, index: number) => (
             <TextField
               name={name}
+              key={name}
               variant="outlined"
               label={label}
               margin="normal"
               autoFocus={index === 0}
               value={user[name]}
               helperText={check[name]}
-              error={check[name]}
+              error={!!check[name]}
               type={name === 'password' ? 'password' : 'text'}
               onBlur={this.checkInput}
               onChange={this.handleChange}
@@ -158,7 +160,7 @@ class SignUp extends Component {
             className={classes.btn}>
             Sign Up
           </Button>
-        </div>
+        </form>
         <Link to={'/'}>Log in</Link>
       </Container>
     );

@@ -70,7 +70,7 @@ function App() {
         />
         <Route
           path={SIGNUP_URL}
-          element={<SignUp checkLoggedIn={isLogged} />}
+          element={<SignUp setLogged={setLogged} checkLoggedIn={isLogged} />}
         />
         <Route
           path={PROFILE_URL}
