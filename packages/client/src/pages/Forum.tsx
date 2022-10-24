@@ -124,161 +124,160 @@ function Forum() {
     setOpenNewPost(false);
   };
 
-  return (
-    <div>
-      {!currectPost ? (
-        <Box className={classes.paper}>
-          <Typography variant="h3" className={classes.centerText}>
-            Forum
-          </Typography>
-          <Dialog
-            open={openNewPost}
-            onClose={handleClickCloseNewPost}
-            aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">New post</DialogTitle>
-            <DialogContent>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="title"
-                label="Title"
-                type="text"
-                fullWidth
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setTitle(e.target.value)
-                }
-              />
-              <TextField
-                autoFocus
-                margin="dense"
-                id="body"
-                label="Body"
-                type="text"
-                multiline
-                fullWidth
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setBody(e.target.value)
-                }
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClickCloseNewPost} color="primary">
-                Cancel
-              </Button>
-              <Button onClick={handleClickNewPost} color="primary">
-                Create
-              </Button>
-            </DialogActions>
-          </Dialog>
-          <TableContainer component={Paper}>
-            <Table
-              className={classes.table}
-              size="small"
-              aria-label="a dense table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Title</TableCell>
-                  <TableCell>Author</TableCell>
-                  <TableCell>Update time</TableCell>
+  if (!currectPost) {
+    return (
+      <Box className={classes.paper}>
+        <Typography variant="h3" className={classes.centerText}>
+          Forum
+        </Typography>
+        <Dialog
+          open={openNewPost}
+          onClose={handleClickCloseNewPost}
+          aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">New post</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="title"
+              label="Title"
+              type="text"
+              fullWidth
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setTitle(e.target.value)
+              }
+            />
+            <TextField
+              autoFocus
+              margin="dense"
+              id="body"
+              label="Body"
+              type="text"
+              multiline
+              fullWidth
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setBody(e.target.value)
+              }
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClickCloseNewPost} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleClickNewPost} color="primary">
+              Create
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <TableContainer component={Paper}>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="a dense table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Title</TableCell>
+                <TableCell>Author</TableCell>
+                <TableCell>Update time</TableCell>
+                <TableCell>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.btn}
+                    endIcon={<AddIcon />}
+                    onClick={handleClickOpenNewPost}
+                    fullWidth>
+                    New
+                  </Button>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {postList.map(row => (
+                <TableRow key={row.title}>
+                  <TableCell component="th" scope="row">
+                    {row.title}
+                  </TableCell>
+                  <TableCell>{row.author}</TableCell>
+                  <TableCell>{getTime(row.updateTime)}</TableCell>
                   <TableCell>
                     <Button
-                      variant="contained"
-                      color="primary"
-                      className={classes.btn}
-                      endIcon={<AddIcon />}
-                      onClick={handleClickOpenNewPost}
-                      fullWidth>
-                      New
+                      color="secondary"
+                      onClick={() => {
+                        setCurrectPost({
+                          id: row.id,
+                          title: row.title,
+                          author: row.author,
+                          updateTime: row.updateTime,
+                          body: row.body,
+                          comments: row.comments,
+                        });
+                      }}>
+                      read
                     </Button>
                   </TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {postList.map(row => (
-                  <TableRow key={row.title}>
-                    <TableCell component="th" scope="row">
-                      {row.title}
-                    </TableCell>
-                    <TableCell>{row.author}</TableCell>
-                    <TableCell>{getTime(row.updateTime)}</TableCell>
-                    <TableCell>
-                      <Button
-                        color="secondary"
-                        onClick={() => {
-                          setCurrectPost({
-                            id: row.id,
-                            title: row.title,
-                            author: row.author,
-                            updateTime: row.updateTime,
-                            body: row.body,
-                            comments: row.comments,
-                          });
-                        }}>
-                        read
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
-      ) : (
-        <Container>
-          <Card className={classes.root}>
-            <CardHeader
-              action={
-                <IconButton onClick={handleClickGoBack}>
-                  <ArrowBackIosIcon />
-                </IconButton>
-              }
-              title={currectPost.author}
-              subheader={getTime(currectPost.updateTime)}
-            />
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                {currectPost.title}
-              </Typography>
-              <Typography variant="h5" component="p">
-                {currectPost.body}
-              </Typography>
-            </CardContent>
-          </Card>
-          <Card className={classes.root}>
-            <CardHeader title="Comments" />
-            <CardContent>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="comment"
-                label="New comment                "
-                type="text"
-                fullWidth
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setComment(e.target.value)
-                }
-              />
-              <CardActions>
-                <Button onClick={handleClickNewComment}>add</Button>
-              </CardActions>
-            </CardContent>
-          </Card>
-          {currectPost.comments.map(comment => (
-            <Card className={classes.root}>
-              <CardHeader
-                title={comment.author}
-                subheader={getTime(comment.time)}
-              />
-              <CardContent>
-                <Typography variant="h5" component="p">
-                  {comment.body}
-                </Typography>
-              </CardContent>
-            </Card>
-          ))}
-        </Container>
-      )}
-    </div>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    );
+  }
+  return (
+    <Container>
+      <Card className={classes.root}>
+        <CardHeader
+          action={
+            <IconButton onClick={handleClickGoBack}>
+              <ArrowBackIosIcon />
+            </IconButton>
+          }
+          title={currectPost.author}
+          subheader={getTime(currectPost.updateTime)}
+        />
+        <CardContent>
+          <Typography color="textSecondary" gutterBottom>
+            {currectPost.title}
+          </Typography>
+          <Typography variant="h5" component="p">
+            {currectPost.body}
+          </Typography>
+        </CardContent>
+      </Card>
+      <Card className={classes.root}>
+        <CardHeader title="Comments" />
+        <CardContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="comment"
+            label="New comment"
+            type="text"
+            fullWidth
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setComment(e.target.value)
+            }
+          />
+          <CardActions>
+            <Button onClick={handleClickNewComment}>add</Button>
+          </CardActions>
+        </CardContent>
+      </Card>
+      {currectPost.comments.map(comment => (
+        <Card className={classes.root}>
+          <CardHeader
+            title={comment.author}
+            subheader={getTime(comment.time)}
+          />
+          <CardContent>
+            <Typography variant="h5" component="p">
+              {comment.body}
+            </Typography>
+          </CardContent>
+        </Card>
+      ))}
+    </Container>
   );
 }
 
