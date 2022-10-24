@@ -7,6 +7,7 @@ import GamePage from './pages/GamePage';
 import Login from './pages/Login';
 import ProfilePage from './pages/ProfilePage';
 import SignUp from './pages/SignUp';
+import Forum from './pages/Forum';
 import { apiRequestGet } from './utils/api';
 import {
   API,
@@ -16,6 +17,7 @@ import {
   LOGIN_URL,
   PROFILE_URL,
   SIGNUP_URL,
+  FORUM_URL,
 } from './utils/constants';
 
 function App() {
@@ -86,6 +88,14 @@ function App() {
           element={
             <ProtectedRoute loggedIn={isLogged}>
               <GamePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={FORUM_URL}
+          element={
+            <ProtectedRoute loggedIn={isLogged}>
+              <Forum />
             </ProtectedRoute>
           }
         />
