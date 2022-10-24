@@ -4,6 +4,7 @@ import './App.css';
 import ProtectedRoute from './hocs/protected-route/ProtectedRoute';
 import ChangePassPage from './pages/ChangePassPage';
 import GamePage from './pages/GamePage';
+import Forum from './pages/Forum';
 import Login from './pages/Login';
 import ProfilePage from './pages/ProfilePage';
 import SignUp from './pages/SignUp';
@@ -16,6 +17,7 @@ import {
   GAME_URL,
   LOGIN_URL,
   PROFILE_URL,
+  FORUM_URL,
   SIGNUP_URL,
   LEADERBOARD_URL,
 } from './utils/constants';
@@ -79,6 +81,14 @@ function App() {
           element={
             <ProtectedRoute loggedIn={isLogged}>
               <ProfilePage setLogged={setLogged} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={FORUM_URL}
+          element={
+            <ProtectedRoute loggedIn={isLogged}>
+              <Forum />
             </ProtectedRoute>
           }
         />
