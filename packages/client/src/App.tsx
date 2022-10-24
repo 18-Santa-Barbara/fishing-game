@@ -8,6 +8,7 @@ import Forum from './pages/Forum';
 import Login from './pages/Login';
 import ProfilePage from './pages/ProfilePage';
 import SignUp from './pages/SignUp';
+import { Leaderboard } from './pages/leaderboard';
 import { apiRequestGet } from './utils/api';
 import {
   API,
@@ -18,6 +19,7 @@ import {
   PROFILE_URL,
   FORUM_URL,
   SIGNUP_URL,
+  LEADERBOARD_URL,
 } from './utils/constants';
 
 function App() {
@@ -97,6 +99,12 @@ function App() {
             <ProtectedRoute loggedIn={isLogged}>
               <GamePage />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path={LEADERBOARD_URL}
+          element={
+            <Leaderboard />
           }
         />
       </Routes>
