@@ -87,7 +87,7 @@ class SignUp extends Component {
     }
   };
 
-  submit = (e: React.FormEventHandler<HTMLFormElement>) => {
+  submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { setLogged, navigate } = this.props;
     const { user } = this.state;
@@ -154,7 +154,6 @@ class SignUp extends Component {
           <Button
             type="submit"
             fullWidth
-            onClick={this.submit}
             variant="contained"
             color="primary"
             className={classes.btn}>

@@ -7,8 +7,6 @@ import { API, GAME_URL, SIGNUP_URL } from '../utils/constants';
 
 const useStyles = makeStyles(() => ({
   paper: {
-    // display: 'flex',
-    // justifyContent: 'center',
     textAlign: 'center',
     boxShadow: '0px 0px 6px rgb(0 0 0 / 14%)',
     borderRadius: '12px',
@@ -37,7 +35,7 @@ function Login({ setLogged, checkLoggedIn, checkLogged }) {
   const classes = useStyles();
   const navigator = useNavigate();
 
-  function submit(e) {
+  function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (login === '') {
       setError("Login can't be empty");
@@ -52,7 +50,6 @@ function Login({ setLogged, checkLoggedIn, checkLogged }) {
         if ('reason' in res) {
           setError(res.reason);
         } else {
-          console.log(res);
           checkLoggedIn();
           setLogged(true);
           navigator(GAME_URL);
@@ -61,7 +58,6 @@ function Login({ setLogged, checkLoggedIn, checkLogged }) {
       .catch(err => {
         console.warn(err);
       });
-    console.log({ login, password });
   }
 
   return (
@@ -102,7 +98,6 @@ function Login({ setLogged, checkLoggedIn, checkLogged }) {
         <Button
           type="submit"
           fullWidth
-          onClick={submit}
           variant="contained"
           color="primary"
           className={classes.btn}>
