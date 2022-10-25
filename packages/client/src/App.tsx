@@ -8,7 +8,8 @@ import Forum from './pages/Forum';
 import Login from './pages/Login';
 import ProfilePage from './pages/ProfilePage';
 import SignUp from './pages/SignUp';
-import { Leaderboard } from './pages/leaderboard';
+import { Leaderboard } from './pages/Leaderboard';
+import ErrorBoundary from './pages/components/ErrorBoundary'
 import { apiRequestGet } from './utils/api';
 import {
   API,
@@ -51,63 +52,65 @@ function App() {
 
   return (
     <>
-      <Routes>
-        <Route
-          path={BASE_URL}
-          element={
-            <Login
-              checkLogged={isLogged}
-              checkLoggedIn={checkLoggedIn}
-              setLogged={setLogged}
-            />
-          }
-        />
-        <Route
-          path={LOGIN_URL}
-          element={
-            <Login
-              checkLogged={isLogged}
-              checkLoggedIn={checkLoggedIn}
-              setLogged={setLogged}
-            />
-          }
-        />
-        <Route
-          path={SIGNUP_URL}
-          element={<SignUp setLogged={setLogged} checkLoggedIn={isLogged} />}
-        />
-        <Route
-          path={PROFILE_URL}
-          element={
-            <ProtectedRoute loggedIn={isLogged}>
-              <ProfilePage setLogged={setLogged} />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={FORUM_URL}
-          element={
-            <ProtectedRoute loggedIn={isLogged}>
-              <Forum />
-            </ProtectedRoute>
-          }
-        />
-        <Route path={CHANGE_PASS_URL} element={<ChangePassPage />} />
-        <Route
-          path={GAME_URL}
-          element={
-            <ProtectedRoute loggedIn={isLogged}>
-              <GamePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={LEADERBOARD_URL}
-          element={
-            <Leaderboard />
-          }
-        />
-      </Routes>
+      <ErrorBoundary>
+        <Routes>
+          <Route
+            path={BASE_URL}
+            element={
+              <Login
+                checkLogged={isLogged}
+                checkLoggedIn={checkLoggedIn}
+                setLogged={setLogged}
+              />
+            }
+          />
+          <Route
+            path={LOGIN_URL}
+            element={
+              <Login
+                checkLogged={isLogged}
+                checkLoggedIn={checkLoggedIn}
+                setLogged={setLogged}
+              />
+            }
+          />
+          <Route
+            path={SIGNUP_URL}
+            element={<SignUp setLogged={setLogged} checkLoggedIn={isLogged} />}
+          />
+          <Route
+            path={PROFILE_URL}
+            element={
+              <ProtectedRoute loggedIn={isLogged}>
+                <ProfilePage setLogged={setLogged} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={FORUM_URL}
+            element={
+              <ProtectedRoute loggedIn={isLogged}>
+                <Forum />
+              </ProtectedRoute>
+            }
+          />
+          <Route path={CHANGE_PASS_URL} element={<ChangePassPage />} />
+          <Route
+            path={GAME_URL}
+            element={
+              <ProtectedRoute loggedIn={isLogged}>
+                <GamePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={LEADERBOARD_URL}
+            element={
+              <Leaderboard />
+            }
+          />
+        </Routes>
+      </ErrorBoundary>
     </>
   );
 }

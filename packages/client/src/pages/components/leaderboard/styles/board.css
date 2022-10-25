@@ -1,6 +1,7 @@
 .leaderboard__container {
     width: 100%;
-    height: 100%;
+    height: 900px;
+    margin: 0 auto;
 }
 
 .leaderboard__header {
