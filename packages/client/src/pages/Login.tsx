@@ -1,9 +1,11 @@
 import { Button, Container, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { makeStyles } from '@mui/styles';
 import { apiRequestPost } from '../utils/api';
 import { API, GAME_URL, SIGNUP_URL } from '../utils/constants';
+import {useDispatch} from 'react-redux';
+import { useLoginMutation } from '../services/userApi';
 
 const useStyles = makeStyles(() => ({
   paper: {
@@ -25,15 +27,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function Login({ setLogged, checkLoggedIn, checkLogged }) {
-  if (checkLogged) {
-    return <Navigate to={GAME_URL} replace />;
-  }
+function Login() {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const classes = useStyles();
   const navigator = useNavigate();
+  const dispatch = useDispatch();
 
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -45,19 +45,7 @@ function Login({ setLogged, checkLoggedIn, checkLogged }) {
       setError("Password can't be empty");
       return;
     }
-    apiRequestPost(`${API}/auth/signin`, { login, password })
-      .then(res => {
-        if ('reason' in res) {
-          setError(res.reason);
-        } else {
-          checkLoggedIn();
-          setLogged(true);
-          navigator(GAME_URL);
-        }
-      })
-      .catch(err => {
-        console.warn(err);
-      });
+    
   }
 
   return (

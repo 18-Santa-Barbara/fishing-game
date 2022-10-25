@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import ProtectedRoute from './hocs/protected-route/ProtectedRoute';
@@ -9,9 +8,7 @@ import Login from './pages/Login';
 import ProfilePage from './pages/ProfilePage';
 import SignUp from './pages/SignUp';
 import { Leaderboard } from './pages/leaderboard';
-import { apiRequestGet } from './utils/api';
 import {
-  API,
   BASE_URL,
   CHANGE_PASS_URL,
   GAME_URL,
@@ -21,33 +18,16 @@ import {
   SIGNUP_URL,
   LEADERBOARD_URL,
 } from './utils/constants';
+import { useGetUserQuery } from './services/userApi';
 
 function App() {
-  const [isLogged, setLogged] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
-  function checkLoggedIn() {
-    apiRequestGet(`${API}/auth/user`)
-      .then(res => {
-        if (!('reason' in res)) {
-          setLogged(true);
-        }
-        setLoading(false);
-        console.log(res);
-      })
-      .catch(err => {
-        console.warn(111, err);
-        setLoading(false);
-      });
-  }
+  const { data, isLoading } = useGetUserQuery('');
 
-  useEffect(() => {
-    checkLoggedIn();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return <>Loading...</>;
   }
+
+  console.log(data);
 
   return (
     <>
@@ -55,39 +35,31 @@ function App() {
         <Route
           path={BASE_URL}
           element={
-            <Login
-              checkLogged={isLogged}
-              checkLoggedIn={checkLoggedIn}
-              setLogged={setLogged}
-            />
+            <Login />
           }
         />
         <Route
           path={LOGIN_URL}
           element={
-            <Login
-              checkLogged={isLogged}
-              checkLoggedIn={checkLoggedIn}
-              setLogged={setLogged}
-            />
+            <Login />
           }
         />
         <Route
           path={SIGNUP_URL}
-          element={<SignUp setLogged={setLogged} checkLoggedIn={isLogged} />}
+          element={<SignUp />}
         />
         <Route
           path={PROFILE_URL}
           element={
-            <ProtectedRoute loggedIn={isLogged}>
-              <ProfilePage setLogged={setLogged} />
+            <ProtectedRoute >
+              <ProfilePage />
             </ProtectedRoute>
           }
         />
         <Route
           path={FORUM_URL}
           element={
-            <ProtectedRoute loggedIn={isLogged}>
+            <ProtectedRoute >
               <Forum />
             </ProtectedRoute>
           }
@@ -96,7 +68,7 @@ function App() {
         <Route
           path={GAME_URL}
           element={
-            <ProtectedRoute loggedIn={isLogged}>
+            <ProtectedRoute >
               <GamePage />
             </ProtectedRoute>
           }
