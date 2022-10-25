@@ -1,4 +1,4 @@
-import { TextField, Button, Avatar, Box, Link as LinkM } from '@mui/material';
+import { TextField, Button, Avatar, Box, Link as LinkM, Typography } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@mui/styles';
@@ -105,7 +105,8 @@ class SignUp extends Component {
     }
   };
 
-  submit = () => {
+  submit = (e) => {
+    e.preventDefault();
     const { user } = this.state;
     let isError = false;
     this.fields.forEach(({ name }) => {
@@ -132,13 +133,14 @@ class SignUp extends Component {
   };
 
   logOut = () => {
+    const {setLogged, navigate} = this.props;
     apiRequestPost(`${API}/auth/logout`, {})
     .then(res => {
       if ('reason' in res) {
         this.setState({ error: res.reason });
       } else {
-        this.props.setLogged(false);
-        this.props.navigate(LOGIN_URL);
+        setLogged(false);
+        navigate(LOGIN_URL);
       }
     })
     .catch(() => this.setState({ error: 'Ошибка!' }));
@@ -155,7 +157,7 @@ class SignUp extends Component {
             <AccountCircle />
           </Avatar>
         </div>
-        <div>
+        <form onSubmit={this.submit}>
           {this.fields.map(({ name, label }, index: number) => (
             <TextField
               name={name}
@@ -186,7 +188,7 @@ class SignUp extends Component {
             className={classes.btn}>
             Change
           </Button>
-        </div>
+        </form>
         <div className={classes.linkBlock}>
           <Link to={'/pass'}>Change password</Link>
         </div>

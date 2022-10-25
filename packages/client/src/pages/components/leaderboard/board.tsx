@@ -5,9 +5,9 @@ import '../leaderboard/styles/board.css'
 import background from '../../../assets/leaderboard.jpg'
 
 import Profiles from './profile';
-import { Player } from '../../leaderboard';
+import { Player } from '../../Leaderboard';
 
-import { testPlayers } from '../../leaderboard';
+import { testPlayers } from '../../Leaderboard';
 import { Button, ButtonProps, Container, styled, Table, TableBody, TableCell, tableCellClasses, TableHead, TableRow } from '@mui/material';
 import { grey } from '@mui/material/colors';
 
