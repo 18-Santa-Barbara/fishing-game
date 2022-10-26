@@ -2,10 +2,9 @@ import { Button, Container, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { makeStyles } from '@mui/styles';
-import { apiRequestPost } from '../utils/api';
-import { API, GAME_URL, SIGNUP_URL } from '../utils/constants';
-import {useDispatch} from 'react-redux';
-import { useLoginMutation } from '../services/userApi';
+import { SIGNUP_URL } from '../utils/constants';
+import { useDispatch } from 'react-redux';
+import { useLogInMutation } from '../services/userApi';
 
 const useStyles = makeStyles(() => ({
   paper: {
@@ -34,6 +33,7 @@ function Login() {
   const classes = useStyles();
   const navigator = useNavigate();
   const dispatch = useDispatch();
+  const [logIn, { isLoading }] = useLogInMutation();
 
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -45,7 +45,12 @@ function Login() {
       setError("Password can't be empty");
       return;
     }
-    
+    logIn({ login, password }).then(response => {
+      console.log(response)
+    })
+    .catch(error => {
+      console.warn(error);
+    });
   }
 
   return (

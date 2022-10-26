@@ -1,9 +1,11 @@
+import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import { LOGIN_URL } from '../../utils/constants';
-import { IProps } from './IProps';
 
-function ProtectedRoute({ loggedIn, children }: IProps) {
-  if (!loggedIn) {
+function ProtectedRoute({ children }) {
+  const userId = useSelector(state => state.user.id);
+
+  if (userId === null) {
     return <Navigate to={LOGIN_URL} replace />;
   }
   return children;
