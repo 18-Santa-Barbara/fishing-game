@@ -13,13 +13,13 @@ const Profiles = ({ Players }: { Players: Player[] }) => {
   )
 }
 
-function Item(data: Player[]){
+function Item(data: any[]){
     return (
 
         <>
             {
-                data.map((value, key) => (
-                    <Card className="profile__card">
+                data.map((value) => (
+                    <Card key={value.data.name} className="profile__card">
                         <CardHeader
                           avatar={
                             <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
