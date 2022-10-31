@@ -1,11 +1,12 @@
-import { useSelector } from 'react-redux';
+import { PropsWithChildren } from 'react';
 import { Navigate } from 'react-router-dom';
+import { useGetUserQuery } from '../../services/userApi';
 import { LOGIN_URL } from '../../utils/constants';
 
-function ProtectedRoute({ children }) {
-  const userId = useSelector(state => state.user.id);
+function ProtectedRoute({ children }: PropsWithChildren) {
+  const { data, isLoading } = useGetUserQuery({}, {skip: true});
 
-  if (userId === null) {
+  if (isLoading || data === undefined) {
     return <Navigate to={LOGIN_URL} replace />;
   }
   return children;

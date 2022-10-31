@@ -1,10 +1,10 @@
 import { Button, Container, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { makeStyles } from '@mui/styles';
-import { SIGNUP_URL } from '../utils/constants';
-import { useDispatch } from 'react-redux';
-import { useLogInMutation } from '../services/userApi';
+import { GAME_URL, SIGNUP_URL } from '../utils/constants';
+import { useDispatch, useSelector } from 'react-redux';
+import { useGetUserQuery, useLogInMutation } from '../services/userApi';
 
 const useStyles = makeStyles(() => ({
   paper: {
@@ -31,9 +31,8 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const classes = useStyles();
-  const navigator = useNavigate();
-  const dispatch = useDispatch();
-  const [logIn, { isLoading }] = useLogInMutation();
+  const [logIn] = useLogInMutation();
+  // const { data } = useGetUserQuery(); 
 
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -45,13 +44,17 @@ function Login() {
       setError("Password can't be empty");
       return;
     }
-    logIn({ login, password }).then(response => {
-      console.log(response)
+    logIn({ login, password })
+    .then((response) => {
+      if(response.error){
+        setError(response.error.data.reason);//Ну это жесть, как это можно переделать?
+      }
     })
-    .catch(error => {
-      console.warn(error);
-    });
   }
+
+  // if (data !== undefined) {
+  //   return <Navigate to={GAME_URL} replace />;
+  // }
 
   return (
     <Container className={classes.paper} maxWidth={'xs'}>
@@ -83,11 +86,11 @@ function Login() {
           margin="normal"
           fullWidth
         />
-        {error && (
+        {error && 
           <Typography className={classes.err} variant="h6">
             {error || 'Ошибка!'}
           </Typography>
-        )}
+        }
         <Button
           type="submit"
           fullWidth

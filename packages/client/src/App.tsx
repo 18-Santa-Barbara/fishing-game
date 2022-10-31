@@ -19,18 +19,14 @@ import {
   LEADERBOARD_URL,
 } from './utils/constants';
 import { useGetUserQuery } from './services/userApi';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from './reducers/user';
 
 function App() {
-  const dispatch = useDispatch();
-  const { data, isLoading, isError} = useGetUserQuery('');
+  const { isLoading, data } = useGetUserQuery(undefined);
 
   if (isLoading) {
     return <>Loading...</>;
-  }
-  if(!isError){
-    // dispatch(setUser(data));
   }
 
   return (
@@ -50,18 +46,18 @@ function App() {
         <Route
           path={FORUM_URL}
           element={
-            <ProtectedRoute>
-              <Forum />
-            </ProtectedRoute>
+            // <ProtectedRoute>
+            <Forum />
+            /* </ProtectedRoute> */
           }
         />
         <Route path={CHANGE_PASS_URL} element={<ChangePassPage />} />
         <Route
           path={GAME_URL}
           element={
-            <ProtectedRoute>
-              <GamePage />
-            </ProtectedRoute>
+            // <ProtectedRoute>
+            <GamePage />
+            /* </ProtectedRoute> */
           }
         />
         <Route path={LEADERBOARD_URL} element={<Leaderboard />} />

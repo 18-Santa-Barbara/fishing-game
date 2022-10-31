@@ -6,9 +6,12 @@ import { apiRequestPost } from '../utils/api';
 import { API, GAME_URL } from '../utils/constants';
 import withNavigation from '../hocs/with-navigation/WithNavigation';
 import { validateValue } from '../utils/validator';
+import { RootState } from '@reduxjs/toolkit/dist/query/core/apiState';
+import { userApi } from '../services/userApi';
+import { connect } from 'react-redux';
 
 interface SignUpState {
-  user: User;
+  form: User;
   check: User;
   error: string;
 }
@@ -35,7 +38,7 @@ const styles = {
 
 class SignUp extends Component {
   state: SignUpState = {
-    user: {
+    form: {
       login: '',
       password: '',
       first_name: '',
@@ -69,7 +72,7 @@ class SignUp extends Component {
     } = e;
     this.setState((oldState: SignUpState) => {
       const newState = { ...oldState };
-      newState.user[name] = value;
+      newState.form[name] = value;
       newState.check[name] = '';
       return newState;
     });
@@ -89,11 +92,11 @@ class SignUp extends Component {
 
   submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { setLogged, navigate } = this.props;
-    const { user } = this.state;
+    const { setLogged, navigate, signUp } = this.props;
+    const { form } = this.state;
     let isError = false;
     this.names.forEach(({ name }) => {
-      const errorText: string = validateValue(name, user[name]);
+      const errorText: string = validateValue(name, form[name]);
       if (errorText !== '') {
         this.setState((oldState: SignUpState) => {
           //Знаю, что можно собрать объект с ошибками и потом сделать один setState, да, мне стыдно :)
@@ -105,23 +108,13 @@ class SignUp extends Component {
       }
     });
     if (!isError) {
-      apiRequestPost(`${API}/auth/signup`, { ...this.state.user }).then(res => {
-        if ('reason' in res) {
-          this.setState({ error: res.reason });
-        } else {
-          setLogged(true);
-          navigate('/game');
-        }
-      });
+      signUp(this.state.form);
     }
   };
 
   render(): ReactNode {
-    const { classes, checkLoggedIn } = this.props;
-    if (checkLoggedIn) {
-      return <Navigate to={GAME_URL} replace />;
-    }
-    const { user, check, error } = this.state;
+    const { classes} = this.props;
+    const { form, check, error } = this.state;
 
     return (
       <Container className={classes.paper} maxWidth={'xs'}>
@@ -137,7 +130,7 @@ class SignUp extends Component {
               label={label}
               margin="normal"
               autoFocus={index === 0}
-              value={user[name]}
+              value={form[name]}
               helperText={check[name]}
               error={!!check[name]}
               type={name === 'password' ? 'password' : 'text'}
@@ -166,4 +159,8 @@ class SignUp extends Component {
   }
 }
 
-export default withStyles(styles)(withNavigation(SignUp));
+const mapDispatch = {
+  signUp: userApi.endpoints.signUp.initiate,
+};
+
+export default connect(undefined, mapDispatch)(withStyles(styles)(withNavigation(SignUp)));
