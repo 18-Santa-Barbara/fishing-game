@@ -45,10 +45,6 @@ export const Leaderboard = () => {
         console.warn(err);
       });
 
-    return (
-      <Delayed>
-          <Board />
-      </Delayed>
-    );
+    return;
 }
 
