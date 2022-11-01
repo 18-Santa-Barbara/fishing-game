@@ -19,11 +19,9 @@ import {
   LEADERBOARD_URL,
 } from './utils/constants';
 import { useGetUserQuery } from './services/userApi';
-import { useDispatch, useSelector } from 'react-redux';
-import { setUser } from './reducers/user';
 
 function App() {
-  const { isLoading, data } = useGetUserQuery(undefined);
+  const { isLoading } = useGetUserQuery(undefined);
 
   if (isLoading) {
     return <>Loading...</>;

@@ -1,7 +1,7 @@
 import { Container, Typography, TextField, Button } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { withStyles } from '@mui/styles';
+import { withStyles, StyledProps } from '@mui/styles';
 import { apiRequestPost } from '../utils/api';
 import { API, GAME_URL } from '../utils/constants';
 import withNavigation from '../hocs/with-navigation/WithNavigation';
@@ -92,7 +92,7 @@ class SignUp extends Component {
 
   submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { setLogged, navigate, signUp } = this.props;
+    const { navigate, signUp } = this.props;
     const { form } = this.state;
     let isError = false;
     this.names.forEach(({ name }) => {
@@ -108,12 +108,20 @@ class SignUp extends Component {
       }
     });
     if (!isError) {
-      signUp(this.state.form);
+      signUp(this.state.form).then(response => {
+        if (response.error) {
+          if (response.error.data === 'OK') {
+            navigate(GAME_URL);
+          } else {
+            this.setState({error: response.error.data.reason}); //Ну это жесть, как это можно переделать?
+          }
+        }
+      });
     }
   };
 
   render(): ReactNode {
-    const { classes} = this.props;
+    const { classes } = this.props;
     const { form, check, error } = this.state;
 
     return (
@@ -163,4 +171,7 @@ const mapDispatch = {
   signUp: userApi.endpoints.signUp.initiate,
 };
 
-export default connect(undefined, mapDispatch)(withStyles(styles)(withNavigation(SignUp)));
+export default connect(
+  undefined,
+  mapDispatch
+)(withStyles(styles)(withNavigation(SignUp)));

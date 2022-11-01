@@ -1,5 +1,15 @@
-import { TextField, Button, Avatar, Box, Link as LinkM, Typography } from '@mui/material';
-import { Component, ReactNode } from 'react';
+import {
+  TextField,
+  Button,
+  Avatar,
+  Box,
+  Link as LinkM,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+} from '@mui/material';
+import { Component, Fragment, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@mui/styles';
 import { AccountCircle } from '@mui/icons-material';
@@ -7,6 +17,8 @@ import { apiRequestPost, apiRequestPut } from '../utils/api';
 import { API, LOGIN_URL } from '../utils/constants';
 import { validateValue } from '../utils/validator';
 import withNavigation from '../hocs/with-navigation/WithNavigation';
+import { endpoints } from '../services/userApi';
+import { connect } from 'react-redux';
 
 interface SignUpState {
   error: string;
@@ -26,6 +38,7 @@ interface SignUpState {
     email: string;
     phone: string;
   };
+  editMode: boolean;
 }
 
 const styles = {
@@ -44,12 +57,18 @@ const styles = {
     width: '33%',
   },
   linkBlock: {
-    margin: '0 0 8px'
+    margin: '0 0 8px',
   },
   a: {
     color: 'red',
-    cursor: 'pointer'
-  }
+    cursor: 'pointer',
+  },
+  li: {
+    width: '40vw',
+    '&:not(:last-child)': {
+      borderBottom: '1px solid #c6c6c6',
+    },
+  },
 };
 
 class SignUp extends Component {
@@ -71,6 +90,7 @@ class SignUp extends Component {
       phone: '',
     },
     error: '',
+    editMode: false,
   };
 
   fields: { name: string; label: string }[] = [
@@ -82,16 +102,16 @@ class SignUp extends Component {
     { name: 'display_name', label: 'Display name' },
   ];
 
-  handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {
-      target: { name, value },
-    } = e;
-    this.setState((oldState: SignUpState) => {
-      const newState = { ...oldState };
-      newState.user[name] = value;
-      return newState;
-    });
-  };
+  // handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const {
+  //     target: { name, value },
+  //   } = e;
+  //   this.setState((oldState: SignUpState) => {
+  //     const newState = { ...oldState };
+  //     newState.user[name] = value;
+  //     return newState;
+  //   });
+  // };
 
   checkInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -105,7 +125,7 @@ class SignUp extends Component {
     }
   };
 
-  submit = (e) => {
+  submit = e => {
     e.preventDefault();
     const { user } = this.state;
     let isError = false;
@@ -133,21 +153,89 @@ class SignUp extends Component {
   };
 
   logOut = () => {
-    const {setLogged, navigate} = this.props;
-    apiRequestPost(`${API}/auth/logout`, {})
-    .then(res => {
-      if ('reason' in res) {
-        this.setState({ error: res.reason });
-      } else {
-        setLogged(false);
-        navigate(LOGIN_URL);
-      }
-    })
-    .catch(() => this.setState({ error: 'Ошибка!' }));
+    this.props.logout()
+  };
+
+  renderForm() {
+    const { editMode, check, error } = this.state;
+    const { user, classes } = this.props;
+    if (editMode) {
+      return (
+        <Fragment>
+          <form onSubmit={this.submit}>
+            {this.fields.map(({ name, label }, index: number) => (
+              <TextField
+                name={name}
+                key={name}
+                variant="outlined"
+                label={label}
+                margin="normal"
+                onBlur={this.checkInput}
+                error={!!check[name]}
+                helperText={check[name]}
+                value={user[name] || ''}
+                autoFocus={index === 0}
+                onChange={this.handleChange}
+                fullWidth
+              />
+            ))}
+            {error && (
+              <Typography className={classes.err} variant="h6">
+                {error || 'Ошибка!'}
+              </Typography>
+            )}
+            <Button
+              type="submit"
+              fullWidth
+              onClick={this.submit}
+              variant="contained"
+              color="primary"
+              className={classes.btn}>
+              Change
+            </Button>
+          </form>
+          <div>
+            <LinkM className={classes.a} onClick={() => this.setState({editMode: false})}>
+              Cancel
+            </LinkM>
+          </div>
+        </Fragment>
+      );
+    }
+    return (
+      <List style={{ width: '100%' }}>
+        {this.fields.map(({ name, label }) => (
+          <ListItem key={name} className={classes.li}>
+            <ListItemText primary={user[name] || '-'} secondary={label} />
+          </ListItem>
+        ))}
+        <Button
+          type="submit"
+          fullWidth
+          onClick={() => this.setState({ editMode: true })}
+          variant="contained"
+          color="primary"
+          className={classes.btn}>
+          Edit profile
+        </Button>
+        <div className={classes.linkBlock}>
+          <Link to={'/pass'}>Change password</Link>
+        </div>
+        <div className={classes.linkBlock}>
+          <Link to={'/game'}>Back to the game</Link>
+        </div>
+        <div>
+          <LinkM className={classes.a} onClick={this.logOut}>
+            Log out
+          </LinkM>
+        </div>
+      </List>
+    );
   }
 
   render(): ReactNode {
-    const { user, check, error } = this.state;
+    const { check, error } = this.state;
+    const { user } = this.props;
     const { classes } = this.props;
     return (
       <Box className={classes.paper} maxWidth={'md'}>
@@ -157,50 +245,21 @@ class SignUp extends Component {
             <AccountCircle />
           </Avatar>
         </div>
-        <form onSubmit={this.submit}>
-          {this.fields.map(({ name, label }, index: number) => (
-            <TextField
-              name={name}
-              key={name}
-              variant="outlined"
-              label={label}
-              margin="normal"
-              onBlur={this.checkInput}
-              error={!!check[name]}
-              helperText={check[name]}
-              value={user[name]}
-              autoFocus={index === 0}
-              onChange={this.handleChange}
-              fullWidth
-            />
-          ))}
-          {error && (
-            <Typography className={classes.err} variant="h6">
-              {error || 'Ошибка!'}
-            </Typography>
-          )}
-          <Button
-            type="submit"
-            fullWidth
-            onClick={this.submit}
-            variant="contained"
-            color="primary"
-            className={classes.btn}>
-            Change
-          </Button>
-        </form>
-        <div className={classes.linkBlock}>
-          <Link to={'/pass'}>Change password</Link>
-        </div>
-        <div className={classes.linkBlock}>
-          <Link to={'/game'}>Back to the game</Link>
-        </div>
-        <div>
-          <LinkM className={classes.a} onClick={this.logOut}>Log out</LinkM>
-        </div>
+        {this.renderForm()}
       </Box>
     );
   }
 }
 
-export default withStyles(styles)(withNavigation(SignUp));
+const mapState = (state: RootState) => ({
+  user: endpoints.getUser.select(undefined)(state).data,
+});
+
+const mapDispatch = {
+  logout: endpoints.logout.initiate
+}
+
+export default connect(
+  mapState,
+  mapDispatch
+)(withStyles(styles)(withNavigation(SignUp)));

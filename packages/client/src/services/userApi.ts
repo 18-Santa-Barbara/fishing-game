@@ -55,7 +55,19 @@ export const userApi = createApi({
         return [];
       },
     }),
+    logout: builder.mutation({
+      query: () => ({
+        url: '/logout',
+        method: 'POST'
+      }),
+      invalidatesTags: (_, res) => {
+        if (res?.data === 'OK') {
+          return ['USER'];
+        }
+        return [];
+      },
+    }),
   }),
 });
 
-export const { useGetUserQuery, useLogInMutation } = userApi;
+export const { endpoints, useGetUserQuery, useLogInMutation, useLogoutMutation } = userApi;

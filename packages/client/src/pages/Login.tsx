@@ -32,7 +32,8 @@ function Login() {
   const [error, setError] = useState('');
   const classes = useStyles();
   const [logIn] = useLogInMutation();
-  // const { data } = useGetUserQuery(); 
+  const navigator = useNavigate();
+  const { data } = useGetUserQuery(undefined);
 
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -44,17 +45,20 @@ function Login() {
       setError("Password can't be empty");
       return;
     }
-    logIn({ login, password })
-    .then((response) => {
-      if(response.error){
-        setError(response.error.data.reason);//Ну это жесть, как это можно переделать?
+    logIn({ login, password }).then(response => {
+      if (response.error) {
+        if (response.error.data === 'OK') {
+          navigator(GAME_URL);
+        } else {
+          setError(response.error.data.reason); //Ну это жесть, как это можно переделать?
+        }
       }
-    })
+    });
   }
 
-  // if (data !== undefined) {
-  //   return <Navigate to={GAME_URL} replace />;
-  // }
+  if (data !== undefined) {
+    return <Navigate to={GAME_URL} replace />;
+  }
 
   return (
     <Container className={classes.paper} maxWidth={'xs'}>
@@ -86,11 +90,11 @@ function Login() {
           margin="normal"
           fullWidth
         />
-        {error && 
+        {error && (
           <Typography className={classes.err} variant="h6">
             {error || 'Ошибка!'}
           </Typography>
-        }
+        )}
         <Button
           type="submit"
           fullWidth
