@@ -7,11 +7,11 @@
 
 .profile__card {
     width: 50%;
-    border-radius: 20px !important;
+    border-radius: 20px;
 
     margin: .5rem;
     padding: 1.5rem;
-    background-color: rgb(195 203 208 / 71%) !important;
+    background-color: rgb(195 203 208 / 71%);
 
     display: flex;
     justify-content: space-between;

@@ -5,7 +5,7 @@
 }
 
 .leaderboard__header {
-    display: flex !important;
+    display: flex;
     justify-content: space-around;
     align-items: center;
     flex-direction: row;
@@ -15,7 +15,7 @@
 
     background-color: rgba(207 218 224 / 30%);
     border: 2px;
-    border-radius: 16px !important;
+    border-radius: 16px;
     border-collapse: separate;
 
     position: relative;
@@ -23,13 +23,13 @@
 }
 
 .leaderboard__title {
-    font-size: 2rem !important;
+    font-size: 2rem;
 }
 
 .leaderboard__button {
-    margin: 0 .6rem !important;
-    color: #fff !important;
-    border: .5px solid #fff !important;
+    margin: 0 .6rem;
+    color: #fff;
+    border: .5px solid #fff;
 }
 
 .leaderboard__button:hover {

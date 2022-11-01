@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { apiRequestPost } from "../utils/api";
 import { API } from "../utils/constants";
 import Board from "./components/leaderboard/board";
@@ -17,28 +17,38 @@ export class Player {
 }
 
 export let testPlayers: Player[]
+let reqOngoing: boolean = false;
+
+const data = {
+    ratingFieldName: "score",
+    cursor: 0,
+    limit: 1500
+}
 
 export const Leaderboard = () => {
-    
-    const data = {
-        ratingFieldName: "score",
-        cursor: 0,
-        limit: 1500
+
+    if (reqOngoing) {
+        return (
+            <Delayed>
+                <Board />
+            </Delayed>
+        );
     }
+    reqOngoing = true;
 
     apiRequestPost(`${API}/leaderboard/SantaBarbara`, data)
       .then(res => {
-          console.log(res);
           testPlayers = res;
+          reqOngoing = false;
       })
       .catch(err => {
         console.warn(err);
       });
 
     return (
-        <Delayed>
-            <Board />
-        </Delayed>
+      <Delayed>
+          <Board />
+      </Delayed>
     );
 }
 

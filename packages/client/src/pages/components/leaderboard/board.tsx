@@ -96,7 +96,6 @@ export default function Board() {
         if (between == 0) return val;
         return previous <= userDate && today >= userDate;
     })
-    console.log("FILTER: ", filter)
     return filter.sort((a: Array, b: Array) => {
         if ( a.score === b.score){
             return b.score - a.score;
