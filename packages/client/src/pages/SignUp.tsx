@@ -1,12 +1,10 @@
 import { Container, Typography, TextField, Button } from '@mui/material';
 import { Component, ReactNode } from 'react';
-import { Link, Navigate } from 'react-router-dom';
-import { withStyles, StyledProps } from '@mui/styles';
-import { apiRequestPost } from '../utils/api';
-import { API, GAME_URL } from '../utils/constants';
+import { Link } from 'react-router-dom';
+import { withStyles } from '@mui/styles';
+import { GAME_URL } from '../utils/constants';
 import withNavigation from '../hocs/with-navigation/WithNavigation';
 import { validateValue } from '../utils/validator';
-import { RootState } from '@reduxjs/toolkit/dist/query/core/apiState';
 import { userApi } from '../services/userApi';
 import { connect } from 'react-redux';
 

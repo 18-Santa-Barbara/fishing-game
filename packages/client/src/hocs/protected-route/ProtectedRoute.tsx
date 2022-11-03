@@ -5,7 +5,6 @@ import { LOGIN_URL } from '../../utils/constants';
 
 function ProtectedRoute({ children }: PropsWithChildren) {
   const { data, isLoading } = useGetUserQuery(undefined);
-  console.log(data)
 
   if (isLoading || data === undefined) {
     return <Navigate to={LOGIN_URL} replace />;

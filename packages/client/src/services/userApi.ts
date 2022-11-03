@@ -16,7 +16,7 @@ export const initialState: User = {
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API}/auth`,
+    baseUrl: `${API}/`,
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
@@ -26,12 +26,12 @@ export const userApi = createApi({
   tagTypes: ['USER'],
   endpoints: builder => ({
     getUser: builder.query({
-      query: () => '/user',
+      query: () => 'auth/user',
       providesTags: ['USER'],
     }),
     logIn: builder.mutation({
       query: payload => ({
-        url: '/signin',
+        url: 'auth/signin',
         method: 'POST',
         body: payload,
       }),
@@ -44,7 +44,7 @@ export const userApi = createApi({
     }),
     signUp: builder.mutation({
       query: payload => ({
-        url: '/signup',
+        url: 'auth/signup',
         method: 'POST',
         body: payload,
       }),
@@ -57,8 +57,8 @@ export const userApi = createApi({
     }),
     logout: builder.mutation({
       query: () => ({
-        url: '/logout',
-        method: 'POST'
+        url: 'auth/logout',
+        method: 'POST',
       }),
       invalidatesTags: (_, res) => {
         if (res?.data === 'OK') {
@@ -67,7 +67,38 @@ export const userApi = createApi({
         return [];
       },
     }),
+    changeProfile: builder.mutation({
+      query: payload => ({
+        url: 'user/profile',
+        method: 'PUT',
+        body: payload,
+      }),
+      invalidatesTags: ['USER'],
+    }),
+    changePass: builder.mutation({
+      query: payload => ({
+        url: 'user/password',
+        method: 'PUT',
+        body: payload,
+      }),
+    }),
+    changeAvatar: builder.mutation({
+      query: payload => ({
+        url: 'user/profile/avatar',
+        method: 'PUT',
+        body: payload,
+      }),
+      invalidatesTags: ['USER'],
+    }),
   }),
 });
 
-export const { endpoints, useGetUserQuery, useLogInMutation, useLogoutMutation } = userApi;
+export const {
+  endpoints,
+  useGetUserQuery,
+  useLogInMutation,
+  useLogoutMutation,
+  useChangeProfileMutation,
+  useChangePassMutation,
+  useChangeAvatarMutation,
+} = userApi;

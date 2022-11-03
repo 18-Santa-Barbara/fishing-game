@@ -23,8 +23,8 @@ import { useGetUserQuery } from './services/userApi';
 function App() {
   const { isLoading } = useGetUserQuery(undefined);
 
-  if (isLoading) {
-    return <>Loading...</>;
+  if (isLoading) {//Закомментить, если не залогинен и раскомментить, если авторизован
+    return <>Loading...</>;//TODO: Нужно как то обрабатывать первоначальную загрузку, либо обрабатывать запрос со статусом != 200
   }
 
   return (
