@@ -7,7 +7,8 @@ import Forum from './pages/Forum';
 import Login from './pages/Login';
 import ProfilePage from './pages/ProfilePage';
 import SignUp from './pages/SignUp';
-import { Leaderboard } from './pages/leaderboard';
+import { Leaderboard } from './pages/Leaderboard';
+import ErrorBoundary from './pages/components/ErrorBoundary'
 import {
   BASE_URL,
   CHANGE_PASS_URL,
