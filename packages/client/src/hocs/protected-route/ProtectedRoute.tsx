@@ -1,14 +1,25 @@
 import { PropsWithChildren } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useGetUserQuery } from '../../services/userApi';
-import { LOGIN_URL } from '../../utils/constants';
+import { GAME_URL, LOGIN_URL } from '../../utils/constants';
 
-function ProtectedRoute({ children }: PropsWithChildren) {
-  const { data, isLoading } = useGetUserQuery(undefined);
+function ProtectedRoute({ mustBeAuth, children }: PropsWithChildren) {
+  const { data, isLoading, isError, isUninitialized } = useGetUserQuery();
+  if (isLoading) {
+    return <>Loading...</>;
+  }
 
-  if (isLoading || data === undefined) {
+  if (!mustBeAuth) {
+    if (data && !isError) {
+      return <Navigate to={GAME_URL} replace />;
+    }
+    return children;
+  }
+
+  if (isError || (isUninitialized && !data)) {
     return <Navigate to={LOGIN_URL} replace />;
   }
+
   return children;
 }
 

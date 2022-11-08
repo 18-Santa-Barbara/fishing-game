@@ -25,7 +25,7 @@ export const userApi = createApi({
   }),
   tagTypes: ['USER'],
   endpoints: builder => ({
-    getUser: builder.query({
+    getUser: builder.query<any, void>({
       query: () => 'auth/user',
       providesTags: ['USER'],
     }),

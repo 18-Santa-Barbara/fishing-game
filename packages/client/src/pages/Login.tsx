@@ -33,7 +33,7 @@ function Login() {
   const classes = useStyles();
   const [logIn] = useLogInMutation();
   const navigator = useNavigate();
-  const { data } = useGetUserQuery(undefined);
+  // const { data } = useGetUserQuery();
 
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -56,9 +56,9 @@ function Login() {
     });
   }
 
-  if (data !== undefined) {
-    return <Navigate to={GAME_URL} replace />;
-  }
+  // if (data !== undefined) {
+  //   return <Navigate to={GAME_URL} replace />;
+  // }
 
   return (
     <Container className={classes.paper} maxWidth={'xs'}>

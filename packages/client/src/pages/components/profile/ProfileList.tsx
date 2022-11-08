@@ -31,7 +31,7 @@ const styles = {
 };
 
 function ProfileList({ classes, editProfile }) {
-  const { data: user } = useGetUserQuery(undefined);
+  const { data: user } = useGetUserQuery();
   const [logout] = useLogoutMutation();
 
   const logOut = () => {

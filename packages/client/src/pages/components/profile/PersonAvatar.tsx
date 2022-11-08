@@ -8,9 +8,11 @@ import {
 import { API } from '../../../utils/constants';
 
 const PersonAvatar = () => {
-  const {
-    data: { avatar },
-  } = useGetUserQuery(undefined);
+  const { data } = useGetUserQuery();
+  if (!data) {
+    return null;
+  }
+
   const [changeAvatar] = useChangeAvatarMutation();
 
   const change = (e: ChangeEvent<HTMLInputElement>) => {
@@ -25,10 +27,10 @@ const PersonAvatar = () => {
       <Badge
         overlap="circular"
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        badgeContent={<PhotoCamera color='primary' />}>
+        badgeContent={<PhotoCamera color="primary" />}>
         <Avatar
           sx={{ m: 1, bgcolor: 'primary', width: '60px', height: '60px' }}
-          src={`${API}/resources${avatar}`}>
+          src={`${API}/resources${data.avatar}`}>
           <AccountCircle />
         </Avatar>
       </Badge>
