@@ -15,7 +15,7 @@ import { grey } from '@mui/material/colors';
 export default function Board() {
 
   const [period, setPeriod] = useState(0);
-  const handleClick = (e: React.SetStateAction<number>) => {
+  const handleClick = (e: React.SetStateAction<any>) => {
     setPeriod(e.target.dataset.id)
   }
   const styles = {
@@ -91,12 +91,12 @@ export default function Board() {
     const previous = new Date(today);
     previous.setDate(previous.getDate() - (between));
 
-    const filter = data.filter((val: Record<string, unknown>) => {
+    const filter = data.filter((val) => {
         const userDate = new Date(val.data.date);
         if (between == 0) return val;
         return previous <= userDate && today >= userDate;
     })
-    return filter.sort((a: Array, b: Array) => {
+    return filter.sort((a, b) => {
         if ( a.score === b.score){
             return b.score - a.score;
         } else {

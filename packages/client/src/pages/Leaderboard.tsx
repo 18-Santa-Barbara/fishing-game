@@ -8,11 +8,13 @@ export class Player {
     name: string;
     score: number;
     date: string;
+    data: any;
 
-    constructor(name: string, score: number, date: string) {
+    constructor(name: string, score: number, date: string, data: any) {
         this.name = name;
         this.score = score;
         this.date = date;
+        this.data = data;
     }
 }
 
@@ -36,7 +38,7 @@ export const Leaderboard = () => {
     }
     reqOngoing = true;
 
-    apiRequestPost(`${API}/leaderboard/SantaBarbara`, data)
+    apiRequestPost(`${API}/leaderboard/Santa-Barbara`, data)
       .then(res => {
           testPlayers = res;
           reqOngoing = false;
