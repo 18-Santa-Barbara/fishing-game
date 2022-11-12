@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 type Props = {
-  children: React.ReactNode;
+  children: any;
   waitBeforeShow?: number;
 };
 
