@@ -1,14 +1,16 @@
 import { Button, TextField, Typography, Link as LinkM } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { ClassNameMap, StyleRules, withStyles } from '@mui/styles';
 import { Component, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import withNavigation from '../../../hocs/with-navigation/WithNavigation';
 import { endpoints } from '../../../services/userApi';
 import { RootState } from '../../../store/Store';
+import { UserToServer } from '../../../types/client';
 import { validateValue } from '../../../utils/validator';
 import { fields } from '../../ProfilePage';
 
-interface SignUpState {
+interface ProfilePageState {
+  // [key: string]: string | boolean | User;
   error: string;
   user: {
     first_name: string;
@@ -29,7 +31,7 @@ interface SignUpState {
   editMode: boolean;
 }
 
-const styles = {
+const styles: StyleRules = {
   btn: {
     margin: '12px 0',
     width: '33%',
@@ -43,8 +45,14 @@ const styles = {
   },
 };
 
-class ProfileForm extends Component {
-  constructor(props) {
+interface IProps {
+  classes: ClassNameMap;
+  user: UserToServer
+} 
+
+
+class ProfileForm extends Component<IProps, ProfilePageState> {
+  constructor(props: IProps) {
     super(props);
     this.state = {
       user: {
@@ -66,18 +74,18 @@ class ProfileForm extends Component {
     const {
       target: { name, value },
     } = e;
-    this.setState((oldState: SignUpState) => {
+    this.setState((oldState: ProfilePageState) => {
       const newState = { ...oldState };
       newState.user[name] = value;
       return newState;
     });
   };
 
-  checkInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  checkInput = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
     const checkValue: string = validateValue(name, value);
     if (checkValue) {
-      this.setState((oldState: SignUpState) => {
+      this.setState((oldState: ProfilePageState) => {
         const newState = { ...oldState };
         newState.check[name] = checkValue;
         return newState;
@@ -93,7 +101,7 @@ class ProfileForm extends Component {
     fields.forEach(({ name }) => {
       const errorText: string = validateValue(name, user[name]);
       if (errorText !== '') {
-        this.setState((oldState: SignUpState) => {
+        this.setState((oldState: ProfilePageState) => {
           //Знаю, что можно собрать объект с ошибками и потом сделать один setState, да, мне стыдно :)
           const newState = { ...oldState };
           newState.check[name] = errorText;

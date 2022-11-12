@@ -16,7 +16,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "typeRoots": [
-      "src/client.d.ts",
+      "src/types/client.d.ts",
     ]
   },
   "include": ["src"],

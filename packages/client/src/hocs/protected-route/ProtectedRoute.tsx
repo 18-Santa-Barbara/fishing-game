@@ -1,9 +1,9 @@
-import { PropsWithChildren } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useGetUserQuery } from '../../services/userApi';
 import { GAME_URL, LOGIN_URL } from '../../utils/constants';
+import IProps from './IProps';
 
-function ProtectedRoute({ mustBeAuth, children }: PropsWithChildren) {
+function ProtectedRoute({ mustBeAuth, children }: IProps) {
   const { data, isLoading, isError, isUninitialized } = useGetUserQuery();
   if (isLoading) {
     return <>Loading...</>;

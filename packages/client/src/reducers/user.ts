@@ -1,16 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-export type User = {
-  id?: number| null;
-  login: string;
-  firstName: string;
-  secondName: string;
-  displayName?: string;
-  avatar?: string;
-  phone: string;
-  email: string;
-};
-
+import { User } from '../types/client';
 
 const initialState: User = {
   id: null,

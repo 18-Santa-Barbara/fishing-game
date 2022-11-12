@@ -1,4 +1,6 @@
-export interface IProps {
-  loggedIn: boolean;
-  children: any;
+import { ReactElement } from 'react';
+
+export default interface IProps {
+  mustBeAuth?: boolean;
+  children: ReactElement;
 }

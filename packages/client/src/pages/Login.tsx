@@ -1,10 +1,9 @@
 import { Button, Container, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { makeStyles } from '@mui/styles';
 import { GAME_URL, SIGNUP_URL } from '../utils/constants';
-import { useDispatch, useSelector } from 'react-redux';
-import { useGetUserQuery, useLogInMutation } from '../services/userApi';
+import { useLogInMutation } from '../services/userApi';
 
 const useStyles = makeStyles(() => ({
   paper: {
@@ -55,10 +54,6 @@ function Login() {
       }
     });
   }
-
-  // if (data !== undefined) {
-  //   return <Navigate to={GAME_URL} replace />;
-  // }
 
   return (
     <Container className={classes.paper} maxWidth={'xs'}>

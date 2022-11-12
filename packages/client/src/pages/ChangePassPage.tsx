@@ -1,7 +1,7 @@
 import { TextField, Button, Box, Typography } from '@mui/material';
 import { Component, ReactNode } from 'react';
-import { Link } from 'react-router-dom';
-import { withStyles } from '@mui/styles';
+import { Link, NavigateFunction } from 'react-router-dom';
+import { ClassNameMap, StyleRules, withStyles } from '@mui/styles';
 import { PROFILE_URL } from '../utils/constants';
 import withNavigation from '../hocs/with-navigation/WithNavigation';
 import { connect } from 'react-redux';
@@ -15,7 +15,12 @@ interface ChangePassPageState {
   confirm: string;
 }
 
-const styles = {
+interface IProps {
+  classes: ClassNameMap;
+  navigate: NavigateFunction;
+}
+
+const styles: StyleRules = {
   paper: {
     textAlign: 'center',
     boxShadow: '0px 0px 6px rgb(0 0 0 / 14%)',
@@ -35,7 +40,7 @@ const styles = {
   },
 };
 
-class ChangePassPage extends Component {
+class ChangePassPage extends Component<IProps> {
   state: ChangePassPageState = {
     oldPassword: '',
     newPassword: '',

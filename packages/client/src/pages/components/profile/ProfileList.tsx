@@ -4,6 +4,7 @@ import {
   ListItem,
   ListItemText,
   Link as LinkM,
+  ClassNameMap,
 } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import { Link } from 'react-router-dom';
@@ -30,7 +31,13 @@ const styles = {
   },
 };
 
-function ProfileList({ classes, editProfile }) {
+interface IProps {
+  classes: ClassNameMap;
+  editProfile: () => void;
+}
+
+function ProfileList(props: IProps) {
+  const { classes, editProfile } = props;
   const { data: user } = useGetUserQuery();
   const [logout] = useLogoutMutation();
 

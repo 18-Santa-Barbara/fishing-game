@@ -16,9 +16,11 @@ const PersonAvatar = () => {
   const [changeAvatar] = useChangeAvatarMutation();
 
   const change = (e: ChangeEvent<HTMLInputElement>) => {
-    const formData = new FormData();
-    formData.append('avatar', e.target!.files[0]);
-    changeAvatar(formData);
+    if (e.target?.files) {
+      const formData = new FormData();
+      formData.append('avatar', e.target?.files[0]);
+      changeAvatar(formData);
+    }
   };
 
   return (

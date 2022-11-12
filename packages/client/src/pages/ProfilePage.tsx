@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { Component, ReactNode } from 'react';
-import { withStyles } from '@mui/styles';
+import { ClassNameMap, StyleRules, withStyles } from '@mui/styles';
 import withNavigation from '../hocs/with-navigation/WithNavigation';
 import ProfileList from './components/profile/ProfileList';
 import ProfileForm from './components/profile/ProfileForm';
@@ -15,7 +15,7 @@ export const fields: { name: string; label: string }[] = [
   { name: 'display_name', label: 'Display name' },
 ];
 
-const styles = {
+const styles: StyleRules = {
   paper: {
     textAlign: 'center',
     boxShadow: '0px 0px 6px rgb(0 0 0 / 14%)',
@@ -39,7 +39,12 @@ const styles = {
   },
 };
 
-class ProfilePage extends Component {
+interface IProps {
+  classes: ClassNameMap
+}
+
+class ProfilePage extends Component<IProps> {
+
   state = {
     editMode: false,
   };

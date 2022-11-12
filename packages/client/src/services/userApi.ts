@@ -1,5 +1,6 @@
 /* eslint-disable no-empty-pattern */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { User } from '../types/client';
 import { API } from '../utils/constants';
 
 export const initialState: User = {
@@ -29,7 +30,7 @@ export const userApi = createApi({
       query: () => 'auth/user',
       providesTags: ['USER'],
     }),
-    logIn: builder.mutation({
+    logIn: builder.mutation<any, {login: string, password: string}>({
       query: payload => ({
         url: 'auth/signin',
         method: 'POST',
@@ -55,7 +56,7 @@ export const userApi = createApi({
         return [];
       },
     }),
-    logout: builder.mutation({
+    logout: builder.mutation<any, void>({
       query: () => ({
         url: 'auth/logout',
         method: 'POST',

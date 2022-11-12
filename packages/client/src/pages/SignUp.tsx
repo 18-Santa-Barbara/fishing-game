@@ -1,20 +1,21 @@
 import { Container, Typography, TextField, Button } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { withStyles } from '@mui/styles';
+import { ClassNameMap, StyleRules, withStyles } from '@mui/styles';
 import { GAME_URL } from '../utils/constants';
 import withNavigation from '../hocs/with-navigation/WithNavigation';
 import { validateValue } from '../utils/validator';
 import { userApi } from '../services/userApi';
 import { connect } from 'react-redux';
+import { UserToServer } from '../types/client';
 
 interface SignUpState {
-  form: User;
-  check: User;
+  form: UserToServer;
+  check: UserToServer;
   error: string;
 }
 
-const styles = {
+const styles: StyleRules = {
   paper: {
     textAlign: 'center',
     boxShadow: '0px 0px 6px rgb(0 0 0 / 14%)',
@@ -34,7 +35,13 @@ const styles = {
   },
 };
 
-class SignUp extends Component {
+interface IProps {
+  classes: ClassNameMap;
+  navigate: Navigator;
+  signUp: () => void;
+}
+
+class SignUp extends Component<IProps, SignUpState> {
   state: SignUpState = {
     form: {
       login: '',
@@ -76,7 +83,7 @@ class SignUp extends Component {
     });
   };
 
-  checkInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  checkInput = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
     const checkValue: string = validateValue(name, value);
     if (checkValue) {
@@ -106,15 +113,17 @@ class SignUp extends Component {
       }
     });
     if (!isError) {
-      signUp(this.state.form).then(response => {
-        if (response.error) {
-          if (response.error.data === 'OK') {
-            navigate(GAME_URL);
-          } else {
-            this.setState({error: response.error.data.reason}); //Ну это жесть, как это можно переделать?
+      signUp(this.state.form).then(
+        (response: { error: { data: string | { reason: string } } }) => {
+          if (response.error) {
+            if (response.error.data === 'OK') {
+              navigate(GAME_URL);
+            } else {
+              this.setState({ error: response.error.data.reason }); //Ну это жесть, как это можно переделать?
+            }
           }
         }
-      });
+      );
     }
   };
 
