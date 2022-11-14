@@ -3,11 +3,12 @@ import './components/game/styles/game.css'
 
 import { FullScreenButton } from './components/fullScreenApiButton'
 import { apiRequestGet } from '../utils/api';
-import { API } from '../utils/constants';
+import { API, LEADERBOARD_URL } from '../utils/constants';
 import { postLeader } from './Leaderboard';
 
 import * as gameData from './components/game/gameData'
 import { Timer } from './components/game/timer'
+import { useNavigate } from 'react-router-dom';
 
 let context: any;
 let offset = 0;
@@ -32,23 +33,19 @@ let skeletonIsDead = false;
 const GamePage = () => {
     const canvasRef: any = useRef();
 
-    // начало игры
     const [start, setStart] = useState(false)
+    const navigateTo = useNavigate();
     
-    const startGame = () => {
-        setStart(false)
-        gameData.final.score = 0,
-        gameData.final.diamonds = 0,
-        gameData.final.time = 0,
-
-        setDiamonds(0),
-        setEnemies(0),
-        setDeadEnemies(0),
-        setStopTimer(false)
-        
+    // начало игры
+    const startGame = () => {        
         setTimeout(() => {
             setStart(true)
         }, 10)
+    }
+
+    // рестарт игры
+    const restartGame = () => {
+        window.location.reload();
     }
 
     // конец игры
@@ -57,12 +54,12 @@ const GamePage = () => {
         gameData.final.diamonds = 0,
         gameData.final.time = 0,
 
-        setDiamonds(0),
-        setEnemies(0),
-        setDeadEnemies(0),
-        setStopTimer(false)
+        setStopTimer(true)
+    }
 
-        setStart(false)
+    // навигация в лидерборд
+    const navigate = () => {
+        navigateTo(LEADERBOARD_URL)
     }
     
     // статистика
@@ -162,10 +159,15 @@ const GamePage = () => {
 
                         alert(`Победа!`)
                     }
+
                     setTimeout(() => {
                         finishRun = true;
-                        gameData.player.position.x += 5
-                        gameData.player.move(+1, gameData.keys)
+                        if (gameData.player.position.x > canvasRef.width) {
+                            gameData.player.stop(1, gameData.keys)
+                        } else {
+                            gameData.player.position.x += 5
+                            gameData.player.move(+1, gameData.keys)
+                        }
                     }, 1000)
                 }
             }
@@ -202,6 +204,7 @@ const GamePage = () => {
             finish = true;
         }
 
+        // поражение при падении
         if (gameData.player.position.y > canvasRef.height) {
             gameOver()
         }
@@ -348,9 +351,10 @@ const GamePage = () => {
                     <p>SKELETONS: {deadEnemies}/{enemies}</p>
                     <p>SCORE: {gameData.final.score}</p>
                     <FullScreenButton></FullScreenButton>
+                    <button className='game-btn' onClick={navigate}><p>Leaderboard</p></button>
                 </div>
                 <div className='game-inteface_start'>
-                    <button className='game-btn' onClick={startGame}>{start ? <p>Reset</p> : <p>Start Game</p>}</button>
+                    <button className='game-btn' onClick={!start ? startGame : restartGame}>{start ? <p>Reset</p> : <p>Start Game</p>}</button>
                 </div>
                 
             </div>

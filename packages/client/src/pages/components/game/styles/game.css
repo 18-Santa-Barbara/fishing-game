@@ -21,11 +21,18 @@
 }
 .game-interface_statistics {
     display: flex;
-    width: 60%;
-    margin-right: 28%;
+    width: 70%;
+    margin-right: 17%;
     align-items: center;
     justify-content: space-between;
     flex-direction: row;
+}
+.game-interface_statistics > div h1,
+.game-interface_statistics > h1,
+.game-interface_statistics > p,
+.game-interface_statistics > button {
+    padding: 0 1.2rem;
+    width: .1rem;
 }
 
 .game-btn {
@@ -59,7 +66,7 @@
     display: inline-block;
     font-size: 100%;
     position: relative;
-    width: auto;
+    width: 6rem;
     text-align: center;
     margin: -20px -20px;
     line-height: 20px;

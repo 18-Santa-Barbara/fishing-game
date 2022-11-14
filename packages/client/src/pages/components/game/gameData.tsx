@@ -89,7 +89,9 @@ export const platforms = [new Platform(-1, 550, defaultPlatform),
                    new Platform(224 * 10, 550, defaultPlatform),
                    new Platform(224 * 11, 550, defaultPlatform),
                    new Platform(224 * 12, 550, defaultPlatform),
-                   new Platform(224 * 13, 550, defaultPlatform),]
+                   new Platform(224 * 13, 550, defaultPlatform),
+                   new Platform(224 * 14, 550, defaultPlatform),
+                   new Platform(224 * 15, 550, defaultPlatform),]
 
 // алмазы
 export const coins = [new Coin(350, 470, coin),
