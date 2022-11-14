@@ -8,7 +8,7 @@ export class Player {
     name: string;
     score: number;
     date: string;
-    data: any;
+    data?: any;
 
     constructor(name: string, score: number, date: string, data: any) {
         this.name = name;

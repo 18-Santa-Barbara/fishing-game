@@ -47,7 +47,7 @@ export function createImg(imgSrc: string) {
 export const leader: Player = {
     name: '',
     date: '',
-    score: 0
+    score: 0,
 };
 
 // самофункция для получения юзернейма лидера

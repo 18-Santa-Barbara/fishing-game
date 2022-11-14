@@ -34,8 +34,35 @@ const GamePage = () => {
 
     // начало игры
     const [start, setStart] = useState(false)
+    
     const startGame = () => {
-        setStart(true)
+        setStart(false)
+        gameData.final.score = 0,
+        gameData.final.diamonds = 0,
+        gameData.final.time = 0,
+
+        setDiamonds(0),
+        setEnemies(0),
+        setDeadEnemies(0),
+        setStopTimer(false)
+        
+        setTimeout(() => {
+            setStart(true)
+        }, 10)
+    }
+
+    // конец игры
+    const gameOver = () => {
+        gameData.final.score = 0,
+        gameData.final.diamonds = 0,
+        gameData.final.time = 0,
+
+        setDiamonds(0),
+        setEnemies(0),
+        setDeadEnemies(0),
+        setStopTimer(false)
+
+        setStart(false)
     }
     
     // статистика
@@ -174,6 +201,10 @@ const GamePage = () => {
         if (offset > 400) {
             finish = true;
         }
+
+        if (gameData.player.position.y > canvasRef.height) {
+            gameOver()
+        }
         
         // коллизии платформ
         gameData.platforms.forEach((platform) => {
@@ -253,7 +284,7 @@ const GamePage = () => {
     const movePlayer = ({ keyCode }: any) => {
         if (start) {
             // движение влево и вправо
-            if (gameData.keyPressed === false && !finishRun) {
+            if (keyPressed === false && !finishRun) {
                 if (keyCode === 37) {
                     gameData.player.move(-1, gameData.keys)
                     keyPressed = true
@@ -264,7 +295,7 @@ const GamePage = () => {
             }
             
             // прыжок
-            if (keyCode === 32 && gameData.player.velocity.y === 0) {
+            if (keyCode === 38 && gameData.player.velocity.y === 0) {
                 gameData.player.jump();
             }
             
@@ -311,12 +342,17 @@ const GamePage = () => {
         <div className='game-field' role="button" tabIndex={0} onKeyDown={e => movePlayer(e)} onKeyUp={e => stopPlayer(e)}>
             <canvas width="1024px" height="576px" ref={canvasRef} />
             <div className='game-interface'>
-                {start ? <Timer seconds={60} stopTimer={stopTimer}></Timer> : <h1>60</h1>}
-                <p>DIAMONDS: {diamonds}</p>
-                <p>SKELETONS: {deadEnemies}/{enemies}</p>
-                <p>SCORE: {gameData.final.score}</p>
-                <FullScreenButton></FullScreenButton>
-                <button className='game-btn' onClick={startGame}><p>Start Game</p></button>
+                <div className='game-interface_statistics'>
+                    {start ? <Timer seconds={60} stopTimer={stopTimer}></Timer> : <h1>60</h1>}
+                    <p>DIAMONDS: {diamonds}</p>
+                    <p>SKELETONS: {deadEnemies}/{enemies}</p>
+                    <p>SCORE: {gameData.final.score}</p>
+                    <FullScreenButton></FullScreenButton>
+                </div>
+                <div className='game-inteface_start'>
+                    <button className='game-btn' onClick={startGame}>{start ? <p>Reset</p> : <p>Start Game</p>}</button>
+                </div>
+                
             </div>
         </div>
     );
