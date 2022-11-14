@@ -18,6 +18,12 @@ export class Player {
     }
 }
 
+type Leader = {
+    data: Record<string, unknown>,
+    ratingFieldName: string,
+    teamName: string
+}
+
 export let testPlayers: Player[]
 let reqOngoing = false;
 
@@ -25,6 +31,16 @@ const data = {
     ratingFieldName: "score",
     cursor: 0,
     limit: 1500
+}
+
+export const postLeader = (leader: Leader) => {
+    apiRequestPost(`${API}/leaderboard`, leader)
+      .then(res => {
+          console.log(res)
+      })
+      .catch(err => {
+        console.warn(err);
+      });
 }
 
 export const Leaderboard = () => {
