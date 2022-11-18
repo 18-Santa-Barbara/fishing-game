@@ -15,7 +15,7 @@ let offset = 0;
 let keyPressed = false;
 
 // условия финиша
-let finish = false;
+const finish = false;
 let finishRun = false;
 let skeletonIsDead = false;
 let enemiesAreDead = false;
