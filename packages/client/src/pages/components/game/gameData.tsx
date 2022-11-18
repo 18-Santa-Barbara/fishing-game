@@ -34,6 +34,7 @@ export const final = {
     score: 0,
     time: 0,
     diamonds: 0,
+    deadSkeletons: 0
 }
 
 // функция для отрисовки спрайтов
@@ -87,18 +88,23 @@ export const platforms = [new Platform(-1, 550, defaultPlatform),
 
                    new Platform(224 * 9, 550, defaultPlatform),
                    new Platform(224 * 10, 550, defaultPlatform),
-                   new Platform(224 * 11, 550, defaultPlatform),
-                   new Platform(224 * 12, 550, defaultPlatform),
-                   new Platform(224 * 13, 550, defaultPlatform),
-                   new Platform(224 * 14, 550, defaultPlatform),
-                   new Platform(224 * 15, 550, defaultPlatform),]
+
+                   new Platform(224 * 11.5, 450, defaultPlatform),
+                   new Platform(224 * 13.5, 450, defaultPlatform),
+                
+                   new Platform(224 * 15.5, 350, defaultPlatform),
+                   new Platform(224 * 17.5, 250, defaultPlatform),
+                   new Platform(224 * 19.5, 350, defaultPlatform),]
 
 // алмазы
 export const coins = [new Coin(350, 470, coin),
                new Coin(550, 470, coin),
                new Coin(770, 370, coin),
                new Coin(990, 270, coin),
-               new Coin(1210, 370, coin),]
+               new Coin(1210, 370, coin),
+
+               new Coin(2670, 370, coin),
+               new Coin(3120, 370, coin)]
 
 // фон
 export const backgroundPlatform = [new PlatformBackground(-1, -1, platformBack), 
@@ -112,8 +118,10 @@ export const backgroundCastle = [new PlatformBackground(-1, 160, castleBack),
 export const startPress = [new PlatformBackground(520, 0, pressStart)]
 
 // враг
-export const skeletons = [new Enemy(2350, 470, enemy)]
+export const skeletons = [new Enemy(2185, 470, enemy),
+                          new Enemy(3585, 270, enemy),
+                          new Enemy(4475, 270, enemy),]
 
 // сундук
-export const finalChest = [new Chest(2600, 511, chest)]
+export const finalChest = [new Chest(6600, 511, chest)]
 

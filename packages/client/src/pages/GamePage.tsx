@@ -18,6 +18,7 @@ let keyPressed = false;
 let finish = false;
 let finishRun = false;
 let skeletonIsDead = false;
+let enemiesAreDead = false;
 
 // самофункция для получения юзернейма лидера
 (function getUser() {
@@ -128,7 +129,7 @@ const GamePage = () => {
                 gameData.player.position.x += 5
                 offset++
     
-                if (offset >= 550 && skeletonIsDead) {
+                if (offset >= 550 && enemiesAreDead) {
                     gameData.finalChest[0].update(context)
 
                     if (!finishRun) {
@@ -171,6 +172,7 @@ const GamePage = () => {
                     }, 1000)
                 }
             }
+            
             gameData.player.velocity.x = 0;
 
             // при движении игрока окружающие объекты сдвигаются, а offset, пройденный игроком, меняется.
@@ -200,8 +202,9 @@ const GamePage = () => {
         }
 
         // одно из условий финиша при достижении определенной точки
-        if (offset > 400) {
-            finish = true;
+        if (offset > 1000) {
+            console.log('FINISh')
+            // finish = true;
         }
 
         // поражение при падении
@@ -235,51 +238,71 @@ const GamePage = () => {
             }
         })
 
-        // поворот скелета в зависимости от положения игрока
-        if (gameData.player.position.x > gameData.skeletons[0].position.x) {
-            gameData.skeletons[0].current = gameData.skeletons[0].sprites.stand.right;
-        } else {
-            gameData.skeletons[0].current = gameData.skeletons[0].sprites.stand.left;
-        }
+        // скелеты
+        gameData.skeletons.forEach(skeleton => {
 
-        // убийство скелета
-        if (gameData.player.current == gameData.player.sprites.fight.right || gameData.player.current == gameData.player.sprites.stand.right) {
-            if (gameData.player.attack.position.x + gameData.player.attack.width + 40 >= gameData.skeletons[0].position.x &&
-                gameData.player.attack.position.x + 40 <= gameData.skeletons[0].position.x + gameData.skeletons[0].width &&
-                gameData.player.attack.position.y + gameData.player.attack.height >= gameData.skeletons[0].position.y &&
-                gameData.player.attack.position.y <= gameData.skeletons[0].position.y + gameData.skeletons[0].height &&
-                gameData.player.doAttack
-                ) {
-                    gameData.skeletons[0].fall()
-                    if (gameData.skeletons[0].frames >= 0) {
-                        gameData.skeletons[0].frames = 0;
+            // поворот скелета в зависимости от положения игрока
+            if (gameData.player.position.x > skeleton.position.x) {
+                skeleton.current = skeleton.sprites.stand.right;
+            } else {
+                skeleton.current = skeleton.sprites.stand.left;
+            }
+            
+            // убийство скелета
+            if (gameData.player.current == gameData.player.sprites.fight.right || gameData.player.current == gameData.player.sprites.stand.right) {
+                if (gameData.player.attack.position.x + gameData.player.attack.width + 40 >= skeleton.position.x &&
+                    gameData.player.attack.position.x + 40 <= skeleton.position.x + skeleton.width &&
+                    gameData.player.attack.position.y + gameData.player.attack.height >= skeleton.position.y &&
+                    gameData.player.attack.position.y <= skeleton.position.y + skeleton.height &&
+                    gameData.player.doAttack
+                    ) {
+                        skeleton.fall()
+                        if (skeleton.frames >= 0) {
+                            skeleton.frames = 0;
+                        }
+                        if (skeletonIsDead == false) {   
+                            skeletonIsDead = true;
+                            setDeadEnemies((deadEnemies) => deadEnemies + 1)
+                            gameData.final.deadSkeletons++
+                            if (gameData.skeletons.length === gameData.final.deadSkeletons) {
+                                enemiesAreDead = true;
+                            }
+                        }
+                        setTimeout(() => {
+                            skeleton.position.x = -100
+                            skeleton.position.y = -100
+                            skeletonIsDead = false
+                        }, 200)
                     }
-                    setTimeout(() => {
-                        gameData.skeletons[0].position.x = -100
-                        gameData.skeletons[0].position.y = -100
-                    }, 200)
-                    skeletonIsDead = true;
-                    setDeadEnemies(deadEnemies + 1)
-                }
-        } else if (gameData.player.current == gameData.player.sprites.fight.left || gameData.player.current == gameData.player.sprites.stand.left) {
-            if (gameData.player.attack.position.x + gameData.player.attack.width >= gameData.skeletons[0].position.x &&
-                gameData.player.attack.position.x <= gameData.skeletons[0].position.x + gameData.skeletons[0].width &&
-                gameData.player.attack.position.y + gameData.player.attack.height >= gameData.skeletons[0].position.y &&
-                gameData.player.attack.position.y <= gameData.skeletons[0].position.y + gameData.skeletons[0].height &&
-                gameData.player.doAttack
-                ) {
-                    gameData.skeletons[0].fall()
-                    if (gameData.skeletons[0].frames >= 0) {
-                        gameData.skeletons[0].frames = 2;
+            } else if (gameData.player.current == gameData.player.sprites.fight.left || gameData.player.current == gameData.player.sprites.stand.left) {
+                if (gameData.player.attack.position.x + gameData.player.attack.width >= skeleton.position.x &&
+                    gameData.player.attack.position.x <= skeleton.position.x + skeleton.width &&
+                    gameData.player.attack.position.y + gameData.player.attack.height >= skeleton.position.y &&
+                    gameData.player.attack.position.y <= skeleton.position.y + skeleton.height &&
+                    gameData.player.doAttack
+                    ) {
+                        skeleton.fall()
+                        if (skeleton.frames >= 0) {
+                            setDeadEnemies((deadEnemies) => deadEnemies + 1)
+                            skeleton.frames = 2;
+                        }
+                        if (skeletonIsDead == false) {   
+                            skeletonIsDead = true;
+                            setDeadEnemies((deadEnemies) => deadEnemies + 1)
+                            gameData.final.deadSkeletons++
+                            if (gameData.skeletons.length === gameData.final.deadSkeletons) {
+                                enemiesAreDead = true;
+                            }
+                        }
+                        setTimeout(() => {
+                            skeleton.position.x = -100
+                            skeleton.position.y = -100
+                            skeletonIsDead = false
+                        }, 200)
                     }
-                    setTimeout(() => {
-                        gameData.skeletons[0].position.x = -100
-                        gameData.skeletons[0].position.y = -100
-                    }, 200)
-                    skeletonIsDead = true;
-                    setDeadEnemies(deadEnemies + 1)
-                }
-        }
+            }
+        })
+
         
     }
 
@@ -325,9 +348,7 @@ const GamePage = () => {
                     }
                 }, 300)
             }
-        }
-
-        
+        }        
     }
 
     // остановка игрока
