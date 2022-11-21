@@ -15,8 +15,9 @@ let offset = 0;
 let keyPressed = false;
 
 // условия финиша
-const finish = false;
+let finish = false;
 let finishRun = false;
+let gameIsOver = false;
 let skeletonIsDead = false;
 let enemiesAreDead = false;
 
@@ -29,7 +30,7 @@ let enemiesAreDead = false;
       .catch(err => {
         console.warn(111, err);
     });
-})()
+})();
 
 const GamePage = () => {
     const canvasRef: any = useRef();
@@ -38,7 +39,10 @@ const GamePage = () => {
     const navigateTo = useNavigate();
     
     // начало игры
-    const startGame = () => {        
+    const startGame = () => {   
+        gameData.sound.volume = 0.2;
+        gameData.sound.play().then(() => console.log('background sound starts'))
+
         setTimeout(() => {
             setStart(true)
         }, 10)
@@ -51,6 +55,7 @@ const GamePage = () => {
 
     // конец игры
     const gameOver = () => {
+        gameIsOver = true;
         gameData.final.score = 0,
         gameData.final.diamonds = 0,
         gameData.final.time = 0,
@@ -95,9 +100,6 @@ const GamePage = () => {
         gameData.backgroundCastle.forEach((object) => {
             object.draw(context)
         })
-        // startPress.forEach((object) => {
-        //     object.draw(context)
-        // })
         gameData.platforms.forEach(platform => {
             platform.draw(context);
             platform.update(context)
@@ -131,6 +133,10 @@ const GamePage = () => {
     
                 if (offset >= 550 && enemiesAreDead) {
                     gameData.finalChest[0].update(context)
+                    
+                    gameData.sound.pause()
+                    gameData.winSound.volume = 0.1
+                    gameData.winSound.play().then(() => console.log("Win"))
 
                     if (!finishRun) {
                         gameData.player.stop(+1, gameData.keys)
@@ -202,9 +208,9 @@ const GamePage = () => {
         }
 
         // одно из условий финиша при достижении определенной точки
-        if (offset > 1000) {
+        if (offset > 980) {
             console.log('FINISh')
-            // finish = true;
+            finish = true;
         }
 
         // поражение при падении
@@ -235,6 +241,9 @@ const GamePage = () => {
                 coin.position.y = -100
                 setDiamonds((diamonds) => diamonds + 1)
                 gameData.final.diamonds++;
+
+                gameData.coinsEffect.volume = 0.1
+                gameData.coinsEffect.play().then(() => console.log("Coin"))
             }
         })
 
@@ -256,6 +265,8 @@ const GamePage = () => {
                     gameData.player.attack.position.y <= skeleton.position.y + skeleton.height &&
                     gameData.player.doAttack
                     ) {
+                        gameData.monsterSound.volume = 0.1
+                        gameData.monsterSound.play().then(() => console.log("Monster Dies"))
                         skeleton.fall()
                         if (skeleton.frames >= 0) {
                             skeleton.frames = 0;
@@ -281,10 +292,11 @@ const GamePage = () => {
                     gameData.player.attack.position.y <= skeleton.position.y + skeleton.height &&
                     gameData.player.doAttack
                     ) {
+                        gameData.monsterSound.volume = 0.1
+                        gameData.monsterSound.play().then(() => console.log("Monster Dies"))
                         skeleton.fall()
                         if (skeleton.frames >= 0) {
-                            setDeadEnemies((deadEnemies) => deadEnemies + 1)
-                            skeleton.frames = 2;
+                            skeleton.frames = 0;
                         }
                         if (skeletonIsDead == false) {   
                             skeletonIsDead = true;
@@ -308,7 +320,7 @@ const GamePage = () => {
 
     // движение игрока
     const movePlayer = ({ keyCode }: any) => {
-        if (start) {
+        if (start && !gameIsOver) {
             // движение влево и вправо
             if (keyPressed === false && !finishRun) {
                 if (keyCode === 37) {
@@ -327,6 +339,8 @@ const GamePage = () => {
             
             // атака
             if (keyCode === 17) {
+                gameData.hitSound.volume = 0.3
+                gameData.hitSound.play().then(() => console.log("Hit"))
                 gameData.player.doAttack = true;
             
                 if (gameData.player.current == gameData.player.sprites.stand.right || gameData.player.current == gameData.player.sprites.run.right) {
@@ -377,7 +391,6 @@ const GamePage = () => {
                 <div className='game-inteface_start'>
                     <button className='game-btn' onClick={!start ? startGame : restartGame}>{start ? <p>Reset</p> : <p>Start Game</p>}</button>
                 </div>
-                
             </div>
         </div>
     );
