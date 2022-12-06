@@ -6,7 +6,7 @@ import { apiRequestGet } from '../utils/api';
 import { API, LEADERBOARD_URL } from '../utils/constants';
 import { postLeader } from './Leaderboard';
 
-import * as gameData from './components/game/gameData'
+import { getGameData } from './components/game/gameData'
 import { Timer } from './components/game/timer'
 import { useNavigate } from 'react-router-dom';
 
@@ -36,6 +36,9 @@ const GamePage = () => {
     const canvasRef: any = useRef();
 
     const [start, setStart] = useState(false)
+    const [gameData, setGameData] = useState(() => {
+        return getGameData()
+    })
     const navigateTo = useNavigate();
     
     // начало игры
