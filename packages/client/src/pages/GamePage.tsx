@@ -4,7 +4,7 @@ import './components/game/styles/game.css'
 import { FullScreenButton } from './components/fullScreenApiButton'
 import { apiRequestGet } from '../utils/api';
 import { API, LEADERBOARD_URL } from '../utils/constants';
-import { postLeader } from './Leaderboard';
+import { Player, postLeader } from './Leaderboard';
 
 import { getGameData } from './components/game/gameData'
 import { Timer } from './components/game/timer'
@@ -20,12 +20,19 @@ let finishRun = false;
 let gameIsOver = false;
 let skeletonIsDead = false;
 let enemiesAreDead = false;
+  
+// дата для лидерборда
+const leader: Player = {
+  name: '',
+  date: '',
+  score: 0,
+};
 
 // самофункция для получения юзернейма лидера
 (function getUser() {
     apiRequestGet(`${API}/auth/user`)
       .then(res => {
-        gameData.leader.name = res.login;
+        leader.name = res.login;
       })
       .catch(err => {
         console.warn(111, err);
@@ -150,18 +157,18 @@ const GamePage = () => {
                         // получаем сегодняшнюю дату лидера
                         const ldrDate = new Date()
                         const frmDate = ldrDate.toLocaleDateString("en-US")
-                        gameData.leader.date = frmDate.toString();
+                        leader.date = frmDate.toString();
 
                         // считаем кол-во очков лидера
                         gameData.final.score = gameData.final.time + ( gameData.final.diamonds / 2 );
-                        gameData.leader.score = gameData.final.score;
+                        leader.score = gameData.final.score;
 
                         // отправляем лидера в лидерборд
                         postLeader({
                             data: {
-                                name: gameData.leader.name,
-                                date: gameData.leader.date,
-                                score: gameData.leader.score
+                                name: leader.name,
+                                date: leader.date,
+                                score: leader.score
                             },
                             ratingFieldName: 'score',
                             teamName: 'Santa-Barbara'
