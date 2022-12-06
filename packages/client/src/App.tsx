@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import ProtectedRoute from './hocs/protected-route/ProtectedRoute';
 import ChangePassPage from './pages/ChangePassPage';
-import GamePage from './pages/GamePage';
+// import GamePage from './pages/GamePage';
 import Forum from './pages/Forum';
 import Login from './pages/Login';
 import ProfilePage from './pages/ProfilePage';
@@ -70,7 +70,7 @@ function App() {
             path={GAME_URL}
             element={
               <ProtectedRoute mustBeAuth>
-                <GamePage />
+                {/* <GamePage /> */}
               </ProtectedRoute>
             }
           />
