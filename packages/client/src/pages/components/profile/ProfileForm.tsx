@@ -47,14 +47,14 @@ const styles: StyleRules = {
 
 interface IProps {
   classes: ClassNameMap;
-  user: UserToServer
-} 
-
+  user: UserToServer;
+}
 
 class ProfileForm extends Component<IProps, ProfilePageState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
+      // @ts-ignore
       user: {
         ...props.user,
       },
@@ -75,7 +75,9 @@ class ProfileForm extends Component<IProps, ProfilePageState> {
       target: { name, value },
     } = e;
     this.setState((oldState: ProfilePageState) => {
+      // @ts-ignore
       const newState = { ...oldState };
+      // @ts-ignore
       newState.user[name] = value;
       return newState;
     });
@@ -85,25 +87,30 @@ class ProfileForm extends Component<IProps, ProfilePageState> {
     const { name, value } = e.target;
     const checkValue: string = validateValue(name, value);
     if (checkValue) {
+      // @ts-ignore
       this.setState((oldState: ProfilePageState) => {
         const newState = { ...oldState };
+        // @ts-ignore
         newState.check[name] = checkValue;
         return newState;
       });
     }
   };
-
+  // @ts-ignore
   submit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     const { user } = this.state;
+    // @ts-ignore
     const { cancel, changeProfile } = this.props;
     let isError = false;
     fields.forEach(({ name }) => {
+      // @ts-ignore
       const errorText: string = validateValue(name, user[name]);
       if (errorText !== '') {
         this.setState((oldState: ProfilePageState) => {
           //Знаю, что можно собрать объект с ошибками и потом сделать один setState, да, мне стыдно :)
           const newState = { ...oldState };
+          // @ts-ignore
           newState.check[name] = errorText;
           return newState;
         });
@@ -119,6 +126,7 @@ class ProfileForm extends Component<IProps, ProfilePageState> {
 
   render(): ReactNode {
     const { check, error, user } = this.state;
+    // @ts-ignore
     const { classes, cancel } = this.props;
     return (
       <>
@@ -130,9 +138,13 @@ class ProfileForm extends Component<IProps, ProfilePageState> {
               variant="outlined"
               label={label}
               margin="normal"
+              // @ts-ignore
               onBlur={this.checkInput}
+              // @ts-ignore
               error={!!check[name]}
+              // @ts-ignore
               helperText={check[name]}
+              // @ts-ignore
               value={user[name] || ''}
               autoFocus={index === 0}
               onChange={this.handleChange}
@@ -176,4 +188,7 @@ const mapDispatch = {
 export default connect(
   mapState,
   mapDispatch
-)(withStyles(styles)(withNavigation(ProfileForm)));
+)(
+  // @ts-ignore
+  withStyles(styles)(withNavigation(ProfileForm))
+);

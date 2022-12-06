@@ -65,7 +65,9 @@ class ChangePassPage extends Component<IProps> {
     if (error) {
       this.setState({ error: '' });
     }
+    // @ts-ignore
     const { changePass, navigate } = this.props;
+    // @ts-ignore
     changePass({ oldPassword, newPassword }).then(response => {
       if (response.error.data === 'OK') {
         navigate(PROFILE_URL);
@@ -141,4 +143,7 @@ const mapDispatch = {
 export default connect(
   undefined,
   mapDispatch
-)(withStyles(styles)(withNavigation(ChangePassPage)));
+)(
+  // @ts-ignore
+  withStyles(styles)(withNavigation(ChangePassPage))
+);

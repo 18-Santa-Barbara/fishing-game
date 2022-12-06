@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GamePage page 1`] = `
+<div
+  className="game-field"
+  onKeyDown={[Function]}
+  onKeyUp={[Function]}
+  role="button"
+  tabIndex={0}
+>
+  <canvas
+    height="576px"
+    width="1024px"
+  />
+  <div
+    className="game-interface"
+  >
+    <div
+      className="game-interface_statistics"
+    >
+      <h1>
+        60
+      </h1>
+      <p>
+        DIAMONDS: 
+        0
+      </p>
+      <p>
+        SKELETONS: 
+        0
+        /
+        0
+      </p>
+      <p>
+        SCORE: 
+        0
+      </p>
+      <button
+        className="game-btn"
+        id="toggler"
+        onClick={[Function]}
+      >
+        <p>
+          Fullscreen
+        </p>
+      </button>
+      <button
+        className="game-btn"
+        onClick={[Function]}
+      >
+        <p>
+          Leaderboard
+        </p>
+      </button>
+    </div>
+    <div
+      className="game-inteface_start"
+    >
+      <button
+        className="game-btn"
+        onClick={[Function]}
+      >
+        <p>
+          Start Game
+        </p>
+      </button>
+    </div>
+  </div>
+</div>
+`;

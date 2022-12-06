@@ -45,10 +45,13 @@ function Login() {
       return;
     }
     logIn({ login, password }).then(response => {
+      // @ts-ignore
       if (response.error) {
+        // @ts-ignore
         if (response.error.data === 'OK') {
           navigator(GAME_URL);
         } else {
+          // @ts-ignore
           setError(response.error.data.reason); //Ну это жесть, как это можно переделать?
         }
       }

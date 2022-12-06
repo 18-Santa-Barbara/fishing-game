@@ -77,7 +77,9 @@ class SignUp extends Component<IProps, SignUpState> {
     } = e;
     this.setState((oldState: SignUpState) => {
       const newState = { ...oldState };
+      // @ts-ignore
       newState.form[name] = value;
+      // @ts-ignore
       newState.check[name] = '';
       return newState;
     });
@@ -89,6 +91,7 @@ class SignUp extends Component<IProps, SignUpState> {
     if (checkValue) {
       this.setState((oldState: SignUpState) => {
         const newState = { ...oldState };
+        // @ts-ignore
         newState.check[name] = checkValue;
         return newState;
       });
@@ -101,11 +104,13 @@ class SignUp extends Component<IProps, SignUpState> {
     const { form } = this.state;
     let isError = false;
     this.names.forEach(({ name }) => {
+      // @ts-ignore
       const errorText: string = validateValue(name, form[name]);
       if (errorText !== '') {
         this.setState((oldState: SignUpState) => {
           //Знаю, что можно собрать объект с ошибками и потом сделать один setState, да, мне стыдно :)
           const newState = { ...oldState };
+          // @ts-ignore
           newState.check[name] = errorText;
           return newState;
         });
@@ -113,12 +118,15 @@ class SignUp extends Component<IProps, SignUpState> {
       }
     });
     if (!isError) {
+      // @ts-ignore
       signUp(this.state.form).then(
         (response: { error: { data: string | { reason: string } } }) => {
           if (response.error) {
             if (response.error.data === 'OK') {
+              // @ts-ignore
               navigate(GAME_URL);
             } else {
+              // @ts-ignore
               this.setState({ error: response.error.data.reason }); //Ну это жесть, как это можно переделать?
             }
           }
@@ -145,8 +153,11 @@ class SignUp extends Component<IProps, SignUpState> {
               label={label}
               margin="normal"
               autoFocus={index === 0}
+              // @ts-ignore
               value={form[name]}
+              // @ts-ignore
               helperText={check[name]}
+              // @ts-ignore
               error={!!check[name]}
               type={name === 'password' ? 'password' : 'text'}
               onBlur={this.checkInput}
@@ -181,4 +192,7 @@ const mapDispatch = {
 export default connect(
   undefined,
   mapDispatch
-)(withStyles(styles)(withNavigation(SignUp)));
+)(
+  // @ts-ignore
+  withStyles(styles)(withNavigation(SignUp))
+);
