@@ -17,7 +17,9 @@ let keyPressed = false;
 // условия финиша
 let finish = false;
 let finishRun = false;
+let gameIsOver = false;
 let skeletonIsDead = false;
+let enemiesAreDead = false;
 
 // самофункция для получения юзернейма лидера
 (function getUser() {
@@ -28,7 +30,7 @@ let skeletonIsDead = false;
       .catch(err => {
         console.warn(111, err);
     });
-})()
+})();
 
 const GamePage = () => {
     const canvasRef: any = useRef();
@@ -37,7 +39,10 @@ const GamePage = () => {
     const navigateTo = useNavigate();
     
     // начало игры
-    const startGame = () => {        
+    const startGame = () => {   
+        gameData.sound.volume = 0.2;
+        gameData.sound.play().then(() => console.log('background sound starts'))
+
         setTimeout(() => {
             setStart(true)
         }, 10)
@@ -50,6 +55,7 @@ const GamePage = () => {
 
     // конец игры
     const gameOver = () => {
+        gameIsOver = true;
         gameData.final.score = 0,
         gameData.final.diamonds = 0,
         gameData.final.time = 0,
@@ -94,9 +100,6 @@ const GamePage = () => {
         gameData.backgroundCastle.forEach((object) => {
             object.draw(context)
         })
-        // startPress.forEach((object) => {
-        //     object.draw(context)
-        // })
         gameData.platforms.forEach(platform => {
             platform.draw(context);
             platform.update(context)
@@ -128,8 +131,12 @@ const GamePage = () => {
                 gameData.player.position.x += 5
                 offset++
     
-                if (offset >= 550 && skeletonIsDead) {
+                if (offset >= 550 && enemiesAreDead) {
                     gameData.finalChest[0].update(context)
+                    
+                    gameData.sound.pause()
+                    gameData.winSound.volume = 0.1
+                    gameData.winSound.play().then(() => console.log("Win"))
 
                     if (!finishRun) {
                         gameData.player.stop(+1, gameData.keys)
@@ -171,6 +178,7 @@ const GamePage = () => {
                     }, 1000)
                 }
             }
+            
             gameData.player.velocity.x = 0;
 
             // при движении игрока окружающие объекты сдвигаются, а offset, пройденный игроком, меняется.
@@ -200,7 +208,8 @@ const GamePage = () => {
         }
 
         // одно из условий финиша при достижении определенной точки
-        if (offset > 400) {
+        if (offset > 980) {
+            console.log('FINISh')
             finish = true;
         }
 
@@ -232,60 +241,86 @@ const GamePage = () => {
                 coin.position.y = -100
                 setDiamonds((diamonds) => diamonds + 1)
                 gameData.final.diamonds++;
+
+                gameData.coinsEffect.volume = 0.1
+                gameData.coinsEffect.play().then(() => console.log("Coin"))
             }
         })
 
-        // поворот скелета в зависимости от положения игрока
-        if (gameData.player.position.x > gameData.skeletons[0].position.x) {
-            gameData.skeletons[0].current = gameData.skeletons[0].sprites.stand.right;
-        } else {
-            gameData.skeletons[0].current = gameData.skeletons[0].sprites.stand.left;
-        }
+        // скелеты
+        gameData.skeletons.forEach(skeleton => {
 
-        // убийство скелета
-        if (gameData.player.current == gameData.player.sprites.fight.right || gameData.player.current == gameData.player.sprites.stand.right) {
-            if (gameData.player.attack.position.x + gameData.player.attack.width + 40 >= gameData.skeletons[0].position.x &&
-                gameData.player.attack.position.x + 40 <= gameData.skeletons[0].position.x + gameData.skeletons[0].width &&
-                gameData.player.attack.position.y + gameData.player.attack.height >= gameData.skeletons[0].position.y &&
-                gameData.player.attack.position.y <= gameData.skeletons[0].position.y + gameData.skeletons[0].height &&
-                gameData.player.doAttack
-                ) {
-                    gameData.skeletons[0].fall()
-                    if (gameData.skeletons[0].frames >= 0) {
-                        gameData.skeletons[0].frames = 0;
+            // поворот скелета в зависимости от положения игрока
+            if (gameData.player.position.x > skeleton.position.x) {
+                skeleton.current = skeleton.sprites.stand.right;
+            } else {
+                skeleton.current = skeleton.sprites.stand.left;
+            }
+            
+            // убийство скелета
+            if (gameData.player.current == gameData.player.sprites.fight.right || gameData.player.current == gameData.player.sprites.stand.right) {
+                if (gameData.player.attack.position.x + gameData.player.attack.width + 40 >= skeleton.position.x &&
+                    gameData.player.attack.position.x + 40 <= skeleton.position.x + skeleton.width &&
+                    gameData.player.attack.position.y + gameData.player.attack.height >= skeleton.position.y &&
+                    gameData.player.attack.position.y <= skeleton.position.y + skeleton.height &&
+                    gameData.player.doAttack
+                    ) {
+                        gameData.monsterSound.volume = 0.1
+                        gameData.monsterSound.play().then(() => console.log("Monster Dies"))
+                        skeleton.fall()
+                        if (skeleton.frames >= 0) {
+                            skeleton.frames = 0;
+                        }
+                        if (skeletonIsDead == false) {   
+                            skeletonIsDead = true;
+                            setDeadEnemies((deadEnemies) => deadEnemies + 1)
+                            gameData.final.deadSkeletons++
+                            if (gameData.skeletons.length === gameData.final.deadSkeletons) {
+                                enemiesAreDead = true;
+                            }
+                        }
+                        setTimeout(() => {
+                            skeleton.position.x = -100
+                            skeleton.position.y = -100
+                            skeletonIsDead = false
+                        }, 200)
                     }
-                    setTimeout(() => {
-                        gameData.skeletons[0].position.x = -100
-                        gameData.skeletons[0].position.y = -100
-                    }, 200)
-                    skeletonIsDead = true;
-                    setDeadEnemies(deadEnemies + 1)
-                }
-        } else if (gameData.player.current == gameData.player.sprites.fight.left || gameData.player.current == gameData.player.sprites.stand.left) {
-            if (gameData.player.attack.position.x + gameData.player.attack.width >= gameData.skeletons[0].position.x &&
-                gameData.player.attack.position.x <= gameData.skeletons[0].position.x + gameData.skeletons[0].width &&
-                gameData.player.attack.position.y + gameData.player.attack.height >= gameData.skeletons[0].position.y &&
-                gameData.player.attack.position.y <= gameData.skeletons[0].position.y + gameData.skeletons[0].height &&
-                gameData.player.doAttack
-                ) {
-                    gameData.skeletons[0].fall()
-                    if (gameData.skeletons[0].frames >= 0) {
-                        gameData.skeletons[0].frames = 2;
+            } else if (gameData.player.current == gameData.player.sprites.fight.left || gameData.player.current == gameData.player.sprites.stand.left) {
+                if (gameData.player.attack.position.x + gameData.player.attack.width >= skeleton.position.x &&
+                    gameData.player.attack.position.x <= skeleton.position.x + skeleton.width &&
+                    gameData.player.attack.position.y + gameData.player.attack.height >= skeleton.position.y &&
+                    gameData.player.attack.position.y <= skeleton.position.y + skeleton.height &&
+                    gameData.player.doAttack
+                    ) {
+                        gameData.monsterSound.volume = 0.1
+                        gameData.monsterSound.play().then(() => console.log("Monster Dies"))
+                        skeleton.fall()
+                        if (skeleton.frames >= 0) {
+                            skeleton.frames = 0;
+                        }
+                        if (skeletonIsDead == false) {   
+                            skeletonIsDead = true;
+                            setDeadEnemies((deadEnemies) => deadEnemies + 1)
+                            gameData.final.deadSkeletons++
+                            if (gameData.skeletons.length === gameData.final.deadSkeletons) {
+                                enemiesAreDead = true;
+                            }
+                        }
+                        setTimeout(() => {
+                            skeleton.position.x = -100
+                            skeleton.position.y = -100
+                            skeletonIsDead = false
+                        }, 200)
                     }
-                    setTimeout(() => {
-                        gameData.skeletons[0].position.x = -100
-                        gameData.skeletons[0].position.y = -100
-                    }, 200)
-                    skeletonIsDead = true;
-                    setDeadEnemies(deadEnemies + 1)
-                }
-        }
+            }
+        })
+
         
     }
 
     // движение игрока
     const movePlayer = ({ keyCode }: any) => {
-        if (start) {
+        if (start && !gameIsOver) {
             // движение влево и вправо
             if (keyPressed === false && !finishRun) {
                 if (keyCode === 37) {
@@ -304,6 +339,8 @@ const GamePage = () => {
             
             // атака
             if (keyCode === 17) {
+                gameData.hitSound.volume = 0.3
+                gameData.hitSound.play().then(() => console.log("Hit"))
                 gameData.player.doAttack = true;
             
                 if (gameData.player.current == gameData.player.sprites.stand.right || gameData.player.current == gameData.player.sprites.run.right) {
@@ -325,9 +362,7 @@ const GamePage = () => {
                     }
                 }, 300)
             }
-        }
-
-        
+        }        
     }
 
     // остановка игрока
@@ -356,7 +391,6 @@ const GamePage = () => {
                 <div className='game-inteface_start'>
                     <button className='game-btn' onClick={!start ? startGame : restartGame}>{start ? <p>Reset</p> : <p>Start Game</p>}</button>
                 </div>
-                
             </div>
         </div>
     );
