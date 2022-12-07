@@ -6,7 +6,7 @@ import IProps from './IProps';
 function ProtectedRoute({ mustBeAuth, children }: IProps) {
   const { data, isLoading, isError, isUninitialized } = useGetUserQuery();
   if (isLoading) {
-    return <>Loading...</>;
+    return <>Loading...Test</>;
   }
 
   if (!mustBeAuth) {

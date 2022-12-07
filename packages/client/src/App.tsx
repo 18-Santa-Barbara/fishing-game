@@ -70,6 +70,7 @@ function App() {
             path={GAME_URL}
             element={
               <ProtectedRoute mustBeAuth>
+                <div>test</div>
                 {/* <GamePage /> */}
               </ProtectedRoute>
             }
