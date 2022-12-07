@@ -17,7 +17,7 @@ const port = Number(process.env.SERVER_PORT) || 3001;
 
 // createClientAndConnect();
 
-app.get('/*', (req, res) => {
+app.get('*', (req, res) => {
   const result = render(req.url);
   const template = path.resolve(__dirname, '../client/dist/client/index.html');
   const htmlString = fs.readFileSync(template, 'utf-8');
