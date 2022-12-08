@@ -19,6 +19,8 @@ import {
   SIGNUP_URL,
   LEADERBOARD_URL,
 } from './utils/constants';
+import { leaderApi } from './services/leaderApi';
+import { ApiProvider } from '@reduxjs/toolkit/dist/query/react';
 
 function App() {
   return (
@@ -74,8 +76,9 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path={LEADERBOARD_URL} element={<Leaderboard />} />
-        </Routes>
+          <Route path={LEADERBOARD_URL} element={
+              <Leaderboard />} />
+          </Routes>
       </ErrorBoundary>
     </>
   );
