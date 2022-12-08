@@ -3,12 +3,14 @@ function commonApiRequest(
   method: string,
   body?: Record<string, any>
 ) {
+  if(typeof window === undefined){
+    return null;
+  }
   return fetch(url, {
     method,
     headers: {
       accept: 'application/json',
       'content-type': 'application/json; charset=UTF-8',
-
     },
     credentials: 'include',
     body: JSON.stringify(body),
