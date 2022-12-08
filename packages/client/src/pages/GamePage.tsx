@@ -49,7 +49,7 @@ const GamePage = () => {
     
     const postLeader = (leader: Leader) => {
         addNewLeader(JSON.stringify({...leader}))
-          .then(() => {})
+          .then((res) => {console.log(res)})
           .then((error) => {
             console.log(error)
           })

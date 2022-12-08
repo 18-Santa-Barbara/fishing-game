@@ -40,7 +40,7 @@ const data = {
 
 export const Leaderboard = () => {
 
-    let res = useGetLeaderQuery({...data});
+    const res = useGetLeaderQuery({...data});
     testPlayers = res.currentData
 
     if (reqOngoing) {
