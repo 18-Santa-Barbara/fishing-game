@@ -3,18 +3,21 @@ import { userApi } from '../services/userApi';
 import UserReducer from '../reducers/user';
 import { leaderApi } from '../services/leaderApi';
 
-export function createStore(){
-  const preloadedState = typeof window !== undefined && window['__INITIAL_STATE__'] ? window['__INITIAL_STATE__'] : undefined;
+export function createStore() {
+  const preloadedState =
+    typeof window !== 'undefined' && window['__INITIAL_STATE__']
+      ? window['__INITIAL_STATE__']
+      : undefined;
   return configureStore({
-  reducer: {
-    user: UserReducer,
-    [userApi.reducerPath]: userApi.reducer,
-    [leaderApi.reducerPath]: leaderApi.reducer
-  },
-  middleware: getDefaultMiddleware =>
-    getDefaultMiddleware().concat(userApi.middleware),
-    preloadedState
-});
+    reducer: {
+      user: UserReducer,
+      [userApi.reducerPath]: userApi.reducer,
+      [leaderApi.reducerPath]: leaderApi.reducer,
+    },
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware().concat(userApi.middleware),
+    preloadedState,
+  });
 }
 
 type AppStore = ReturnType<typeof createStore>;

@@ -9,7 +9,7 @@ import express from 'express';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {render} from '../client/dist/ssr/entry-server.cjs';
+import { render } from '../client/dist/ssr/entry-server.cjs';
 
 const app = express();
 app.use(cors());
@@ -20,15 +20,11 @@ app.use(express.static(path.resolve(__dirname, '../client/dist/client')));
 
 app.get('*', async (req, res) => {
   const result = await render(req.url);
-  const template = path.resolve(
-    __dirname,
-    '../client/dist/client/index.html'
-  );
+  const template = path.resolve(__dirname, '../client/dist/client/index.html');
   const htmlString = fs.readFileSync(template, 'utf-8');
   const newString = htmlString.replace('<!--ssr-outlet-->', result);
   res.send(newString);
 });
-
 
 app.listen(port, () => {
   console.log(`  ➜ 🎸 Server is listening on port: ${port}`);

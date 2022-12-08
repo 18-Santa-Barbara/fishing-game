@@ -1,11 +1,4 @@
-import { withStyles } from "@mui/styles";
-import React from "react";
-import { connect } from "react-redux";
-import withNavigation from "../hocs/with-navigation/WithNavigation";
-import { leaderApi, useGetLeaderQuery } from "../services/leaderApi";
-import leader, { getLeader } from "../reducers/leader";
-import { apiRequestPost } from "../utils/api";
-import { API } from "../utils/constants";
+import { useGetLeaderQuery } from "../services/leaderApi";
 import Board from "./components/leaderboard/board";
 import Delayed from "./components/leaderboard/delayed";
 
