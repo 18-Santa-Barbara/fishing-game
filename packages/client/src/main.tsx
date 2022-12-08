@@ -17,11 +17,9 @@ hydrateRoot(
     <ThemeProvider theme={theme}>
       <StyledEngineProvider injectFirst>
         <BrowserRouter>
-          <ApiProvider api={leaderApi}>
             <Provider store={store}>
               <App />
             </Provider>
-          </ApiProvider>
         </BrowserRouter>
       </StyledEngineProvider>
     </ThemeProvider>

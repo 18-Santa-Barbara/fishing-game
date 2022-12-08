@@ -1,15 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { userApi } from '../services/userApi';
 import UserReducer from '../reducers/user';
-import LeaderReducer from '../reducers/leader'
-import LeadersReducer from '../reducers/leaders'
 import { leaderApi } from '../services/leaderApi';
 
 export const store = configureStore({
   reducer: {
     user: UserReducer,
-    leader: LeaderReducer,
-    leaders: LeadersReducer,
     [leaderApi.reducerPath]: leaderApi.reducer,
     [userApi.reducerPath]: userApi.reducer,
   },
