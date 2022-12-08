@@ -4,11 +4,14 @@ import './components/game/styles/game.css'
 import { FullScreenButton } from './components/fullScreenApiButton'
 import { apiRequestGet } from '../utils/api';
 import { API, LEADERBOARD_URL } from '../utils/constants';
-import { Player, postLeader } from './Leaderboard';
+import { Player } from './Leaderboard';
 
 import { getGameData } from './components/game/gameData'
 import { Timer } from './components/game/timer'
 import { useNavigate } from 'react-router-dom';
+
+import { Leader } from './Leaderboard'
+import { useSetLeaderMutation } from '../services/leaderApi';
 
 let context: any;
 let offset = 0;
@@ -20,6 +23,7 @@ let finishRun = false;
 let gameIsOver = false;
 let skeletonIsDead = false;
 let enemiesAreDead = false;
+let resLeaders: any;
   
 // дата для лидерборда
 const leader: Player = {
@@ -40,6 +44,17 @@ const leader: Player = {
 })();
 
 const GamePage = () => {
+
+    const [addNewLeader, response] = useSetLeaderMutation()
+    
+    const postLeader = (leader: Leader) => {
+        addNewLeader(JSON.stringify({...leader}))
+          .then((res) => {console.log(res)})
+          .then((error) => {
+            console.log(error)
+          })
+    }
+
     const canvasRef: any = useRef();
 
     const [start, setStart] = useState(false)
@@ -219,7 +234,7 @@ const GamePage = () => {
 
         // одно из условий финиша при достижении определенной точки
         if (offset > 980) {
-            console.log('FINISh')
+            // console.log('FINISh')
             finish = true;
         }
 

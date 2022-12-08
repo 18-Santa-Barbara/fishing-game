@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { userApi } from '../services/userApi';
 import UserReducer from '../reducers/user';
+import { leaderApi } from '../services/leaderApi';
 
 export function createStore(){
   const preloadedState = typeof window !== undefined && window['__INITIAL_STATE__'] ? window['__INITIAL_STATE__'] : undefined;
@@ -8,6 +9,7 @@ export function createStore(){
   reducer: {
     user: UserReducer,
     [userApi.reducerPath]: userApi.reducer,
+    [leaderApi.reducerPath]: leaderApi.reducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware().concat(userApi.middleware),

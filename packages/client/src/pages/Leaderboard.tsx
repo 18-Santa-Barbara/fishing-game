@@ -1,4 +1,9 @@
+import { withStyles } from "@mui/styles";
 import React from "react";
+import { connect } from "react-redux";
+import withNavigation from "../hocs/with-navigation/WithNavigation";
+import { leaderApi, useGetLeaderQuery } from "../services/leaderApi";
+import leader, { getLeader } from "../reducers/leader";
 import { apiRequestPost } from "../utils/api";
 import { API } from "../utils/constants";
 import Board from "./components/leaderboard/board";
@@ -18,7 +23,7 @@ export class Player {
     }
 }
 
-type Leader = {
+export type Leader = {
     data: Record<string, unknown>,
     ratingFieldName: string,
     teamName: string
@@ -33,17 +38,10 @@ const data = {
     limit: 1500
 }
 
-export const postLeader = (leader: Leader) => {
-    apiRequestPost(`${API}/leaderboard`, leader)
-      .then(res => {
-          console.log(res)
-      })
-      .catch(err => {
-        console.warn(err);
-      });
-}
-
 export const Leaderboard = () => {
+
+    const res = useGetLeaderQuery({...data});
+    testPlayers = res.currentData
 
     if (reqOngoing) {
         return (
@@ -53,16 +51,7 @@ export const Leaderboard = () => {
         );
     }
     reqOngoing = true;
-
-    apiRequestPost(`${API}/leaderboard/Santa-Barbara`, data)
-      .then(res => {
-          testPlayers = res;
-          reqOngoing = false;
-      })
-      .catch(err => {
-        console.warn(err);
-      });
-
+    
     return;
 }
 
