@@ -3,12 +3,14 @@ function commonApiRequest(
   method: string,
   body?: Record<string, any>
 ) {
+  if(typeof window === undefined){
+    return null;
+  }
   return fetch(url, {
     method,
     headers: {
       accept: 'application/json',
       'content-type': 'application/json; charset=UTF-8',
-
     },
     credentials: 'include',
     body: JSON.stringify(body),
@@ -22,10 +24,10 @@ function commonApiRequest(
 
 function checkResponseStatus(response: any) {
   if (response.status >= 200 && response.status < 400) {
-    console.log(response)
     return response === 'OK' ? response : response.json();
   } else {
     const error: Error = new Error(response);
+    //@ts-ignore
     error.response = response.json();
     throw error;
   }

@@ -7,10 +7,14 @@ dotenv.config();
 export default defineConfig({
   server: {
     port: Number(process.env.CLIENT_PORT) || 3000,
-    open: true
+    open: true,
   },
   define: {
     __SERVER_PORT__: process.env.SERVER_PORT,
+  },
+  ssr: {
+    target: 'node',
+    format: 'cjs',
   },
   plugins: [react()],
 });

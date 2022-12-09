@@ -1,19 +1,21 @@
 import { Container, Typography, TextField, Button } from '@mui/material';
 import { Component, ReactNode } from 'react';
-import { Link, Navigate } from 'react-router-dom';
-import { withStyles } from '@mui/styles';
-import { apiRequestPost } from '../utils/api';
-import { API, GAME_URL } from '../utils/constants';
+import { Link } from 'react-router-dom';
+import { ClassNameMap, StyleRules, withStyles } from '@mui/styles';
+import { GAME_URL } from '../utils/constants';
 import withNavigation from '../hocs/with-navigation/WithNavigation';
 import { validateValue } from '../utils/validator';
+import { userApi } from '../services/userApi';
+import { connect } from 'react-redux';
+import { UserToServer } from '../types/client';
 
 interface SignUpState {
-  user: User;
-  check: User;
+  form: UserToServer;
+  check: UserToServer;
   error: string;
 }
 
-const styles = {
+const styles: StyleRules = {
   paper: {
     textAlign: 'center',
     boxShadow: '0px 0px 6px rgb(0 0 0 / 14%)',
@@ -33,9 +35,15 @@ const styles = {
   },
 };
 
-class SignUp extends Component {
+interface IProps {
+  classes: ClassNameMap;
+  navigate: Navigator;
+  signUp: () => void;
+}
+
+class SignUp extends Component<IProps, SignUpState> {
   state: SignUpState = {
-    user: {
+    form: {
       login: '',
       password: '',
       first_name: '',
@@ -69,13 +77,13 @@ class SignUp extends Component {
     } = e;
     this.setState((oldState: SignUpState) => {
       const newState = { ...oldState };
-      newState.user[name] = value;
+      newState.form[name] = value;
       newState.check[name] = '';
       return newState;
     });
   };
 
-  checkInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  checkInput = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
     const checkValue: string = validateValue(name, value);
     if (checkValue) {
@@ -89,11 +97,11 @@ class SignUp extends Component {
 
   submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { setLogged, navigate } = this.props;
-    const { user } = this.state;
+    const { navigate, signUp } = this.props;
+    const { form } = this.state;
     let isError = false;
     this.names.forEach(({ name }) => {
-      const errorText: string = validateValue(name, user[name]);
+      const errorText: string = validateValue(name, form[name]);
       if (errorText !== '') {
         this.setState((oldState: SignUpState) => {
           //Знаю, что можно собрать объект с ошибками и потом сделать один setState, да, мне стыдно :)
@@ -105,23 +113,23 @@ class SignUp extends Component {
       }
     });
     if (!isError) {
-      apiRequestPost(`${API}/auth/signup`, { ...this.state.user }).then(res => {
-        if ('reason' in res) {
-          this.setState({ error: res.reason });
-        } else {
-          setLogged(true);
-          navigate('/game');
+      signUp(this.state.form).then(
+        (response: { error: { data: string | { reason: string } } }) => {
+          if (response.error) {
+            if (response.error.data === 'OK') {
+              navigate(GAME_URL);
+            } else {
+              this.setState({ error: response.error.data.reason }); //Ну это жесть, как это можно переделать?
+            }
+          }
         }
-      });
+      );
     }
   };
 
   render(): ReactNode {
-    const { classes, checkLoggedIn } = this.props;
-    if (checkLoggedIn) {
-      return <Navigate to={GAME_URL} replace />;
-    }
-    const { user, check, error } = this.state;
+    const { classes } = this.props;
+    const { form, check, error } = this.state;
 
     return (
       <Container className={classes.paper} maxWidth={'xs'}>
@@ -137,7 +145,7 @@ class SignUp extends Component {
               label={label}
               margin="normal"
               autoFocus={index === 0}
-              value={user[name]}
+              value={form[name]}
               helperText={check[name]}
               error={!!check[name]}
               type={name === 'password' ? 'password' : 'text'}
@@ -166,4 +174,11 @@ class SignUp extends Component {
   }
 }
 
-export default withStyles(styles)(withNavigation(SignUp));
+const mapDispatch = {
+  signUp: userApi.endpoints.signUp.initiate,
+};
+
+export default connect(
+  undefined,
+  mapDispatch
+)(withStyles(styles)(withNavigation(SignUp)));

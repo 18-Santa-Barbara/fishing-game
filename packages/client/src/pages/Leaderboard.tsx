@@ -1,6 +1,4 @@
-import React from "react";
-import { apiRequestPost } from "../utils/api";
-import { API } from "../utils/constants";
+import { useGetLeaderQuery } from "../services/leaderApi";
 import Board from "./components/leaderboard/board";
 import Delayed from "./components/leaderboard/delayed";
 
@@ -8,7 +6,7 @@ export class Player {
     name: string;
     score: number;
     date: string;
-    data: any;
+    data?: any;
 
     constructor(name: string, score: number, date: string, data: any) {
         this.name = name;
@@ -16,6 +14,12 @@ export class Player {
         this.date = date;
         this.data = data;
     }
+}
+
+export type Leader = {
+    data: Record<string, unknown>,
+    ratingFieldName: string,
+    teamName: string
 }
 
 export let testPlayers: Player[]
@@ -29,6 +33,9 @@ const data = {
 
 export const Leaderboard = () => {
 
+    const res = useGetLeaderQuery({...data});
+    testPlayers = res.currentData
+
     if (reqOngoing) {
         return (
             <Delayed>
@@ -37,16 +44,7 @@ export const Leaderboard = () => {
         );
     }
     reqOngoing = true;
-
-    apiRequestPost(`${API}/leaderboard/Santa-Barbara`, data)
-      .then(res => {
-          testPlayers = res;
-          reqOngoing = false;
-      })
-      .catch(err => {
-        console.warn(err);
-      });
-
+    
     return;
 }
 
