@@ -2,7 +2,6 @@ import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import ProtectedRoute from './hocs/protected-route/ProtectedRoute';
 import ChangePassPage from './pages/ChangePassPage';
-// import GamePage from './pages/GamePage';
 import Forum from './pages/Forum';
 import Login from './pages/Login';
 import ProfilePage from './pages/ProfilePage';
@@ -19,8 +18,8 @@ import {
   SIGNUP_URL,
   LEADERBOARD_URL,
 } from './utils/constants';
-import { leaderApi } from './services/leaderApi';
-import { ApiProvider } from '@reduxjs/toolkit/dist/query/react';
+import { NoSsr } from '@mui/material';
+import GamePage from './pages/GamePage';
 
 function App() {
   return (
@@ -72,8 +71,7 @@ function App() {
             path={GAME_URL}
             element={
               <ProtectedRoute mustBeAuth>
-                <div>test</div>
-                {/* <GamePage /> */}
+                <GamePage />
               </ProtectedRoute>
             }
           />

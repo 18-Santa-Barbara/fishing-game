@@ -50,7 +50,7 @@ export const userApi = createApi({
         body: payload,
       }),
       invalidatesTags: (_, res) => {
-        if (res?.data === 'OK') {
+        if (res?.data) {
           return ['USER'];
         }
         return [];
@@ -99,6 +99,7 @@ export const {
   useGetUserQuery,
   useLogInMutation,
   useLogoutMutation,
+  useSignUpMutation,
   useChangeProfileMutation,
   useChangePassMutation,
   useChangeAvatarMutation,
