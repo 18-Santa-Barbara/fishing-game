@@ -38,7 +38,7 @@ const styles: StyleRules = {
 interface IProps {
   classes: ClassNameMap;
   navigate: Navigator;
-  signUp: () => void;
+  signUp: (check: UserToServer) => Promise<T>;
 }
 
 class SignUp extends Component<IProps, SignUpState> {
@@ -113,7 +113,7 @@ class SignUp extends Component<IProps, SignUpState> {
       }
     });
     if (!isError) {
-      signUp(this.state.form).then(
+      signUp(form).then(
         (response: { error: { data: string | { reason: string } } }) => {
           if (response.error) {
             if (response.error.data === 'OK') {
@@ -121,6 +121,8 @@ class SignUp extends Component<IProps, SignUpState> {
             } else {
               this.setState({ error: response.error.data.reason }); //Ну это жесть, как это можно переделать?
             }
+          } else if(response.data){
+            navigate(GAME_URL);
           }
         }
       );

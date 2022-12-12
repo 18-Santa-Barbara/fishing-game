@@ -1,6 +1,4 @@
-import { useGetLeaderQuery } from "../services/leaderApi";
-import Board from "./components/leaderboard/board";
-import Delayed from "./components/leaderboard/delayed";
+import Board from "./components/leaderboard/Board";
 
 export class Player {
     name: string;
@@ -22,29 +20,5 @@ export type Leader = {
     teamName: string
 }
 
-export let testPlayers: Player[]
-let reqOngoing = false;
-
-const data = {
-    ratingFieldName: "score",
-    cursor: 0,
-    limit: 1500
-}
-
-export const Leaderboard = () => {
-
-    const res = useGetLeaderQuery({...data});
-    testPlayers = res.currentData
-
-    if (reqOngoing) {
-        return (
-            <Delayed>
-                <Board />
-            </Delayed>
-        );
-    }
-    reqOngoing = true;
-    
-    return;
-}
+export const Leaderboard = () => <Board />;
 
