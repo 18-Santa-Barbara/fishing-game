@@ -15,9 +15,14 @@ import router from './app/routes/forum.routes'
 const app = express();
 
 const corsOptions = {
-  credentials: true
+  credentials: true,
+  origin: 'localhost:3001'
 }
 app.use(cors(corsOptions));
+
+
+app.use(express.json());  
+app.use(express.urlencoded({ extended: true }));
 
 const db = require("./app/models")
 db.sequelize.sync({ force: true })  

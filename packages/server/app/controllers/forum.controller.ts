@@ -2,7 +2,7 @@ const dbs = require("../models");
 const Forum = dbs.forums;
 const Op = dbs.Sequelize.Op;
 
-exports.create = (req: { body: { title: any; author: any; updateTime: any; body: any; comments: any; }; }, res: { send: (arg0: any) => void; status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: any; }): void; new(): any; }; }; }) => {
+export const create = (req: { body: { title: any; author: any; updateTime: any; body: any; comments: any; }; }, res: { send: (arg0: any) => void; status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: any; }): void; new(): any; }; }; }) => {
 
   const forum = {
     title: req.body.title,
@@ -22,9 +22,10 @@ exports.create = (req: { body: { title: any; author: any; updateTime: any; body:
           err.message || "Some error occurred."
       });
     });
+    
 };
 
-exports.findAll = (req: { query: { title: any; }; }, res: { send: (arg0: any) => void; status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: any; }): void; new(): any; }; }; }) => {
+export const find = (req: { query: { title: any; }; }, res: { send: (arg0: any) => void; status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: any; }): void; new(): any; }; }; }) => {
   const title = req.query.title;
   const condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
 
@@ -40,7 +41,7 @@ exports.findAll = (req: { query: { title: any; }; }, res: { send: (arg0: any) =>
     });
 };
 
-exports.update = (req: { params: { id: any; }; body: any; }, res: { send: (arg0: { message: string; }) => void; status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: string; }): void; new(): any; }; }; }) => {
+export const update = (req: { params: { id: any; }; body: any; }, res: { send: (arg0: { message: string; }) => void; status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: string; }): void; new(): any; }; }; }) => {
   const id = req.params.id;
 
   Forum.update(req.body, {
