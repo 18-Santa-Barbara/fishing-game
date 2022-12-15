@@ -1,4 +1,5 @@
 module.exports = (sequelize: { define: (arg0: string, arg1: { title: { type: any; }; author: { type: any; }; updateTime: { type: any; }; body: { type: any; }; comments: { type: any; defaultValue: never[]; }; }, arg2: { timestamps: boolean; }) => any; }, Sequelize: { STRING: any; ARRAY: (arg0: any) => any; JSON: any; }) => {
+
   const Forum = sequelize.define("forum", {
     title: {
         type: Sequelize.STRING
@@ -21,4 +22,5 @@ module.exports = (sequelize: { define: (arg0: string, arg1: { title: { type: any
   });
 
   return Forum;
+  
 };

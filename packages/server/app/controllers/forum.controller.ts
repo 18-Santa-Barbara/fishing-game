@@ -54,13 +54,13 @@ export const update = (req: { params: { id: any; }; body: any; }, res: { send: (
         });
       } else {
         res.send({
-          message: `Cannot update Forum with id=${id}.`
+          message: `Cannot update with id=${id}.`
         });
       }
     })
     .catch((err: any) => {
       res.status(500).send({
-        message: "Error updating Forum with id=" + id + err
+        message: "Error with id=" + id + err
       });
     });
 };
