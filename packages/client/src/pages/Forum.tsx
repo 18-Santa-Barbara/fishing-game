@@ -26,12 +26,14 @@ import AddIcon from '@mui/icons-material/Add';
 import { makeStyles } from '@mui/styles';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useState } from 'react';
+import { useGetForumQuery, useSetForumMutation, useUpdateForumMutation } from '../services/forumApi';
+import { useGetUserQuery } from '../services/userApi';
 
-type PostType = {
-  id: number;
+export type PostType = {
+  id?: number;
   title: string;
   author: string;
-  updateTime: number;
+  updateTime: string;
   body: string;
   comments: Record<string, string | number>[];
 };
@@ -58,35 +60,42 @@ const useStyles = makeStyles(() => ({
   table: {},
 }));
 
-function createData(
-  id: number,
-  title: string,
-  author: string,
-  updateTime: number,
-  body: string,
-  comments: Record<string, string | number>[]
-): PostType {
-  return { id, title, author, updateTime, body, comments };
-}
-
 const rows: PostType[] = [];
-
-rows.push(createData(0, 'Title 1', 'Test user', +new Date(), 'Test body', []));
-
-rows.push(
-  createData(1, 'Title 2', 'Test user 2', +new Date(), 'Test body 2', [
-    { author: 'Test user 2', body: 'Test body 2', time: '10.10.2022' },
-  ])
-);
+let rowsPlaced = false;
+let usernamePlaced = false;
+let username = '';
+let preUser: any;
+let receivedPosts = [];
 
 function Forum() {
+
+  const getUser = useGetUserQuery()
+  const getForumPosts = useGetForumQuery()
+  const [addForumPost, response] = useSetForumMutation();
+  const [addForumUpdate, responseUpdate] = useUpdateForumMutation();
   const [postList, setPostList] = useState<PostType[]>(rows);
   const [currectPost, setCurrectPost] = useState<PostType | null>(null);
   const [openNewPost, setOpenNewPost] = useState(false);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [comment, setComment] = useState('');
+  const [placedRows, setPlacedRows] = useState(false)
   const classes = useStyles();
+  
+  preUser = getUser.currentData
+  if (preUser && !usernamePlaced) {
+    username = preUser.login
+    usernamePlaced = true;
+  }
+
+  receivedPosts = getForumPosts.currentData;
+  if (receivedPosts && !rowsPlaced) {
+    receivedPosts.forEach((r: any) => {
+      console.log(r)
+      rows.push(r) 
+    })
+    rowsPlaced = true;
+  }
 
   const handleClickOpenNewPost = () => {
     setOpenNewPost(true);
@@ -97,7 +106,7 @@ function Forum() {
   };
 
   const getTime = (date: string | number) => {
-    return `${new Date(date).toLocaleString()}`;
+    return `${date}`;
   };
 
   const handleClickGoBack = () => {
@@ -106,22 +115,49 @@ function Forum() {
 
   const handleClickNewComment = () => {
     const postId = rows.findIndex(post => post.id === currectPost?.id);
-    rows[postId].comments.push({
-      author: 'unknown',
-      body: comment,
-      time: +new Date(),
-    });
+
+    let copyArr = [...rows[postId].comments]
+    copyArr = rows[postId].comments.concat({author: username, body: comment, date: new Date().toDateString()});
+
+    const forumData: PostType = {
+      id: rows[postId].id,
+      title: rows[postId].title, 
+      author: rows[postId].author, 
+      updateTime: rows[postId].updateTime, 
+      body: rows[postId].body, 
+      comments: copyArr
+    };
+
+    addForumUpdate(forumData)
+      .then((response) => rows.push(response.data))
+    rows[postId] = forumData;
+
     setPostList(rows);
     setCurrectPost(rows[postId]);
     setComment('');
+    
   };
 
   const handleClickNewPost = () => {
-    rows.push(
-      createData(rows.length - 1, title, 'Unknown', +new Date(), body, [])
-    );
+
+    const forumData: PostType = {
+      title: title, 
+      author: username, 
+      updateTime: new Date().toDateString(), 
+      body: body, 
+      comments: [
+        { author: username, body: `${username} created the topic.`, date: new Date().toDateString() }
+      ]
+    };
+
+    addForumPost(JSON.stringify({...forumData}))
+      .then((response) => rows.push(response.data))
+
+    rows[rows.length] = forumData;
+
     setPostList(rows);
     setOpenNewPost(false);
+
   };
 
   if (!currectPost) {
@@ -178,7 +214,7 @@ function Forum() {
               <TableRow>
                 <TableCell>Title</TableCell>
                 <TableCell>Author</TableCell>
-                <TableCell>Update time</TableCell>
+                <TableCell>Update date</TableCell>
                 <TableCell>
                   <Button
                     variant="contained"
@@ -210,7 +246,7 @@ function Forum() {
                           author: row.author,
                           updateTime: row.updateTime,
                           body: row.body,
-                          comments: row.comments,
+                          comments: row.comments
                         });
                       }}>
                       read

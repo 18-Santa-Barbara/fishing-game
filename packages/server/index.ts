@@ -12,7 +12,22 @@ import express from 'express';
 import { render } from '../client/dist/ssr/entry-server.cjs';
 
 const app = express();
-app.use(cors());
+
+const corsOptions = {
+  credentials: true,
+  origin: 'http://localhost:3001'
+}
+app.use(cors(corsOptions));
+
+const db = require("./app/models")
+db.sequelize.sync({ force: true })  
+  .then(() => {
+    console.log("Synced db.");
+  })
+  .catch((err: { message: string; }) => {
+    console.log("Failed to sync db: " + err.message);
+  });
+
 const port = Number(process.env.SERVER_PORT) || 3001;
 
 // createClientAndConnect();

@@ -8,3 +8,4 @@ export const LEADERBOARD_URL = '/leaderboard';
 export const FORUM_URL = '/forum';
 
 export const API = 'https://ya-praktikum.tech/api/v2';
+export const PORT = 'http://localhost:8080/api';
