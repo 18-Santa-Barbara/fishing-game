@@ -10,6 +10,7 @@ import express from 'express';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { render } from '../client/dist/ssr/entry-server.cjs';
+import router from './app/routes/forum.routes'
 
 const app = express();
 
@@ -26,6 +27,8 @@ db.sequelize.sync({ force: true })
   .catch((err: { message: string; }) => {
     console.log("Failed to sync db: " + err.message);
   });
+  
+app.use("/api/forums", router);
 
 const port = Number(process.env.SERVER_PORT) || 3001;
 
