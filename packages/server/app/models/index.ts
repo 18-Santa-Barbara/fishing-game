@@ -4,8 +4,9 @@ const Sequelize = require("sequelize");
 
 const { POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_PORT } = process.env
 
-const sequelize = new Sequelize("vdnhvqcc", "vdnhvqcc", "RMsiJ25jyvI4pZCw6Vx0kOL7aYY6Pdp9", {
-  host: 'mouse.db.elephantsql.com',
+const sequelize = new Sequelize(POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD, {
+  host: 'localhost',
+  port: 5432,
   dialect: 'postgres',
 });
 

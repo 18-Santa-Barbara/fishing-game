@@ -14,8 +14,7 @@ import { render } from '../client/dist/ssr/entry-server.cjs';
 const app = express();
 
 const corsOptions = {
-  credentials: true,
-  origin: 'http://localhost:3001'
+  credentials: true
 }
 app.use(cors(corsOptions));
 
