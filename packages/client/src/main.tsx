@@ -1,4 +1,4 @@
-import { createTheme, StyledEngineProvider } from '@mui/material';
+import { CssBaseline, StyledEngineProvider } from '@mui/material';
 import { ThemeProvider } from '@mui/styles';
 import React from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
@@ -7,14 +7,16 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
 import { createStore } from './store/Store';
-const theme = createTheme();
+import { lightTheme } from './utils/theme';
+// const theme = createTheme();
 
 const mainElement = (
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={lightTheme}>
       <StyledEngineProvider injectFirst>
         <BrowserRouter>
           <Provider store={createStore()}>
+            <CssBaseline />
             <App />
           </Provider>
         </BrowserRouter>
