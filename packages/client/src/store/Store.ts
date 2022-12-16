@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { userApi } from '../services/userApi';
 import UserReducer from '../reducers/user';
 import { leaderApi } from '../services/leaderApi';
+import { themeApi } from '../services/themeApi';
 
 export function createStore() {
   const preloadedState =
@@ -13,9 +14,14 @@ export function createStore() {
       user: UserReducer,
       [userApi.reducerPath]: userApi.reducer,
       [leaderApi.reducerPath]: leaderApi.reducer,
+      [themeApi.reducerPath]: themeApi.reducer,
     },
     middleware: getDefaultMiddleware =>
-      getDefaultMiddleware().concat(userApi.middleware),
+      getDefaultMiddleware().concat(
+        userApi.middleware,
+        leaderApi.middleware,
+        themeApi.middleware
+      ),
     preloadedState,
   });
 }
