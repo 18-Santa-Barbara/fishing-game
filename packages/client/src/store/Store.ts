@@ -16,8 +16,8 @@ export function createStore() {
       [leaderApi.reducerPath]: leaderApi.reducer,
       [forumApi.reducerPath]: forumApi.reducer,
     },
-    middleware: getDefaultMiddleware =>
-      getDefaultMiddleware().concat(userApi.middleware),
+    middleware: getDefaultMiddleware => 
+      getDefaultMiddleware().concat(userApi.middleware, forumApi.middleware),
     preloadedState,
   });
 }

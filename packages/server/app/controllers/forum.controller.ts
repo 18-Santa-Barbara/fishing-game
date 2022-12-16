@@ -1,4 +1,4 @@
-const dbs = require("../models");
+import dbs from "../models"
 const Forum = dbs.forums;
 const Op = dbs.Sequelize.Op;
 
@@ -22,7 +22,7 @@ export const create = (req: { body: { title: any; author: any; updateTime: any; 
           err.message || "Some error occurred."
       });
     });
-    
+
 };
 
 export const find = (req: { query: { title: any; }; }, res: { send: (arg0: any) => void; status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: any; }): void; new(): any; }; }; }) => {

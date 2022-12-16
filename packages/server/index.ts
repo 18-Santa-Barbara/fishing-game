@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import * as path from 'path';
 import * as fs from 'fs';
+import db from './app/models'
 dotenv.config();
 
 import express from 'express';
@@ -20,11 +21,9 @@ const corsOptions = {
 }
 app.use(cors(corsOptions));
 
-
 app.use(express.json());  
 app.use(express.urlencoded({ extended: true }));
 
-const db = require("./app/models")
 db.sequelize.sync({ force: true })  
   .then(() => {
     console.log("Synced db.");

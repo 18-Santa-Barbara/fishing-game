@@ -60,42 +60,20 @@ const useStyles = makeStyles(() => ({
   table: {},
 }));
 
-const rows: PostType[] = [];
-let rowsPlaced = false;
-let usernamePlaced = false;
-let username = '';
-let preUser: any;
-let receivedPosts = [];
+const username = '';
 
 function Forum() {
 
-  const getUser = useGetUserQuery()
-  const getForumPosts = useGetForumQuery()
+  const { data: user } = useGetUserQuery();
+  const { data: forum, isLoading: isLoadingForum } = useGetForumQuery();
   const [addForumPost, response] = useSetForumMutation();
   const [addForumUpdate, responseUpdate] = useUpdateForumMutation();
-  const [postList, setPostList] = useState<PostType[]>(rows);
   const [currectPost, setCurrectPost] = useState<PostType | null>(null);
   const [openNewPost, setOpenNewPost] = useState(false);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [comment, setComment] = useState('');
-  const [placedRows, setPlacedRows] = useState(false)
   const classes = useStyles();
-  
-  preUser = getUser.currentData
-  if (preUser && !usernamePlaced) {
-    username = preUser.login
-    usernamePlaced = true;
-  }
-
-  receivedPosts = getForumPosts.currentData;
-  if (receivedPosts && !rowsPlaced) {
-    receivedPosts.forEach((r: any) => {
-      console.log(r)
-      rows.push(r) 
-    })
-    rowsPlaced = true;
-  }
 
   const handleClickOpenNewPost = () => {
     setOpenNewPost(true);
@@ -114,51 +92,52 @@ function Forum() {
   };
 
   const handleClickNewComment = () => {
-    const postId = rows.findIndex(post => post.id === currectPost?.id);
+    const postId = forum.findIndex(post => post.id === currectPost?.id);
 
-    let copyArr = [...rows[postId].comments]
-    copyArr = rows[postId].comments.concat({author: username, body: comment, date: new Date().toDateString()});
+    let copyArr = [...forum[postId].comments]
+    copyArr = forum[postId].comments.concat({ author: username, body: comment, date: new Date().toDateString() });
 
     const forumData: PostType = {
-      id: rows[postId].id,
-      title: rows[postId].title, 
-      author: rows[postId].author, 
-      updateTime: rows[postId].updateTime, 
-      body: rows[postId].body, 
+      id: forum[postId].id,
+      title: forum[postId].title,
+      author: forum[postId].author,
+      updateTime: forum[postId].updateTime,
+      body: forum[postId].body,
       comments: copyArr
     };
 
     addForumUpdate(forumData)
-      .then((response) => rows.push(response.data))
-    rows[postId] = forumData;
+      .then((response) => forum.push(response.data))
+    forum[postId] = forumData;
 
-    setPostList(rows);
-    setCurrectPost(rows[postId]);
+    // setPostList(forum);
+    setCurrectPost(forum[postId]);
     setComment('');
-    
+
   };
 
   const handleClickNewPost = () => {
 
     const forumData: PostType = {
-      title: title, 
-      author: username, 
-      updateTime: new Date().toDateString(), 
-      body: body, 
-      comments: [
-        { author: username, body: `${username} created the topic.`, date: new Date().toDateString() }
-      ]
+      title: title,
+      author: user.login,
+      updateTime: new Date().toDateString(),
+      body: body,
+      comments: []
     };
 
-    addForumPost(JSON.stringify({...forumData}))
-      .then((response) => rows.push(response.data))
-
-    rows[rows.length] = forumData;
-
-    setPostList(rows);
-    setOpenNewPost(false);
+    addForumPost(forumData)
+      .then((response) => { 
+        console.log(response.data); 
+        setOpenNewPost(false)
+      })
+      .catch((err) => console.warn("error: ", err))
 
   };
+
+  if (isLoadingForum) {
+    return <div>Loading</div>
+  }
 
   if (!currectPost) {
     return (
@@ -229,7 +208,7 @@ function Forum() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {postList.map(row => (
+              {forum && forum.length && forum.map(row => (
                 <TableRow key={row.title}>
                   <TableCell component="th" scope="row">
                     {row.title}

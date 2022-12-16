@@ -1,4 +1,5 @@
 import { Sequelize } from "sequelize";
+import { forumModels } from "./forum.model";
 
 const { POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB }: any = process.env
 
@@ -13,6 +14,6 @@ const db: any = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.forums = require("./forum.model.ts")(sequelize, Sequelize);
+db.forums = forumModels(sequelize, db.Sequelize);
 
-module.exports = db;
+export default db;
