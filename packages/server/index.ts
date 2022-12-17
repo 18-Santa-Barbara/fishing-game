@@ -6,12 +6,14 @@ import db from './app/models'
 dotenv.config();
 
 import express from 'express';
-// import { createClientAndConnect } from './db';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { render } from '../client/dist/ssr/entry-server.cjs';
 import router from './app/routes/forum.routes'
+import { startBackWithBase } from './db';
+import themeRouter from './routes/theme.routes';
+
 
 const app = express();
 
@@ -36,7 +38,9 @@ app.use("/api/forums", router);
 
 const port = Number(process.env.SERVER_PORT) || 3001;
 
-// createClientAndConnect();
+app.use('/api/theme', themeRouter);
+
+startBackWithBase();
 app.use(express.static(path.resolve(__dirname, '../client/dist/client')));
 
 app.get('*', async (req, res) => {
