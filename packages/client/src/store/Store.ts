@@ -3,6 +3,7 @@ import { userApi } from '../services/userApi';
 import UserReducer from '../reducers/user';
 import { leaderApi } from '../services/leaderApi';
 import { forumApi } from '../services/forumApi';
+import { commentApi } from '../services/commentsApi';
 
 export function createStore() {
   const preloadedState =
@@ -15,9 +16,10 @@ export function createStore() {
       [userApi.reducerPath]: userApi.reducer,
       [leaderApi.reducerPath]: leaderApi.reducer,
       [forumApi.reducerPath]: forumApi.reducer,
+      [commentApi.reducerPath]: commentApi.reducer
     },
     middleware: getDefaultMiddleware => 
-      getDefaultMiddleware().concat(userApi.middleware, forumApi.middleware),
+      getDefaultMiddleware().concat(userApi.middleware, forumApi.middleware, commentApi.middleware),
     preloadedState,
   });
 }

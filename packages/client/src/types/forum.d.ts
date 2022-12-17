@@ -5,3 +5,10 @@ export type ForumPost = {
     body: string,
     comments: string,
 }
+
+export type CommentPost = {
+    postId: number,
+    author: string,
+    body: string,
+    date: string
+}

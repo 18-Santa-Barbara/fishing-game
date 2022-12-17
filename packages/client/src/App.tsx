@@ -8,6 +8,7 @@ import ProfilePage from './pages/ProfilePage';
 import SignUp from './pages/SignUp';
 import { Leaderboard } from './pages/Leaderboard';
 import ErrorBoundary from './pages/components/ErrorBoundary';
+import Comments from './pages/Comments';
 import {
   BASE_URL,
   CHANGE_PASS_URL,
@@ -17,6 +18,7 @@ import {
   FORUM_URL,
   SIGNUP_URL,
   LEADERBOARD_URL,
+  COMMENTS_URL,
 } from './utils/constants';
 import { NoSsr } from '@mui/material';
 import GamePage from './pages/GamePage';
@@ -59,6 +61,7 @@ function App() {
             }
           />
           <Route path={FORUM_URL} element={<Forum />} />
+          <Route path="/comments/:id" element={<Comments />} />
           <Route
             path={CHANGE_PASS_URL}
             element={
