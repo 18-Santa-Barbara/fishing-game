@@ -38,6 +38,8 @@ const Header = () => {
       sx={{
         p: '12px',
         mb: '12px',
+        minHeight: '64px',
+        flexDirection: 'row'
       }}
       color="primary">
       <div
@@ -45,6 +47,7 @@ const Header = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          width: '100%'
         }}>
         <span>{setHeader(data.pathname)}</span>
         <div style={{ display: 'flex', alignItems: 'center' }}>

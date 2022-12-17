@@ -6,11 +6,15 @@ import { useChangeThemeMutation, useGetThemeQuery } from '../services/themeApi';
 import { useGetUserQuery } from '../services/userApi';
 
 const ThemeSwitch = () => {
-  const { isSuccess, data } = useGetUserQuery();
+  const { isSuccess, data, isError } = useGetUserQuery();
   const { data: isDarkTheme } = useGetThemeQuery(
     isSuccess ? data.id : skipToken
   );
   const [changeTheme] = useChangeThemeMutation();
+  console.log(data, isError);
+  if (!data || isError) {
+    return null;
+  }
   return (
     <>
       <IconButton

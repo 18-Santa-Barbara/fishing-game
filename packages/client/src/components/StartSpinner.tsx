@@ -11,13 +11,6 @@ const useStyles = makeStyles({
     left: '50%',
     transform: 'translate(-50%, -50%)',
   },
-  btn: {
-    margin: '16px 0',
-    width: '33%',
-  },
-  err: {
-    color: 'red',
-  },
 });
 
 const StartSpinner = () => {
