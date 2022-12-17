@@ -3,10 +3,10 @@ import { Theme } from '../db';
 
 export const getThemeById = (req: Request, res: Response) => {
   const { userId } = req.params;
-  return Theme.findOne({
+  return Theme.findOrCreate({
     where: { userId },
   })
-    .then(data => {
+    .then(([data]) => {
       res.send(data);
     })
     .catch(err => {
@@ -14,4 +14,23 @@ export const getThemeById = (req: Request, res: Response) => {
         message: err.message || 'Error while getting theme!',
       });
     });
-}
+};
+
+export const changeThemeById = (req: Request, res: Response) => {
+  const { userId, isDark } = req.body;
+  console.log(req.body);
+  return Theme.update(
+    { isDark },
+    {
+      where: { userId },
+    }
+  )
+    .then(() => {
+      res.send(JSON.stringify(req.body));
+    })
+    .catch(err => {
+      res.status(501).send({
+        message: err.message || 'Error while changing theme!',
+      });
+    });
+};

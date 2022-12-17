@@ -1,11 +1,14 @@
 import express from 'express';
 
-import {getThemeById} from '../controllers/theme.controller';
+import {changeThemeById, getThemeById} from '../controllers/theme.controller';
 
 const router = express.Router();
 
 // получение темы по id юзера
 router.get('/:userId', getThemeById);
+
+// обновить тему юзера
+router.put('', changeThemeById);
 
 // удалить запись по userID
 // router.delete('/:userID', themeController.deleteOne);

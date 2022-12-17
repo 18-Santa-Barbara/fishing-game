@@ -1,4 +1,4 @@
-import { Container, Typography, TextField, Button } from '@mui/material';
+import { Container, Typography, TextField, Button, Paper } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { ClassNameMap, StyleRules, withStyles } from '@mui/styles';
@@ -121,7 +121,7 @@ class SignUp extends Component<IProps, SignUpState> {
             } else {
               this.setState({ error: response.error.data.reason }); //Ну это жесть, как это можно переделать?
             }
-          } else if(response.data){
+          } else if (response.data) {
             navigate(GAME_URL);
           }
         }
@@ -134,43 +134,45 @@ class SignUp extends Component<IProps, SignUpState> {
     const { form, check, error } = this.state;
 
     return (
-      <Container className={classes.paper} maxWidth={'xs'}>
-        <Typography variant="h5" style={{ marginBottom: '12px' }}>
-          Sign Up
-        </Typography>
-        <form onSubmit={this.submit}>
-          {this.names.map(({ name, label }, index: number) => (
-            <TextField
-              name={name}
-              key={name}
-              variant="outlined"
-              label={label}
-              margin="normal"
-              autoFocus={index === 0}
-              value={form[name]}
-              helperText={check[name]}
-              error={!!check[name]}
-              type={name === 'password' ? 'password' : 'text'}
-              onBlur={this.checkInput}
-              onChange={this.handleChange}
-              fullWidth
-            />
-          ))}
-          {error && (
-            <Typography variant="h6" className={classes.err}>
-              {error || 'Ошибка!'}
-            </Typography>
-          )}
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.btn}>
+      <Container maxWidth={'xs'}>
+        <Paper className={classes.paper}>
+          <Typography variant="h5" style={{ marginBottom: '12px' }}>
             Sign Up
-          </Button>
-        </form>
-        <Link to={'/'}>Log in</Link>
+          </Typography>
+          <form onSubmit={this.submit}>
+            {this.names.map(({ name, label }, index: number) => (
+              <TextField
+                name={name}
+                key={name}
+                variant="outlined"
+                label={label}
+                margin="normal"
+                autoFocus={index === 0}
+                value={form[name]}
+                helperText={check[name]}
+                error={!!check[name]}
+                type={name === 'password' ? 'password' : 'text'}
+                onBlur={this.checkInput}
+                onChange={this.handleChange}
+                fullWidth
+              />
+            ))}
+            {error && (
+              <Typography variant="h6" className={classes.err}>
+                {error || 'Ошибка!'}
+              </Typography>
+            )}
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.btn}>
+              Sign Up
+            </Button>
+          </form>
+          <Link to={'/'}>Log in</Link>
+        </Paper>
       </Container>
     );
   }

@@ -1,6 +1,5 @@
 import '../leaderboard/styles/board.css';
 import {
-  AppBar,
   Container,
   Paper,
   Table,
@@ -8,27 +7,14 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import ScoreBody from './ScoreBody';
 
-const useStyles = makeStyles({
-  header: {
-    padding: '16px',
-  },
-});
-
 function Board() {
-  const classes = useStyles();
 
   return (
     <>
-      <AppBar className={classes.header} position="static" color="primary">
-        LeaderBoard
-      </AppBar>
       <Container sx={{ maxHeight: 'calc(100vh - 50px)' }}>
-        <Paper sx={{
-          mt: '12px'
-        }}>
+        <Paper>
           <Table>
             <TableHead>
               <TableRow>
