@@ -1,3 +1,4 @@
+import { ForumModel } from './models/forum.model';
 import type { SequelizeOptions } from 'sequelize-typescript';
 import { Sequelize } from 'sequelize-typescript';
 import { ThemeModel } from './models/theme.model';
@@ -11,7 +12,7 @@ const sequelizeOptions: SequelizeOptions = {
   username: POSTGRES_USER,
   password: POSTGRES_PASSWORD,
   database: POSTGRES_DB,
-  dialect: 'postgres', // 'mysql', 'sqlite', 'mariadb', 'mssql'
+  dialect: 'postgres',
   ssl: false,
   dialectOptions: {},
 };
@@ -19,6 +20,7 @@ const sequelizeOptions: SequelizeOptions = {
 const sequelize = new Sequelize(sequelizeOptions);
 
 export const Theme = sequelize.define('Theme', ThemeModel, {});
+export const Forum = sequelize.define('Forum', ForumModel, {});
 
 export async function connect() {
   try {

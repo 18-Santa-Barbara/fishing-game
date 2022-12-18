@@ -29,7 +29,6 @@ export type PostType = {
   author: string;
   updateTime: string;
   body: string;
-  comments: Record<string, string | number>[];
 };
 
 const useStyles = makeStyles(() => ({
@@ -85,8 +84,7 @@ function Forum() {
       title: title,
       author: user.login,
       updateTime: new Date().toDateString(),
-      body: body,
-      comments: [],
+      body: body
     };
 
     addForumPost(forumData)

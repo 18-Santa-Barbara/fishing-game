@@ -2,15 +2,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { PostType } from '../pages/Forum';
 import { ForumPost } from '../types/forum';
-import { Player } from '../types/leader';
 import { API, PORT } from '../utils/constants';
 
 export const initialState: ForumPost = {
   title: '',
   author: '',
   updateTime: 0,
-  body: '',
-  comments: '',
+  body: ''
 };
 
 export const forumApi = createApi({
@@ -41,16 +39,8 @@ export const forumApi = createApi({
       }),
       invalidatesTags: ['FORUM'],
     }),
-    updateForum: builder.mutation({
-      query: payload => ({
-        url: `forums/${payload.id}`,
-        method: 'PUT',
-        body: payload
-      }),
-      invalidatesTags: ['PUT'],
-    }),
   }),
 });
 
-export const { useGetForumQuery, useGetFeaturedForumQuery ,useSetForumMutation, useUpdateForumMutation } =
+export const { useGetForumQuery, useGetFeaturedForumQuery ,useSetForumMutation } =
   forumApi;
