@@ -67,10 +67,6 @@ const GamePage = () => {
   const restartGame = () => {
     window.location.reload();
   };
-  // рестарт игры
-  const restartGame = () => {
-    window.location.reload();
-  };
 
   // конец игры
   const gameOver = () => {
@@ -109,7 +105,6 @@ const GamePage = () => {
 
   // статистика
   const [diamonds, setDiamonds] = useState(0);
-  const [enemies, setEnemies] = useState(0);
   const [deadEnemies, setDeadEnemies] = useState(0);
   const [stopTimer, setStopTimer] = useState(false);
 
@@ -478,7 +473,6 @@ const GamePage = () => {
         }, 300);
       }
     }
-  };
   };
 
   // остановка игрока

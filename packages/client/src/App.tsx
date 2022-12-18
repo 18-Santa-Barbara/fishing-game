@@ -18,7 +18,6 @@ import {
   SIGNUP_URL,
   LEADERBOARD_URL,
 } from './utils/constants';
-import { NoSsr } from '@mui/material';
 import GamePage from './pages/GamePage';
 
 function App() {

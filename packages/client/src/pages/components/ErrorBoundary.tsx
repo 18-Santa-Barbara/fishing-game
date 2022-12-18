@@ -1,15 +1,15 @@
-import { Component, ErrorInfo } from 'react';
+import { Component, ErrorInfo, ReactElement } from 'react';
 
-export default class ErrorBoundary extends Component {
-  constructor(props: any) {
-    super(props);
+type ErrorBoundaryProps = {
+  children: ReactElement;
+};
 
-    this.state = {
-      hasError: false,
-      error: null,
-      errorInfo: null,
-    };
-  }
+export default class ErrorBoundary extends Component<ErrorBoundaryProps> {
+  state = {
+    hasError: false,
+    error: null,
+    errorInfo: null,
+  };
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     this.setState({
@@ -20,11 +20,10 @@ export default class ErrorBoundary extends Component {
   }
 
   render() {
-    // @ts-ignore
     if (this.state.hasError) {
       return <p>Ошибка</p>;
     }
-    // @ts-ignore
+
     return this.props.children;
   }
 }

@@ -1,4 +1,4 @@
-export const FullScreenButton = (e: any) => {
+export const FullScreenButton = () => {
   let toggle = false;
 
   const fullScreen = () => {
