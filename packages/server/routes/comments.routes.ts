@@ -1,11 +1,10 @@
 import express from 'express';
 
-import { create, findAll, findOne } from '../controllers/forum.controller';
+import { create, findAll } from '../controllers/comments.controller';
 
 const router = express.Router();
 
 router.post('/', create);
 router.get('/', findAll);
-router.get('/:id', findOne);
 
 export default router;

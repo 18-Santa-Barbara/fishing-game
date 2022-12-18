@@ -1,15 +1,15 @@
 import type { Request, Response } from 'express';
-import { Forum } from '../db';
+import { Comments } from '../db';
 
 export const create = (req: Request, res: Response) => {
-  const forum = {
-    title: req.body.title,
+  const comment = {
+    postId: req.body.postId,
     author: req.body.author,
-    updateTime: req.body.updateTime,
     body: req.body.body,
+    date: req.body.date,
   };
 
-  Forum.create(forum)
+  Comments.create(comment)
     .then((data: any) => {
       res.send(data);
     })
@@ -21,35 +21,16 @@ export const create = (req: Request, res: Response) => {
 };
 
 export const findAll = (req: Request, res: Response) => {
-  console.log(req.query.title);
+  console.log(req.query)
+  const id = req.query.id;
 
-  Forum.findAll()
+  Comments.findAll({ where: { postId: id } })
     .then((data: any) => {
       res.send(data);
     })
     .catch((err: { message: any }) => {
       res.status(500).send({
         message: err.message || 'Some error occurred.',
-      });
-    });
-};
-
-export const findOne = (req: Request, res: Response) => {
-  const id = req.params.id;
-
-  Forum.findByPk(id)
-    .then(data => {
-      if (data) {
-        res.send(data);
-      } else {
-        res.status(404).send({
-          message: `Cannot find with id=${id}.`
-        });
-      }
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error retrieving with id=" + id + err
       });
     });
 };

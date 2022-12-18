@@ -1,29 +1,29 @@
 import { DataType, Model } from 'sequelize-typescript';
 import type { ModelAttributes } from 'sequelize/types';
 
-export interface IForum {
-  title: string;
+export interface IComments {
+  postId: number;
   author: string;
-  updateTime: string;
   body: string;
+  date: string;
 }
 
-const { STRING } = DataType;
+const { STRING, INTEGER } = DataType;
 
-export const ForumModel: ModelAttributes<Model, IForum> = {
-  title: {
-    type: STRING,
+export const CommentsModel: ModelAttributes<Model, IComments> = {
+  postId: {
+    type: INTEGER,
     allowNull: false,
   },
   author: {
     type: STRING,
     allowNull: false,
   },
-  updateTime: {
+  body: {
     type: STRING,
     allowNull: false,
   },
-  body: {
+  date: {
     type: STRING,
     allowNull: false,
   },
