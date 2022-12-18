@@ -18,7 +18,6 @@ const useStyles = makeStyles(() => ({
   },
   btn: {
     margin: '16px 0',
-    // width: '33%',
   },
   err: {
     color: 'red',
@@ -33,7 +32,6 @@ function Login() {
   const [logIn] = useLogInMutation();
   const navigator = useNavigate();
   const [serviceID] = useServiceIDMutation();
-  // const { data } = useServiceIDQuery(REDIRECT_URI);
 
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -118,7 +116,7 @@ function Login() {
           color="primary"
           className={classes.btn}
           onClick={onYandexClick}>
-          Войти через Яндекс
+          Log in via Yandex
         </Button>
       </form>
       <Link to={SIGNUP_URL}>Don't have account? Sign up!</Link>
