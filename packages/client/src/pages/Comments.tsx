@@ -48,16 +48,10 @@ function Comments() {
   const navigate = useNavigate();
 
   const { id } = useParams();
-  const { data: comments, isLoading } = useGetCommentsByIdQuery(id);
+  const { data: comments, isLoading } = useGetCommentsByIdQuery({id: id});
   const { data: postName } = useGetFeaturedForumQuery(id);
 
   const [addCommentPost, responseComment] = useSetCommentsMutation();
-  const [correctComment, setCorrectComment] = useState<CommentPost>({
-    postId: 0,
-    author: '',
-    body: '',
-    date: '',
-  });
   const [body, setBody] = useState('');
 
   const navigateBack = () => {
@@ -65,13 +59,12 @@ function Comments() {
   };
 
   const handleClickNewComment = () => {
-
     const commentData: CommentPost = {
-        postId: +id,
-        author: postName.author,
-        body,
-        date: new Date().toDateString()
-    }
+      postId: +id,
+      author: postName.author,
+      body,
+      date: new Date().toDateString(),
+    };
 
     addCommentPost(commentData)
       .then(response => {
@@ -138,19 +131,16 @@ function Comments() {
               author: string;
               date: string;
               body: string;
-            }) =>
-              comment.postId == id ? (
-                <Card className={classes.root}>
-                  <CardHeader title={comment.author} subheader={comment.date} />
-                  <CardContent>
-                    <Typography variant="h5" component="p">
-                      {comment.body}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              ) : (
-                console.log(2)
-              )
+            }) => (
+              <Card className={classes.root}>
+                <CardHeader title={comment.author} subheader={comment.date} />
+                <CardContent>
+                  <Typography variant="h5" component="p">
+                    {comment.body}
+                  </Typography>
+                </CardContent>
+              </Card>
+            )
           )}
       </Container>
     );

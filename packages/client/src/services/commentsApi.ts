@@ -24,8 +24,14 @@ export const commentApi = createApi({
   }),
   tagTypes: ['POST', 'PUT', 'COMMENT'],
   endpoints: builder => ({
-    getCommentsById: builder.query({
-      query: () => `comments`,
+    getCommentsById: builder.query<any, {id: string | number}>({
+      query: (arg) => {
+        const { id } = arg;
+        return {
+          url: 'comments',
+          params: { id },
+        };
+      },
       providesTags: ['COMMENT'],
     }),
     setComments: builder.mutation({
