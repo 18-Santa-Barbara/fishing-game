@@ -83,6 +83,12 @@ export const userApi = createApi({
         body: payload,
       }),
     }),
+    serviceID: builder.mutation({
+      query: url => ({
+        url: `${API}/oauth/yandex/service-id?redirect_uri=${url}`,
+        method: 'GET',
+      }),
+    }),
     changeAvatar: builder.mutation({
       query: payload => ({
         url: 'user/profile/avatar',
@@ -103,4 +109,5 @@ export const {
   useChangeProfileMutation,
   useChangePassMutation,
   useChangeAvatarMutation,
+  useServiceIDMutation,
 } = userApi;
