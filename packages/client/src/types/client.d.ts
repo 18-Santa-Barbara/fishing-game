@@ -13,9 +13,10 @@ export type User = {
 
 export type UserToServer = {
   login: string;
-  password: string;
+  password?: string;
   first_name: string;
   second_name: string;
+  display_name?: string;
   email: string;
   phone: string;
 };

@@ -15,10 +15,16 @@ interface ChangePassPageState {
   confirm: string;
 }
 
-interface IProps {
+type ChangePassPageProps = {
   classes: ClassNameMap;
   navigate: NavigateFunction;
-}
+  changePass: ({ oldPassword, newPassword }: oldNewPass) => Promise<Response>;
+};
+
+type oldNewPass = {
+  oldPassword: string;
+  newPassword: string;
+};
 
 const styles: StyleRules = {
   paper: {
@@ -40,7 +46,7 @@ const styles: StyleRules = {
   },
 };
 
-class ChangePassPage extends Component<IProps> {
+class ChangePassPage extends Component<ChangePassPageProps> {
   state: ChangePassPageState = {
     oldPassword: '',
     newPassword: '',
@@ -65,13 +71,14 @@ class ChangePassPage extends Component<IProps> {
     if (error) {
       this.setState({ error: '' });
     }
-    // @ts-ignore
     const { changePass, navigate } = this.props;
-    // @ts-ignore
+    
     changePass({ oldPassword, newPassword }).then(response => {
+      //@ts-ignore
       if (response.error.data === 'OK') {
         navigate(PROFILE_URL);
       } else {
+        //@ts-ignore
         this.setState({ error: response.error.data.reason }); //Ну это жесть, как это можно переделать?
       }
     });

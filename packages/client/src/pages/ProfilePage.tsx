@@ -39,11 +39,11 @@ const styles: StyleRules = {
   },
 };
 
-interface IProps {
+type ProfilePageProps = {
   classes: ClassNameMap
 }
 
-class ProfilePage extends Component<IProps> {
+class ProfilePage extends Component<ProfilePageProps> {
 
   state = {
     editMode: false,
