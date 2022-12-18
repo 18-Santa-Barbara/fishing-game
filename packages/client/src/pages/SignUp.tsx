@@ -13,7 +13,7 @@ type SignUpState = {
   form: UserToServer;
   check: UserToServer;
   error: string;
-}
+};
 
 const styles: StyleRules = {
   paper: {
@@ -80,7 +80,7 @@ class SignUp extends Component<SignUpProps, SignUpState> {
       form: {
         ...prevState.form,
         [name]: value,
-      }
+      },
     }));
   };
 
@@ -92,8 +92,8 @@ class SignUp extends Component<SignUpProps, SignUpState> {
         ...prevState,
         check: {
           ...prevState.check,
-          [name]: checkValue
-        }
+          [name]: checkValue,
+        },
       }));
     }
   };
@@ -128,7 +128,8 @@ class SignUp extends Component<SignUpProps, SignUpState> {
               // @ts-ignore
               this.setState({ error: response.error.data.reason }); //Ну это жесть, как это можно переделать?
             }
-          } else if(response.data){
+            // @ts-ignore
+          } else if (response.data) {
             navigate(GAME_URL);
           }
         }
