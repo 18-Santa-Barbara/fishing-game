@@ -75,7 +75,13 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path={LEADERBOARD_URL} element={<Leaderboard />} />
+          <Route
+            path={LEADERBOARD_URL}
+            element={
+              // @ts-ignore
+              <Leaderboard />
+            }
+          />
         </Routes>
       </ErrorBoundary>
     </>

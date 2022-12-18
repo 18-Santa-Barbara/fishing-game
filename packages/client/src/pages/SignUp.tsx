@@ -1,6 +1,6 @@
 import { Container, Typography, TextField, Button } from '@mui/material';
 import { Component, ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavigateFunction } from 'react-router-dom';
 import { ClassNameMap, StyleRules, withStyles } from '@mui/styles';
 import { GAME_URL } from '../utils/constants';
 import withNavigation from '../hocs/with-navigation/WithNavigation';
@@ -9,7 +9,7 @@ import { userApi } from '../services/userApi';
 import { connect } from 'react-redux';
 import { UserToServer } from '../types/client';
 
-interface SignUpState {
+type SignUpState = {
   form: UserToServer;
   check: UserToServer;
   error: string;
@@ -35,13 +35,13 @@ const styles: StyleRules = {
   },
 };
 
-interface IProps {
+type SignUpProps = {
   classes: ClassNameMap;
-  navigate: Navigator;
-  signUp: (check: UserToServer) => Promise<T>;
-}
+  navigate: NavigateFunction;
+  signUp: (obj: UserToServer) => Promise<Response>;
+};
 
-class SignUp extends Component<IProps, SignUpState> {
+class SignUp extends Component<SignUpProps, SignUpState> {
   state: SignUpState = {
     form: {
       login: '',
@@ -75,23 +75,26 @@ class SignUp extends Component<IProps, SignUpState> {
     const {
       target: { name, value },
     } = e;
-    this.setState((oldState: SignUpState) => {
-      const newState = { ...oldState };
-      newState.form[name] = value;
-      newState.check[name] = '';
-      return newState;
-    });
+    this.setState((prevState: SignUpState) => ({
+      ...prevState,
+      form: {
+        ...prevState.form,
+        [name]: value,
+      }
+    }));
   };
 
   checkInput = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
     const checkValue: string = validateValue(name, value);
     if (checkValue) {
-      this.setState((oldState: SignUpState) => {
-        const newState = { ...oldState };
-        newState.check[name] = checkValue;
-        return newState;
-      });
+      this.setState((prevState: SignUpState) => ({
+        ...prevState,
+        check: {
+          ...prevState.check,
+          [name]: checkValue
+        }
+      }));
     }
   };
 
@@ -101,24 +104,28 @@ class SignUp extends Component<IProps, SignUpState> {
     const { form } = this.state;
     let isError = false;
     this.names.forEach(({ name }) => {
+      // @ts-ignore
       const errorText: string = validateValue(name, form[name]);
       if (errorText !== '') {
-        this.setState((oldState: SignUpState) => {
-          //Знаю, что можно собрать объект с ошибками и потом сделать один setState, да, мне стыдно :)
-          const newState = { ...oldState };
-          newState.check[name] = errorText;
-          return newState;
-        });
+        this.setState((prevState: SignUpState) => ({
+          ...prevState,
+          check: {
+            ...prevState.check,
+            [name]: errorText,
+          },
+        }));
         isError = true;
       }
     });
     if (!isError) {
-      signUp(form).then(
-        (response: { error: { data: string | { reason: string } } }) => {
+      signUp(this.state.form).then(
+        // @ts-ignore
+        (response: { error: { data: string | Record<string, string> } }) => {
           if (response.error) {
             if (response.error.data === 'OK') {
               navigate(GAME_URL);
             } else {
+              // @ts-ignore
               this.setState({ error: response.error.data.reason }); //Ну это жесть, как это можно переделать?
             }
           } else if(response.data){
@@ -147,8 +154,11 @@ class SignUp extends Component<IProps, SignUpState> {
               label={label}
               margin="normal"
               autoFocus={index === 0}
+              // @ts-ignore
               value={form[name]}
+              // @ts-ignore
               helperText={check[name]}
+              // @ts-ignore
               error={!!check[name]}
               type={name === 'password' ? 'password' : 'text'}
               onBlur={this.checkInput}
@@ -183,4 +193,7 @@ const mapDispatch = {
 export default connect(
   undefined,
   mapDispatch
-)(withStyles(styles)(withNavigation(SignUp)));
+)(
+  // @ts-ignore
+  withStyles(styles)(withNavigation(SignUp))
+);
