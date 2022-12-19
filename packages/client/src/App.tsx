@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@emotion/react';
-import { Container, CssBaseline, StyledEngineProvider } from '@mui/material';
+import { CssBaseline, StyledEngineProvider } from '@mui/material';
 import { skipToken } from '@reduxjs/toolkit/dist/query';
 import './App.css';
 import Header from './components/Header';
@@ -13,7 +13,7 @@ import Footer from './components/Footer';
 function App() {
   const { isSuccess, data, isFetching, isError } = useGetUserQuery();
   const { data: isDarkTheme } = useGetThemeQuery(
-    isSuccess ?  data.id : skipToken 
+    isSuccess ? data.id : skipToken
   );
   const appTheme = isDarkTheme?.isDark ? darkTheme : lightTheme;
 

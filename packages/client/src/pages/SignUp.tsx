@@ -1,6 +1,6 @@
-import { Container, Typography, TextField, Button, Paper } from '@mui/material';
+import { Container, Typography, TextField, Button } from '@mui/material';
 import { Component, ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavigateFunction } from 'react-router-dom';
 import { ClassNameMap, StyleRules, withStyles } from '@mui/styles';
 import { GAME_URL } from '../utils/constants';
 import withNavigation from '../hocs/with-navigation/WithNavigation';
@@ -9,11 +9,11 @@ import { userApi } from '../services/userApi';
 import { connect } from 'react-redux';
 import { UserToServer } from '../types/client';
 
-interface SignUpState {
+type SignUpState = {
   form: UserToServer;
   check: UserToServer;
   error: string;
-}
+};
 
 const styles: StyleRules = {
   paper: {
@@ -35,13 +35,13 @@ const styles: StyleRules = {
   },
 };
 
-interface IProps {
+type SignUpProps = {
   classes: ClassNameMap;
-  navigate: Navigator;
-  signUp: (check: UserToServer) => Promise<T>;
-}
+  navigate: NavigateFunction;
+  signUp: (obj: UserToServer) => Promise<Response>;
+};
 
-class SignUp extends Component<IProps, SignUpState> {
+class SignUp extends Component<SignUpProps, SignUpState> {
   state: SignUpState = {
     form: {
       login: '',
@@ -75,23 +75,26 @@ class SignUp extends Component<IProps, SignUpState> {
     const {
       target: { name, value },
     } = e;
-    this.setState((oldState: SignUpState) => {
-      const newState = { ...oldState };
-      newState.form[name] = value;
-      newState.check[name] = '';
-      return newState;
-    });
+    this.setState((prevState: SignUpState) => ({
+      ...prevState,
+      form: {
+        ...prevState.form,
+        [name]: value,
+      },
+    }));
   };
 
   checkInput = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
     const checkValue: string = validateValue(name, value);
     if (checkValue) {
-      this.setState((oldState: SignUpState) => {
-        const newState = { ...oldState };
-        newState.check[name] = checkValue;
-        return newState;
-      });
+      this.setState((prevState: SignUpState) => ({
+        ...prevState,
+        check: {
+          ...prevState.check,
+          [name]: checkValue,
+        },
+      }));
     }
   };
 
@@ -101,26 +104,31 @@ class SignUp extends Component<IProps, SignUpState> {
     const { form } = this.state;
     let isError = false;
     this.names.forEach(({ name }) => {
+      // @ts-ignore
       const errorText: string = validateValue(name, form[name]);
       if (errorText !== '') {
-        this.setState((oldState: SignUpState) => {
-          //Знаю, что можно собрать объект с ошибками и потом сделать один setState, да, мне стыдно :)
-          const newState = { ...oldState };
-          newState.check[name] = errorText;
-          return newState;
-        });
+        this.setState((prevState: SignUpState) => ({
+          ...prevState,
+          check: {
+            ...prevState.check,
+            [name]: errorText,
+          },
+        }));
         isError = true;
       }
     });
     if (!isError) {
-      signUp(form).then(
-        (response: { error: { data: string | { reason: string } } }) => {
+      signUp(this.state.form).then(
+        // @ts-ignore
+        (response: { error: { data: string | Record<string, string> } }) => {
           if (response.error) {
             if (response.error.data === 'OK') {
               navigate(GAME_URL);
             } else {
+              // @ts-ignore
               this.setState({ error: response.error.data.reason }); //Ну это жесть, как это можно переделать?
             }
+            // @ts-ignore
           } else if (response.data) {
             navigate(GAME_URL);
           }
@@ -134,45 +142,46 @@ class SignUp extends Component<IProps, SignUpState> {
     const { form, check, error } = this.state;
 
     return (
-      <Container maxWidth={'xs'}>
-        <Paper className={classes.paper}>
-          <Typography variant="h5" style={{ marginBottom: '12px' }}>
-            Sign Up
-          </Typography>
-          <form onSubmit={this.submit}>
-            {this.names.map(({ name, label }, index: number) => (
-              <TextField
-                name={name}
-                key={name}
-                variant="outlined"
-                label={label}
-                margin="normal"
-                autoFocus={index === 0}
-                value={form[name]}
-                helperText={check[name]}
-                error={!!check[name]}
-                type={name === 'password' ? 'password' : 'text'}
-                onBlur={this.checkInput}
-                onChange={this.handleChange}
-                fullWidth
-              />
-            ))}
-            {error && (
-              <Typography variant="h6" className={classes.err}>
-                {error || 'Ошибка!'}
-              </Typography>
-            )}
-            <Button
-              type="submit"
+      <Container className={classes.paper} maxWidth={'xs'}>
+        <Typography variant="h5" style={{ marginBottom: '12px' }}>
+          Sign Up
+        </Typography>
+        <form onSubmit={this.submit}>
+          {this.names.map(({ name, label }, index: number) => (
+            <TextField
+              name={name}
+              key={name}
+              variant="outlined"
+              label={label}
+              margin="normal"
+              autoFocus={index === 0}
+              // @ts-ignore
+              value={form[name]}
+              // @ts-ignore
+              helperText={check[name]}
+              // @ts-ignore
+              error={!!check[name]}
+              type={name === 'password' ? 'password' : 'text'}
+              onBlur={this.checkInput}
+              onChange={this.handleChange}
               fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.btn}>
-              Sign Up
-            </Button>
-          </form>
-          <Link to={'/'}>Log in</Link>
-        </Paper>
+            />
+          ))}
+          {error && (
+            <Typography variant="h6" className={classes.err}>
+              {error || 'Ошибка!'}
+            </Typography>
+          )}
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.btn}>
+            Sign Up
+          </Button>
+        </form>
+        <Link to={'/'}>Log in</Link>
       </Container>
     );
   }
@@ -185,4 +194,7 @@ const mapDispatch = {
 export default connect(
   undefined,
   mapDispatch
-)(withStyles(styles)(withNavigation(SignUp)));
+)(
+  // @ts-ignore
+  withStyles(styles)(withNavigation(SignUp))
+);
