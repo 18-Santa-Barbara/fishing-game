@@ -16,7 +16,6 @@ import { useGetUserQuery } from '../services/userApi';
 let context: any;
 let offset = 0;
 let keyPressed = false;
-// let toggle = false;
 
 // условия финиша
 let finish = false;
