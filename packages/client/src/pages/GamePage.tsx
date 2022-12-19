@@ -105,7 +105,7 @@ const GamePage = () => {
 
   function animate() {
     
-    window.scrollTo(0, 45);
+    window.scrollTo(0, 0);
 
     document.body.classList.add("no-scroll")
     requestAnimationFrame(animate);

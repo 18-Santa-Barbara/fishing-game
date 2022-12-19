@@ -10,10 +10,12 @@
   width: 100%;
   height: 900px;
   border: 0;
+  position: relative;
+  bottom: 1rem;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   background: url('../../../../../public/game/Background2.jpg');
 }
@@ -87,6 +89,7 @@ canvas {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 2rem;
   width: 1024;
   height: 574;
 }
