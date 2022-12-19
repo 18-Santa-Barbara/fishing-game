@@ -13,10 +13,18 @@ export const themeApi = createApi({
   tagTypes: ['THEME'],
   endpoints: builder => ({
     getTheme: builder.query<any, void>({
-      query: (userId) => `/${userId}`,
+      query: userId => `/${userId}`,
       providesTags: ['THEME'],
+    }),
+    changeTheme: builder.mutation({
+      query: payload => ({
+        url: '',
+        method: 'PUT',
+        body: payload,
+      }),
+      invalidatesTags: ['THEME'],
     }),
   }),
 });
 
-export const { endpoints, useGetThemeQuery } = themeApi;
+export const { endpoints, useGetThemeQuery, useChangeThemeMutation } = themeApi;

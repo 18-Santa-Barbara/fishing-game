@@ -30,7 +30,7 @@ export const userApi = createApi({
       query: () => 'auth/user',
       providesTags: ['USER'],
     }),
-    logIn: builder.mutation<any, {login: string, password: string}>({
+    logIn: builder.mutation<any, { login: string; password: string }>({
       query: payload => ({
         url: 'auth/signin',
         method: 'POST',

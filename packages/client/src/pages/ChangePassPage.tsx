@@ -1,4 +1,4 @@
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { TextField, Button, Box, Typography, Paper } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { Link, NavigateFunction } from 'react-router-dom';
 import { ClassNameMap, StyleRules, withStyles } from '@mui/styles';
@@ -79,56 +79,58 @@ class ChangePassPage extends Component<IProps> {
     const { oldPassword, newPassword, confirm, error } = this.state;
     const { classes } = this.props;
     return (
-      <Box className={classes.paper} maxWidth={'md'}>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          {/*TODO: Плиз, кто-нибудь выведите всю форму с Аватаркой и Box в отдельный компонент, мне лень :)*/}
-          <PersonAvatar />
-        </div>
-        <form onSubmit={this.submit}>
-          <TextField
-            name="oldPassword"
-            variant="outlined"
-            label="Old password"
-            margin="normal"
-            value={oldPassword}
-            autoFocus
-            onChange={this.handleChange}
-            fullWidth
-          />
-          <TextField
-            name="newPassword"
-            onChange={this.handleChange}
-            variant="outlined"
-            value={newPassword}
-            label="New password"
-            margin="normal"
-            fullWidth
-          />
-          <TextField
-            name="confirm"
-            variant="outlined"
-            label="Confirm password"
-            margin="normal"
-            value={confirm}
-            onChange={this.handleChange}
-            fullWidth
-          />
-          {error && (
-            <Typography className={classes.err} variant="h6">
-              {error || 'Ошибка!'}
-            </Typography>
-          )}
-          <Button
-            type="submit"
-            fullWidth
-            onClick={this.submit}
-            variant="contained"
-            color="primary"
-            className={classes.btn}>
-            Sign Up
-          </Button>
-        </form>
-        <Link to={'/profile'}>Back to profile</Link>
+      <Box maxWidth={'md'}>
+        <Paper className={classes.paper}>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            {/*TODO: Плиз, кто-нибудь выведите всю форму с Аватаркой и Box в отдельный компонент, мне лень :)*/}
+            <PersonAvatar />
+          </div>
+          <form onSubmit={this.submit}>
+            <TextField
+              name="oldPassword"
+              variant="outlined"
+              label="Old password"
+              margin="normal"
+              value={oldPassword}
+              autoFocus
+              onChange={this.handleChange}
+              fullWidth
+            />
+            <TextField
+              name="newPassword"
+              onChange={this.handleChange}
+              variant="outlined"
+              value={newPassword}
+              label="New password"
+              margin="normal"
+              fullWidth
+            />
+            <TextField
+              name="confirm"
+              variant="outlined"
+              label="Confirm password"
+              margin="normal"
+              value={confirm}
+              onChange={this.handleChange}
+              fullWidth
+            />
+            {error && (
+              <Typography className={classes.err} variant="h6">
+                {error || 'Ошибка!'}
+              </Typography>
+            )}
+            <Button
+              type="submit"
+              fullWidth
+              onClick={this.submit}
+              variant="contained"
+              color="primary"
+              className={classes.btn}>
+              Sign Up
+            </Button>
+          </form>
+          <Link to={'/profile'}>Back to profile</Link>
+        </Paper>
       </Box>
     );
   }

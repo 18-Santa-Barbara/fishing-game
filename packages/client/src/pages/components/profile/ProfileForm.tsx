@@ -129,6 +129,7 @@ class ProfileForm extends Component<IProps, ProfilePageState> {
               key={name}
               variant="outlined"
               label={label}
+              size={'small'}
               margin="normal"
               onBlur={this.checkInput}
               error={!!check[name]}
