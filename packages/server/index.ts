@@ -22,6 +22,7 @@ app.use(cors());
 app.use(express.json());
 
 const port = Number(process.env.SERVER_PORT) || 3001;
+app.use(express.json());
 
 app.use('/api/forums', forumRouter);
 app.use('/api/theme', themeRouter);

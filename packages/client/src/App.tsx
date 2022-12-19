@@ -1,4 +1,6 @@
-import { Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from '@emotion/react';
+import { CssBaseline, StyledEngineProvider } from '@mui/material';
+import { skipToken } from '@reduxjs/toolkit/dist/query';
 import './App.css';
 import ProtectedRoute from './hocs/protected-route/ProtectedRoute';
 import ChangePassPage from './pages/ChangePassPage';
@@ -24,64 +26,37 @@ import { NoSsr } from '@mui/material';
 import GamePage from './pages/GamePage';
 
 function App() {
+  const { isSuccess, data, isFetching, isError } = useGetUserQuery();
+  const { data: isDarkTheme } = useGetThemeQuery(
+    isSuccess ? data.id : skipToken
+  );
+  const appTheme = isDarkTheme?.isDark ? darkTheme : lightTheme;
+
+  if (isFetching && isError) {
+    return (
+      <ThemeProvider theme={appTheme}>
+        <StyledEngineProvider injectFirst>
+          <CssBaseline />
+          <StartSpinner />
+        </StyledEngineProvider>
+      </ThemeProvider>
+    );
+  }
+
   return (
-    <>
-      <ErrorBoundary>
-        <Routes>
-          <Route
-            path={BASE_URL}
-            element={
-              <ProtectedRoute>
-                <Login />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={LOGIN_URL}
-            element={
-              <ProtectedRoute>
-                <Login />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={SIGNUP_URL}
-            element={
-              <ProtectedRoute>
-                <SignUp />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={PROFILE_URL}
-            element={
-              <ProtectedRoute mustBeAuth>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route path={FORUM_URL} element={<Forum />} />
-          <Route path="/comments/:id" element={<Comments />} />
-          <Route
-            path={CHANGE_PASS_URL}
-            element={
-              <ProtectedRoute mustBeAuth>
-                <ChangePassPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={GAME_URL}
-            element={
-              <ProtectedRoute mustBeAuth>
-                <GamePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route path={LEADERBOARD_URL} element={<Leaderboard />} />
-        </Routes>
-      </ErrorBoundary>
-    </>
+    <ThemeProvider theme={appTheme}>
+      <StyledEngineProvider injectFirst>
+        <CssBaseline />
+        <Header />
+        <div
+          style={{
+            minHeight: 'calc(100vh - 153px)',
+          }}>
+          <RootRouter />
+        </div>
+        <Footer />
+      </StyledEngineProvider>
+    </ThemeProvider>
   );
 }
 
