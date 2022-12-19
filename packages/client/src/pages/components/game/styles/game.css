@@ -20,6 +20,13 @@
   background: url('../../../../../public/game/Background2.jpg');
 }
 
+.active {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .game-interface {
   color: white;
   width: 67%;

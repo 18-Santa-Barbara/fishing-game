@@ -16,6 +16,7 @@ import { useGetUserQuery } from '../services/userApi';
 let context: any;
 let offset = 0;
 let keyPressed = false;
+// let toggle = false;
 
 // условия финиша
 let finish = false;
@@ -34,6 +35,7 @@ const leader: Player = {
 const GamePage = () => {
   const [addNewLeader, response] = useSetLeaderMutation();
   const { data: user } = useGetUserQuery();
+  const [toggle, setToggle] = useState(false)
 
   const postLeader = (leader: Leader) => {
     addNewLeader(JSON.stringify({ ...leader }))
@@ -76,6 +78,32 @@ const GamePage = () => {
       (gameData.final.diamonds = 0),
       (gameData.final.time = 0),
       setStopTimer(true);
+  };
+
+  const fullScreen = () => {
+    if (toggle == false) {
+      if (viewTargetRef.current.requestFullscreen) {
+        viewTargetRef.current.requestFullscreen();
+      } else if (viewTargetRef.current.msRequestFullscreen) {
+        viewTargetRef.current.msRequestFullscreen();
+      } else if (viewTargetRef.current.mozRequestFullScreen) {
+        viewTargetRef.current.mozRequestFullScreen();
+      } else if (viewTargetRef.current.webkitRequestFullscreen) {
+        viewTargetRef.current.webkitRequestFullscreen();
+      }
+      setToggle(true);
+    } else if (toggle == true) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.msexitFullscreen) {
+        document.msexitFullscreen();
+      } else if (document.mozexitFullscreen) {
+        document.mozexitFullscreen();
+      } else if (document.webkitexitFullscreen) {
+        document.webkitexitFullscreen();
+      }
+      setToggle(false);
+    }
   };
 
   // навигация в лидерборд
@@ -436,9 +464,11 @@ const GamePage = () => {
     <div
       className="game-field"
       role="button"
+      style={!toggle ? {justifyContent: 'flex-start'} : {justifyContent: 'center'}}
       tabIndex={0}
       onKeyDown={e => movePlayer(e)}
-      onKeyUp={e => stopPlayer(e)}>
+      onKeyUp={e => stopPlayer(e)}
+      ref={viewTargetRef}>
       <canvas width="1024px" height="576px" ref={canvasRef} />
       <div className="game-interface">
         <div className="game-interface_statistics">
@@ -452,7 +482,9 @@ const GamePage = () => {
             SKELETONS: {deadEnemies}/{enemies}
           </p>
           <p>SCORE: {gameData.final.score}</p>
-          <FullScreenButton></FullScreenButton>
+          <button className="game-btn" onClick={fullScreen} id="toggler">
+              <p>Fullscreen</p>
+          </button>
           <button className="game-btn" onClick={navigate}>
             <p>Leaderboard</p>
           </button>
