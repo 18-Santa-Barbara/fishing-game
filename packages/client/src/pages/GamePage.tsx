@@ -46,6 +46,7 @@ const GamePage = () => {
   };
 
   const canvasRef: any = useRef();
+  const viewTargetRef: any = useRef(null);
 
   const [start, setStart] = useState(false);
   const [gameData, setGameData] = useState(() => {
@@ -56,7 +57,7 @@ const GamePage = () => {
   // начало игры
   const startGame = () => {
     gameData.sound.volume = 0.2;
-    gameData.sound.play().then(() => console.log('background sound starts'));
+    gameData.sound.play().catch(err => console.warn('error: ', err));
 
     setTimeout(() => {
       setStart(true);
@@ -103,6 +104,10 @@ const GamePage = () => {
   }, []);
 
   function animate() {
+    
+    window.scrollTo(0, 45);
+
+    document.body.classList.add("no-scroll")
     requestAnimationFrame(animate);
     context.fillStyle = 'white';
     context.fillRect(0, 0, canvasRef.width, canvasRef.height);
@@ -149,7 +154,7 @@ const GamePage = () => {
 
           gameData.sound.pause();
           gameData.winSound.volume = 0.1;
-          gameData.winSound.play().then(() => console.log('Win'));
+          gameData.winSound.play().catch(err => console.warn('error: ', err));
 
           if (!finishRun) {
             gameData.player.stop(+1, gameData.keys);
@@ -163,8 +168,7 @@ const GamePage = () => {
             leader.date = frmDate.toString();
 
             // считаем кол-во очков лидера
-            gameData.final.score =
-              gameData.final.time + gameData.final.diamonds / 2;
+            gameData.final.score = gameData.final.diamonds * 4;
             leader.score = gameData.final.score;
 
             // отправляем лидера в лидерборд
@@ -178,7 +182,7 @@ const GamePage = () => {
               teamName: 'Santa-Barbara',
             });
 
-            alert(`Победа!`);
+            console.warn(`Победа!`);
           }
 
           setTimeout(() => {
@@ -223,7 +227,6 @@ const GamePage = () => {
 
     // одно из условий финиша при достижении определенной точки
     if (offset > 980) {
-      // console.log('FINISh')
       finish = true;
     }
 
@@ -267,7 +270,7 @@ const GamePage = () => {
         gameData.final.diamonds++;
 
         gameData.coinsEffect.volume = 0.1;
-        gameData.coinsEffect.play().then(() => console.log('Coin'));
+        gameData.coinsEffect.play().catch(err => console.warn('error: ', err));
       }
     });
 
@@ -299,7 +302,7 @@ const GamePage = () => {
           gameData.player.doAttack
         ) {
           gameData.monsterSound.volume = 0.1;
-          gameData.monsterSound.play().then(() => console.log('Monster Dies'));
+          gameData.monsterSound.play().catch(err => console.warn('error: ', err));
           skeleton.fall();
           if (skeleton.frames >= 0) {
             skeleton.frames = 0;
@@ -334,7 +337,7 @@ const GamePage = () => {
           gameData.player.doAttack
         ) {
           gameData.monsterSound.volume = 0.1;
-          gameData.monsterSound.play().then(() => console.log('Monster Dies'));
+          gameData.monsterSound.play().catch(err => console.warn('error: ', err));
           skeleton.fall();
           if (skeleton.frames >= 0) {
             skeleton.frames = 0;
@@ -379,7 +382,7 @@ const GamePage = () => {
       // атака
       if (keyCode === 17) {
         gameData.hitSound.volume = 0.3;
-        gameData.hitSound.play().then(() => console.log('Hit'));
+        gameData.hitSound.play().catch(err => console.warn('error: ', err));
         gameData.player.doAttack = true;
 
         if (
