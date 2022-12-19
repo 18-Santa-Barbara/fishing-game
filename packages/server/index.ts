@@ -10,15 +10,23 @@ import express from 'express';
 // @ts-ignore
 import { render } from '../client/dist/ssr/entry-server.cjs';
 import { startBackWithBase } from './db';
-import themeRouter from './routes/theme.routes';
 
+import forumRouter from './routes/forum.routes';
+import themeRouter from './routes/theme.routes';
+import commentsRouter from './routes/comments.routes';
 
 const app = express();
+
 app.use(cors());
+
+app.use(express.json());
+
 const port = Number(process.env.SERVER_PORT) || 3001;
 app.use(express.json());
 
+app.use('/api/forums', forumRouter);
 app.use('/api/theme', themeRouter);
+app.use('/api/comments', commentsRouter);
 
 startBackWithBase();
 app.use(express.static(path.resolve(__dirname, '../client/dist/client')));

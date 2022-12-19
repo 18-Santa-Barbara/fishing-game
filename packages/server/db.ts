@@ -1,6 +1,8 @@
+import { ForumModel } from './models/forum.model';
 import type { SequelizeOptions } from 'sequelize-typescript';
 import { Sequelize } from 'sequelize-typescript';
 import { ThemeModel } from './models/theme.model';
+import { CommentsModel } from './models/comments.routes';
 
 const { POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_PORT } =
   process.env;
@@ -11,7 +13,7 @@ const sequelizeOptions: SequelizeOptions = {
   username: POSTGRES_USER,
   password: POSTGRES_PASSWORD,
   database: POSTGRES_DB,
-  dialect: 'postgres', // 'mysql', 'sqlite', 'mariadb', 'mssql'
+  dialect: 'postgres',
   ssl: false,
   dialectOptions: {},
 };
@@ -19,6 +21,8 @@ const sequelizeOptions: SequelizeOptions = {
 const sequelize = new Sequelize(sequelizeOptions);
 
 export const Theme = sequelize.define('Theme', ThemeModel, {});
+export const Forum = sequelize.define('Forum', ForumModel, {});
+export const Comments = sequelize.define('Comments', CommentsModel, {});
 
 export async function connect() {
   try {

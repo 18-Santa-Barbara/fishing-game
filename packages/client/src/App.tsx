@@ -2,13 +2,13 @@ import { ThemeProvider } from '@emotion/react';
 import { CssBaseline, StyledEngineProvider } from '@mui/material';
 import { skipToken } from '@reduxjs/toolkit/dist/query';
 import './App.css';
+import Footer from './components/Footer';
 import Header from './components/Header';
-import StartSpinner from './components/StartSpinner';
 import RootRouter from './components/RootRouter';
+import StartSpinner from './components/StartSpinner';
 import { useGetThemeQuery } from './services/themeApi';
 import { useGetUserQuery } from './services/userApi';
 import { darkTheme, lightTheme } from './utils/theme';
-import Footer from './components/Footer';
 
 function App() {
   const { isSuccess, data, isFetching, isError } = useGetUserQuery();

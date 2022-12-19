@@ -2,6 +2,8 @@ import { configureStore } from '@reduxjs/toolkit';
 import { userApi } from '../services/userApi';
 import UserReducer from '../reducers/user';
 import { leaderApi } from '../services/leaderApi';
+import { forumApi } from '../services/forumApi';
+import { commentApi } from '../services/commentsApi';
 import { themeApi } from '../services/themeApi';
 
 export function createStore() {
@@ -14,13 +16,17 @@ export function createStore() {
       user: UserReducer,
       [userApi.reducerPath]: userApi.reducer,
       [leaderApi.reducerPath]: leaderApi.reducer,
-      [themeApi.reducerPath]: themeApi.reducer,
+      [forumApi.reducerPath]: forumApi.reducer,
+      [commentApi.reducerPath]: commentApi.reducer,
+      [themeApi.reducerPath]: themeApi.reducer
     },
-    middleware: getDefaultMiddleware =>
+    middleware: getDefaultMiddleware => 
       getDefaultMiddleware().concat(
-        userApi.middleware,
+        userApi.middleware, 
+        forumApi.middleware,
         leaderApi.middleware,
-        themeApi.middleware
+        themeApi.middleware,
+        commentApi.middleware
       ),
     preloadedState,
   });
