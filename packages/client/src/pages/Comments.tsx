@@ -48,7 +48,7 @@ function Comments() {
   const navigate = useNavigate();
 
   const { id } = useParams();
-  const { data: comments, isLoading } = useGetCommentsByIdQuery({id});
+  const { data: comments, isLoading } = useGetCommentsByIdQuery({ id });
   const { data: postName } = useGetFeaturedForumQuery(id);
 
   const [addCommentPost, responseComment] = useSetCommentsMutation();
@@ -78,71 +78,72 @@ function Comments() {
     return <div>Loading...</div>;
   }
 
-  if (postName) {
-    return (
-      <Container>
-        <Card className={classes.root}>
-          <CardHeader
-            action={
-              <IconButton
-                onClick={navigateBack}>
-                <ArrowBackIosIcon />
-              </IconButton>
-            }
-            title={postName.author}
-            subheader={postName.date}
-          />
-          <CardContent>
-            <Typography color="textSecondary" gutterBottom>
-              {postName.title}
-            </Typography>
-            <Typography variant="h5" component="p">
-              {postName.body}
-            </Typography>
-          </CardContent>
-        </Card>
-        <Card className={classes.root}>
-          <CardHeader title="Comments" />
-          <CardContent>
-            <TextField
-              autoFocus
-              margin="dense"
-              label="New comment"
-              type="text"
-              multiline
-              value={body}
-              fullWidth
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setBody(e.target.value)
-              }
-            />
-            <CardActions>
-              <Button onClick={handleClickNewComment}>add</Button>
-            </CardActions>
-          </CardContent>
-        </Card>
-        {comments &&
-          !!comments.length &&
-          comments.map(
-            (comment: {
-              postId: string | number;
-              author: string;
-              date: string;
-              body: string;
-            }) => (
-              <Card className={classes.root}>
-                <CardHeader title={comment.author} subheader={comment.date} />
-                <CardContent>
-                  <Typography variant="h5" component="p">
-                    {comment.body}
-                  </Typography>
-                </CardContent>
-              </Card>
-            )
-          )}
-      </Container>
-    );
+  if (!postName) {
+    return null;
   }
+
+  return (
+    <Container>
+      <Card className={classes.root}>
+        <CardHeader
+          action={
+            <IconButton onClick={navigateBack}>
+              <ArrowBackIosIcon />
+            </IconButton>
+          }
+          title={postName.author}
+          subheader={postName.date}
+        />
+        <CardContent>
+          <Typography color="textSecondary" gutterBottom>
+            {postName.title}
+          </Typography>
+          <Typography variant="h5" component="p">
+            {postName.body}
+          </Typography>
+        </CardContent>
+      </Card>
+      <Card className={classes.root}>
+        <CardHeader title="Comments" />
+        <CardContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="New comment"
+            type="text"
+            multiline
+            value={body}
+            fullWidth
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setBody(e.target.value)
+            }
+          />
+          <CardActions>
+            <Button onClick={handleClickNewComment}>add</Button>
+          </CardActions>
+        </CardContent>
+      </Card>
+      {comments &&
+        !!comments.length &&
+        comments.map(
+          (comment: {
+            postId: string | number;
+            author: string;
+            date: string;
+            body: string;
+          }) => (
+            <Card className={classes.root}>
+              <CardHeader title={comment.author} subheader={comment.date} />
+              <CardContent>
+                <Typography variant="h5" component="p">
+                  {comment.body}
+                </Typography>
+              </CardContent>
+            </Card>
+          )
+        )}
+    </Container>
+  );
 }
 
 export default Comments;
