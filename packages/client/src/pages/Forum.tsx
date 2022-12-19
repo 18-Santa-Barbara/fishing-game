@@ -22,6 +22,7 @@ import { useState } from 'react';
 import { useGetForumQuery, useSetForumMutation } from '../services/forumApi';
 import { useGetUserQuery } from '../services/userApi';
 import { useNavigate } from 'react-router-dom';
+import StartSpinner from '../components/StartSpinner';
 
 export type PostType = {
   id?: number;
@@ -56,7 +57,7 @@ const useStyles = makeStyles(() => ({
 function Forum() {
   const { data: user } = useGetUserQuery();
   const { data: forum, isLoading: isLoadingForum } = useGetForumQuery();
-  const [addForumPost, response] = useSetForumMutation();
+  const [addForumPost] = useSetForumMutation();
   const [openNewPost, setOpenNewPost] = useState(false);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
@@ -75,8 +76,10 @@ function Forum() {
     return `${date}`;
   };
 
-  const navigateToComments = (id: any) => {
-    navigate(`/comments/${id}`);
+  const navigateToComments = (id: number | undefined) => {
+    if (id !== undefined) {
+      navigate(`/comments/${id}`);
+    }
   };
 
   const handleClickNewPost = () => {
@@ -84,7 +87,7 @@ function Forum() {
       title: title,
       author: user.login,
       updateTime: new Date().toDateString(),
-      body: body
+      body: body,
     };
 
     addForumPost(forumData)
@@ -95,7 +98,7 @@ function Forum() {
   };
 
   if (isLoadingForum) {
-    return <div>Loading</div>;
+    return <StartSpinner />;
   }
 
   return (
@@ -168,7 +171,7 @@ function Forum() {
           <TableBody>
             {forum &&
               !!forum.length &&
-              forum.map(row => (
+              forum.map((row: PostType) => (
                 <TableRow key={row.title}>
                   <TableCell component="th" scope="row">
                     {row.title}

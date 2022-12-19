@@ -51,7 +51,7 @@ function Comments() {
   const { data: comments, isLoading } = useGetCommentsByIdQuery({ id });
   const { data: postName } = useGetFeaturedForumQuery(id);
 
-  const [addCommentPost, responseComment] = useSetCommentsMutation();
+  const [addCommentPost] = useSetCommentsMutation();
   const [body, setBody] = useState('');
 
   const navigateBack = () => {
@@ -67,7 +67,7 @@ function Comments() {
     };
 
     addCommentPost(commentData)
-      .then(response => {
+      .then(() => {
         setBody('');
       })
       .catch(err => console.warn('error: ', err));
