@@ -88,8 +88,7 @@ function Forum() {
     };
 
     addForumPost(forumData)
-      .then(response => {
-        console.log(response.data);
+      .then(() => {
         setOpenNewPost(false);
       })
       .catch(err => console.warn('error: ', err));
@@ -168,7 +167,7 @@ function Forum() {
           </TableHead>
           <TableBody>
             {forum &&
-              forum.length &&
+              !!forum.length &&
               forum.map(row => (
                 <TableRow key={row.title}>
                   <TableCell component="th" scope="row">

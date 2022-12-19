@@ -48,7 +48,7 @@ function Comments() {
   const navigate = useNavigate();
 
   const { id } = useParams();
-  const { data: comments, isLoading } = useGetCommentsByIdQuery({id: id});
+  const { data: comments, isLoading } = useGetCommentsByIdQuery({id});
   const { data: postName } = useGetFeaturedForumQuery(id);
 
   const [addCommentPost, responseComment] = useSetCommentsMutation();
@@ -85,9 +85,7 @@ function Comments() {
           <CardHeader
             action={
               <IconButton
-                onClick={() => {
-                  navigateBack();
-                }}>
+                onClick={navigateBack}>
                 <ArrowBackIosIcon />
               </IconButton>
             }
@@ -124,7 +122,7 @@ function Comments() {
           </CardContent>
         </Card>
         {comments &&
-          comments.length &&
+          !!comments.length &&
           comments.map(
             (comment: {
               postId: string | number;

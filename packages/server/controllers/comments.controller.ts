@@ -15,7 +15,7 @@ export const create = (req: Request, res: Response) => {
     })
     .catch((err: { message: any }) => {
       res.status(500).send({
-        message: err.message || 'Some error occurred.',
+        message: err.message || 'Some error occurred while creating a comment.',
       });
     });
 };
@@ -30,7 +30,7 @@ export const findAll = (req: Request, res: Response) => {
     })
     .catch((err: { message: any }) => {
       res.status(500).send({
-        message: err.message || 'Some error occurred.',
+        message: err.message || 'Some error occurred while getting all comments.',
       });
     });
 };

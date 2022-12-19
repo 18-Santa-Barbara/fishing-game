@@ -21,15 +21,14 @@ export const forumApi = createApi({
       accept: 'application/json',
     },
   }),
-  tagTypes: ['POST', 'PUT', 'FORUM', 'FEATURED'],
+  tagTypes: ['FORUM'],
   endpoints: builder => ({
     getForum: builder.query<any, void>({
       query: () => 'forums',
       providesTags: ['FORUM'],
     }),
     getFeaturedForum: builder.query({
-      query: (id: number) => `forums/${id}`,
-      providesTags: ['FEATURED'],
+      query: (id: number) => `forums/${id}`
     }),
     setForum: builder.mutation({
       query: payload => ({
