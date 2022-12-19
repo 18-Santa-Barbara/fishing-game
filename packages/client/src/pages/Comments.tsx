@@ -68,7 +68,6 @@ function Comments() {
 
     addCommentPost(commentData)
       .then(response => {
-        console.log(response.data);
         setBody('');
       })
       .catch(err => console.warn('error: ', err));
