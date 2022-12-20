@@ -1,15 +1,14 @@
 /* eslint-disable no-empty-pattern */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { PostType } from '../pages/Forum';
-import { CommentPost, ForumPost } from '../types/forum';
-import { Player } from '../types/leader';
-import { API, PORT } from '../utils/constants';
+import { CommentPost } from '../types/forum';
+import { PORT } from '../utils/constants';
 
 export const initialState: CommentPost = {
   postId: 0,
   author: '',
   body: '',
   date: '',
+  comment: {},
 };
 
 export const commentApi = createApi({
@@ -22,10 +21,10 @@ export const commentApi = createApi({
       accept: 'application/json',
     },
   }),
-  tagTypes: ['POST', 'PUT', 'COMMENT'],
+  tagTypes: ['COMMENT'],
   endpoints: builder => ({
-    getCommentsById: builder.query<any, {id: string | number}>({
-      query: (arg) => {
+    getCommentsById: builder.query<any, { id: string | number }>({
+      query: arg => {
         const { id } = arg;
         return {
           url: 'comments',
@@ -38,12 +37,23 @@ export const commentApi = createApi({
       query: payload => ({
         url: `comments`,
         method: 'POST',
-        body: payload
+        body: payload,
+      }),
+      invalidatesTags: ['COMMENT'],
+    }),
+    setReplyComments: builder.mutation({
+      query: payload => ({
+        url: `comments`,
+        method: 'POST',
+        body: payload,
       }),
       invalidatesTags: ['COMMENT'],
     }),
   }),
 });
 
-export const { useGetCommentsByIdQuery, useSetCommentsMutation } =
-  commentApi;
+export const {
+  useGetCommentsByIdQuery,
+  useSetCommentsMutation,
+  useSetReplyCommentsMutation,
+} = commentApi;

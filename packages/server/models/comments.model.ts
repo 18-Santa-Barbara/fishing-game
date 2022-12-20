@@ -6,9 +6,10 @@ export interface IComments {
   author: string;
   body: string;
   date: string;
+  comment: {};
 }
 
-const { STRING, INTEGER } = DataType;
+const { STRING, INTEGER, JSON } = DataType;
 
 export const CommentsModel: ModelAttributes<Model, IComments> = {
   postId: {
@@ -27,4 +28,8 @@ export const CommentsModel: ModelAttributes<Model, IComments> = {
     type: STRING,
     allowNull: false,
   },
+  comment: {
+    type: JSON,
+    allowNull: true
+  }
 };
