@@ -2,9 +2,9 @@ import { Navigate } from 'react-router-dom';
 import StartSpinner from '../../components/StartSpinner';
 import { useGetUserQuery } from '../../services/userApi';
 import { GAME_URL, LOGIN_URL } from '../../utils/constants';
-import IProps from './IProps';
+import { ProtectedRouteProps } from './IProps';
 
-function ProtectedRoute({ mustBeAuth, children }: IProps) {
+function ProtectedRoute({ mustBeAuth, children }: ProtectedRouteProps) {
   const { data, isLoading, isError, isUninitialized } = useGetUserQuery();
   if (isLoading) {
     return <StartSpinner />;

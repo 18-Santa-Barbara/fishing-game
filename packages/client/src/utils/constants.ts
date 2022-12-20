@@ -9,4 +9,6 @@ export const FORUM_URL = '/forum';
 export const COMMENTS_URL = '/comments'
 
 export const API = 'https://ya-praktikum.tech/api/v2';
+export const REDIRECT_URI = 'http://santa-barbara-18.ya-praktikum.tech';
+
 export const PORT = 'http://localhost:3001/api';
