@@ -1,7 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import './components/game/styles/game.css';
 
-import { FullScreenButton } from './components/FullScreenApiButton';
 import { LEADERBOARD_URL } from '../utils/constants';
 import { Player } from './Leaderboard';
 

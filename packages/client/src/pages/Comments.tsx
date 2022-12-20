@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import { useState } from 'react';
 import { FORUM_URL } from '../utils/constants';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -137,6 +138,9 @@ function Comments() {
                 <Typography variant="h5" component="p">
                   {comment.body}
                 </Typography>
+                <IconButton onClick={navigateBack}>
+                  <ThumbUpOffAltIcon />
+                </IconButton>
               </CardContent>
             </Card>
           )
