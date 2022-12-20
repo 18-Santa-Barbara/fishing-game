@@ -16,7 +16,7 @@ import {
   FORUM_URL,
   SIGNUP_URL,
   LEADERBOARD_URL,
-  COMMENTS_URL
+  COMMENTS_URL,
 } from '../utils/constants';
 import GamePage from '../pages/GamePage';
 import Comments from '../pages/Comments';

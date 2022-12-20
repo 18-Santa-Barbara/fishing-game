@@ -14,6 +14,7 @@ import { startBackWithBase } from './db';
 import forumRouter from './routes/forum.routes';
 import themeRouter from './routes/theme.routes';
 import commentsRouter from './routes/comments.routes';
+import likesRouter from './routes/likes.routes';
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use(express.json());
 app.use('/api/forums', forumRouter);
 app.use('/api/theme', themeRouter);
 app.use('/api/comments', commentsRouter);
+app.use('/api/likes', likesRouter);
 
 startBackWithBase();
 app.use(express.static(path.resolve(__dirname, '../client/dist/client')));

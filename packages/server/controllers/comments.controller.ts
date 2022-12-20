@@ -7,6 +7,7 @@ export const create = (req: Request, res: Response) => {
     author: req.body.author,
     body: req.body.body,
     date: req.body.date,
+    comment: req.body.comment,
   };
 
   Comments.create(comment)
@@ -21,7 +22,7 @@ export const create = (req: Request, res: Response) => {
 };
 
 export const findAll = (req: Request, res: Response) => {
-  console.log(req.query)
+  console.log(req.query);
   const id = req.query.id;
 
   Comments.findAll({ where: { postId: id } })
@@ -30,7 +31,8 @@ export const findAll = (req: Request, res: Response) => {
     })
     .catch((err: { message: any }) => {
       res.status(500).send({
-        message: err.message || 'Some error occurred while getting all comments.',
+        message:
+          err.message || 'Some error occurred while getting all comments.',
       });
     });
 };

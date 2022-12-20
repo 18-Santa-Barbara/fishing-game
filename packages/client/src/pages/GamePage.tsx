@@ -1,7 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import './components/game/styles/game.css';
 
-import { FullScreenButton } from './components/FullScreenApiButton';
 import { LEADERBOARD_URL } from '../utils/constants';
 import { Player } from './Leaderboard';
 
@@ -34,6 +33,7 @@ const leader: Player = {
 const GamePage = () => {
   const [addNewLeader, response] = useSetLeaderMutation();
   const { data: user } = useGetUserQuery();
+  const [toggle, setToggle] = useState(false);
 
   const postLeader = (leader: Leader) => {
     addNewLeader(JSON.stringify({ ...leader }))
@@ -46,6 +46,7 @@ const GamePage = () => {
   };
 
   const canvasRef: any = useRef();
+  const viewTargetRef: any = useRef(null);
 
   const [start, setStart] = useState(false);
   const [gameData, setGameData] = useState(() => {
@@ -56,7 +57,7 @@ const GamePage = () => {
   // начало игры
   const startGame = () => {
     gameData.sound.volume = 0.2;
-    gameData.sound.play().then(() => console.log('background sound starts'));
+    gameData.sound.play().catch(err => console.warn('error: ', err));
 
     setTimeout(() => {
       setStart(true);
@@ -75,6 +76,32 @@ const GamePage = () => {
       (gameData.final.diamonds = 0),
       (gameData.final.time = 0),
       setStopTimer(true);
+  };
+
+  const fullScreen = () => {
+    if (toggle == false) {
+      if (viewTargetRef.current.requestFullscreen) {
+        viewTargetRef.current.requestFullscreen();
+      } else if (viewTargetRef.current.msRequestFullscreen) {
+        viewTargetRef.current.msRequestFullscreen();
+      } else if (viewTargetRef.current.mozRequestFullScreen) {
+        viewTargetRef.current.mozRequestFullScreen();
+      } else if (viewTargetRef.current.webkitRequestFullscreen) {
+        viewTargetRef.current.webkitRequestFullscreen();
+      }
+      setToggle(true);
+    } else if (toggle == true) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.msexitFullscreen) {
+        document.msexitFullscreen();
+      } else if (document.mozexitFullscreen) {
+        document.mozexitFullscreen();
+      } else if (document.webkitexitFullscreen) {
+        document.webkitexitFullscreen();
+      }
+      setToggle(false);
+    }
   };
 
   // навигация в лидерборд
@@ -98,37 +125,14 @@ const GamePage = () => {
   useEffect(() => {
     context = canvasRef.current.getContext('2d');
     setEnemies(gameData.skeletons.length);
-  // навигация в лидерборд
-  const navigate = () => {
-    navigateTo(LEADERBOARD_URL);
-  };
 
-  // статистика
-  const [diamonds, setDiamonds] = useState(0);
-  const [deadEnemies, setDeadEnemies] = useState(0);
-  const [stopTimer, setStopTimer] = useState(false);
-
-  function resizeCanvas() {
-    canvasRef.width = 1024;
-    canvasRef.height = 900;
-
-    animate();
-  }
-
-  useEffect(() => {
-    context = canvasRef.current.getContext('2d');
-    setEnemies(gameData.skeletons.length);
-
-    resizeCanvas();
-  }, []);
     resizeCanvas();
   }, []);
 
   function animate() {
-    requestAnimationFrame(animate);
-    context.fillStyle = 'white';
-    context.fillRect(0, 0, canvasRef.width, canvasRef.height);
-  function animate() {
+    window.scrollTo(0, 0);
+
+    document.body.classList.add('no-scroll');
     requestAnimationFrame(animate);
     context.fillStyle = 'white';
     context.fillRect(0, 0, canvasRef.width, canvasRef.height);
@@ -175,15 +179,11 @@ const GamePage = () => {
 
           gameData.sound.pause();
           gameData.winSound.volume = 0.1;
-          gameData.winSound.play().then(() => console.log('Win'));
+          gameData.winSound.play().catch(err => console.warn('error: ', err));
 
           if (!finishRun) {
             gameData.player.stop(+1, gameData.keys);
-          if (!finishRun) {
-            gameData.player.stop(+1, gameData.keys);
 
-            // останавливаем таймер
-            setStopTimer(true);
             // останавливаем таймер
             setStopTimer(true);
 
@@ -193,8 +193,7 @@ const GamePage = () => {
             leader.date = frmDate.toString();
 
             // считаем кол-во очков лидера
-            gameData.final.score =
-              gameData.final.time + gameData.final.diamonds / 2;
+            gameData.final.score = gameData.final.diamonds * 4;
             leader.score = gameData.final.score;
 
             // отправляем лидера в лидерборд
@@ -208,9 +207,7 @@ const GamePage = () => {
               teamName: 'Santa-Barbara',
             });
 
-            alert(`Победа!`);
-          }
-            alert(`Победа!`);
+            console.warn(`Победа!`);
           }
 
           setTimeout(() => {
@@ -252,35 +249,9 @@ const GamePage = () => {
         offset--;
       }
     }
-      // при движении игрока окружающие объекты сдвигаются, а offset, пройденный игроком, меняется.
-      if (gameData.keys.right) {
-        offset++;
-        if (!finish) {
-          gameData.backgroundPlatform.forEach(platform => {
-            platform.position.x -= 1;
-          });
-          gameData.backgroundCastle.forEach(castle => {
-            castle.position.x -= 2;
-          });
-          gameData.platforms.forEach(platform => {
-            platform.position.x -= 5;
-          });
-          gameData.coins.forEach(castle => {
-            castle.position.x -= 5;
-          });
-          gameData.skeletons.forEach(castle => {
-            castle.position.x -= 5;
-          });
-          gameData.finalChest[0].position.x -= 5;
-        }
-      } else if (gameData.keys.left) {
-        offset--;
-      }
-    }
 
     // одно из условий финиша при достижении определенной точки
     if (offset > 980) {
-      // console.log('FINISh')
       finish = true;
     }
 
@@ -324,7 +295,7 @@ const GamePage = () => {
         gameData.final.diamonds++;
 
         gameData.coinsEffect.volume = 0.1;
-        gameData.coinsEffect.play().then(() => console.log('Coin'));
+        gameData.coinsEffect.play().catch(err => console.warn('error: ', err));
       }
     });
 
@@ -356,7 +327,9 @@ const GamePage = () => {
           gameData.player.doAttack
         ) {
           gameData.monsterSound.volume = 0.1;
-          gameData.monsterSound.play().then(() => console.log('Monster Dies'));
+          gameData.monsterSound
+            .play()
+            .catch(err => console.warn('error: ', err));
           skeleton.fall();
           if (skeleton.frames >= 0) {
             skeleton.frames = 0;
@@ -391,7 +364,9 @@ const GamePage = () => {
           gameData.player.doAttack
         ) {
           gameData.monsterSound.volume = 0.1;
-          gameData.monsterSound.play().then(() => console.log('Monster Dies'));
+          gameData.monsterSound
+            .play()
+            .catch(err => console.warn('error: ', err));
           skeleton.fall();
           if (skeleton.frames >= 0) {
             skeleton.frames = 0;
@@ -436,7 +411,7 @@ const GamePage = () => {
       // атака
       if (keyCode === 17) {
         gameData.hitSound.volume = 0.3;
-        gameData.hitSound.play().then(() => console.log('Hit'));
+        gameData.hitSound.play().catch(err => console.warn('error: ', err));
         gameData.player.doAttack = true;
 
         if (
@@ -483,25 +458,22 @@ const GamePage = () => {
     } else if (keyCode === 39) {
       keyPressed = false;
       gameData.player.stop(1, gameData.keys);
-  // остановка игрока
-  const stopPlayer = ({ keyCode }: any) => {
-    if (keyCode === 37) {
-      keyPressed = false;
-      gameData.player.stop(-1, gameData.keys);
-    } else if (keyCode === 39) {
-      keyPressed = false;
-      gameData.player.stop(1, gameData.keys);
     }
-  };
   };
 
   return (
     <div
       className="game-field"
       role="button"
+      style={
+        !toggle
+          ? { justifyContent: 'flex-start' }
+          : { justifyContent: 'center' }
+      }
       tabIndex={0}
       onKeyDown={e => movePlayer(e)}
-      onKeyUp={e => stopPlayer(e)}>
+      onKeyUp={e => stopPlayer(e)}
+      ref={viewTargetRef}>
       <canvas width="1024px" height="576px" ref={canvasRef} />
       <div className="game-interface">
         <div className="game-interface_statistics">
@@ -515,43 +487,9 @@ const GamePage = () => {
             SKELETONS: {deadEnemies}/{enemies}
           </p>
           <p>SCORE: {gameData.final.score}</p>
-          <FullScreenButton></FullScreenButton>
-          <button className="game-btn" onClick={navigate}>
-            <p>Leaderboard</p>
+          <button className="game-btn" onClick={fullScreen} id="toggler">
+            <p>Fullscreen</p>
           </button>
-        </div>
-        <div className="game-inteface_start">
-          <button
-            className="game-btn"
-            onClick={!start ? startGame : restartGame}>
-            {start ? <p>Reset</p> : <p>Start Game</p>}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-  return (
-    <div
-      className="game-field"
-      role="button"
-      tabIndex={0}
-      onKeyDown={e => movePlayer(e)}
-      onKeyUp={e => stopPlayer(e)}>
-      <canvas width="1024px" height="576px" ref={canvasRef} />
-      <div className="game-interface">
-        <div className="game-interface_statistics">
-          {start ? (
-            <Timer seconds={60} stopTimer={stopTimer}></Timer>
-          ) : (
-            <h1>60</h1>
-          )}
-          <p>DIAMONDS: {diamonds}</p>
-          <p>
-            SKELETONS: {deadEnemies}/{enemies}
-          </p>
-          <p>SCORE: {gameData.final.score}</p>
-          <FullScreenButton></FullScreenButton>
           <button className="game-btn" onClick={navigate}>
             <p>Leaderboard</p>
           </button>
