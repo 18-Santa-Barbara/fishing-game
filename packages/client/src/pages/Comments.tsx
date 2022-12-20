@@ -126,7 +126,7 @@ function Comments() {
       </Card>
       {comments &&
         !!comments.length &&
-        comments.map(
+        comments.slice(0).reverse().map(
           (comment: {
             id: number;
             postId: string | number;
