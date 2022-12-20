@@ -1,9 +1,9 @@
 import { Button, Container, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { makeStyles } from '@mui/styles';
-import { apiRequestPost } from '../utils/api';
-import { API, GAME_URL, SIGNUP_URL } from '../utils/constants';
+import { GAME_URL, SIGNUP_URL } from '../utils/constants';
+import { useLogInMutation } from '../services/userApi';
 
 const useStyles = makeStyles(() => ({
   paper: {
@@ -25,15 +25,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function Login({ setLogged, checkLoggedIn, checkLogged }) {
-  if (checkLogged) {
-    return <Navigate to={GAME_URL} replace />;
-  }
+function Login() {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const classes = useStyles();
+  const [logIn] = useLogInMutation();
   const navigator = useNavigate();
+  // const { data } = useGetUserQuery();
 
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -45,19 +44,18 @@ function Login({ setLogged, checkLoggedIn, checkLogged }) {
       setError("Password can't be empty");
       return;
     }
-    apiRequestPost(`${API}/auth/signin`, { login, password })
-      .then(res => {
-        if ('reason' in res) {
-          setError(res.reason);
-        } else {
-          checkLoggedIn();
-          setLogged(true);
+    logIn({ login, password }).then(response => {
+      // @ts-ignore
+      if (response.error) {
+        // @ts-ignore
+        if (response.error.data === 'OK') {
           navigator(GAME_URL);
+        } else {
+          // @ts-ignore
+          setError(response.error.data.reason); //Ну это жесть, как это можно переделать?
         }
-      })
-      .catch(err => {
-        console.warn(err);
-      });
+      }
+    });
   }
 
   return (

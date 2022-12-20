@@ -1,11 +1,25 @@
 import { Navigate } from 'react-router-dom';
-import { LOGIN_URL } from '../../utils/constants';
-import { IProps } from './IProps';
+import { useGetUserQuery } from '../../services/userApi';
+import { GAME_URL, LOGIN_URL } from '../../utils/constants';
+import { ProtectedRouteProps } from './IProps';
 
-function ProtectedRoute({ loggedIn, children }: IProps) {
-  if (!loggedIn) {
+function ProtectedRoute({ mustBeAuth, children }: ProtectedRouteProps) {
+  const { data, isLoading, isError, isUninitialized } = useGetUserQuery();
+  if (isLoading) {
+    return <>Loading...</>;
+  }
+
+  if (!mustBeAuth) {
+    if (data && !isError) {
+      return <Navigate to={GAME_URL} replace />;
+    }
+    return children;
+  }
+
+  if (isError || (isUninitialized && !data)) {
     return <Navigate to={LOGIN_URL} replace />;
   }
+
   return children;
 }
 

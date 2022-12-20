@@ -1,4 +1,6 @@
-export interface IProps {
-  loggedIn: boolean;
-  children: any;
+import { ReactElement } from 'react';
+
+export type ProtectedRouteProps = {
+  mustBeAuth?: boolean,
+  children: ReactElement,
 }

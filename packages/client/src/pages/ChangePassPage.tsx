@@ -1,20 +1,32 @@
-import { TextField, Button, Avatar, Box, Typography } from '@mui/material';
+import { TextField, Button, Box, Typography } from '@mui/material';
 import { Component, ReactNode } from 'react';
-import { Link } from 'react-router-dom';
-import { withStyles } from '@mui/styles';
-import { AccountCircle } from '@mui/icons-material';
-import { apiRequestPut } from '../utils/api';
-import { API } from '../utils/constants';
+import { Link, NavigateFunction } from 'react-router-dom';
+import { ClassNameMap, StyleRules, withStyles } from '@mui/styles';
+import { PROFILE_URL } from '../utils/constants';
 import withNavigation from '../hocs/with-navigation/WithNavigation';
+import { connect } from 'react-redux';
+import { endpoints } from '../services/userApi';
+import PersonAvatar from './components/profile/PersonAvatar';
 
-interface SignUpState {
+interface ChangePassPageState {
   error: string;
   oldPassword: string;
   newPassword: string;
   confirm: string;
 }
 
-const styles = {
+type ChangePassPageProps = {
+  classes: ClassNameMap;
+  navigate: NavigateFunction;
+  changePass: ({ oldPassword, newPassword }: oldNewPass) => Promise<Response>;
+};
+
+type oldNewPass = {
+  oldPassword: string;
+  newPassword: string;
+};
+
+const styles: StyleRules = {
   paper: {
     textAlign: 'center',
     boxShadow: '0px 0px 6px rgb(0 0 0 / 14%)',
@@ -30,12 +42,12 @@ const styles = {
     width: '33%',
   },
   err: {
-    color: 'red'
-  }
+    color: 'red',
+  },
 };
 
-class SignUp extends Component {
-  state: SignUpState = {
+class ChangePassPage extends Component<ChangePassPageProps> {
+  state: ChangePassPageState = {
     oldPassword: '',
     newPassword: '',
     confirm: '',
@@ -49,18 +61,27 @@ class SignUp extends Component {
     this.setState({ [name]: value });
   };
 
-  submit = (e) => {
+  submit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    const { oldPassword, newPassword } = this.state;
-    apiRequestPut(`${API}/user/password`, { oldPassword, newPassword })
-      .then(res => {
-        if ('reason' in res) {
-          this.setState({ error: res.reason });
-        } else {
-          this.props.navigate('/profile');
-        }
-      })
-      .catch(() => this.setState({ error: 'Ошибка!' }));
+    const { oldPassword, newPassword, confirm, error } = this.state;
+    if (newPassword !== confirm) {
+      this.setState({ error: 'Passwords are not the same!' });
+      return;
+    }
+    if (error) {
+      this.setState({ error: '' });
+    }
+    const { changePass, navigate } = this.props;
+    
+    changePass({ oldPassword, newPassword }).then(response => {
+      //@ts-ignore
+      if (response.error.data === 'OK') {
+        navigate(PROFILE_URL);
+      } else {
+        //@ts-ignore
+        this.setState({ error: response.error.data.reason }); //Ну это жесть, как это можно переделать?
+      }
+    });
   };
 
   render(): ReactNode {
@@ -69,10 +90,8 @@ class SignUp extends Component {
     return (
       <Box className={classes.paper} maxWidth={'md'}>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Avatar
-            sx={{ m: 1, bgcolor: 'primary', width: '60px', height: '60px' }}>
-            <AccountCircle />
-          </Avatar>
+          {/*TODO: Плиз, кто-нибудь выведите всю форму с Аватаркой и Box в отдельный компонент, мне лень :)*/}
+          <PersonAvatar />
         </div>
         <form onSubmit={this.submit}>
           <TextField
@@ -124,4 +143,14 @@ class SignUp extends Component {
   }
 }
 
-export default withStyles(styles)(withNavigation(SignUp));
+const mapDispatch = {
+  changePass: endpoints.changePass.initiate,
+};
+
+export default connect(
+  undefined,
+  mapDispatch
+)(
+  // @ts-ignore
+  withStyles(styles)(withNavigation(ChangePassPage))
+);
