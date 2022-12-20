@@ -16,8 +16,10 @@ import {
   FORUM_URL,
   SIGNUP_URL,
   LEADERBOARD_URL,
+  COMMENTS_URL,
 } from '../utils/constants';
 import GamePage from '../pages/GamePage';
+import Comments from '../pages/Comments';
 
 const RootRouter = () => {
   return (
@@ -57,6 +59,7 @@ const RootRouter = () => {
             }
           />
           <Route path={FORUM_URL} element={<Forum />} />
+          <Route path="/comments/:id" element={<Comments />} />
           <Route
             path={CHANGE_PASS_URL}
             element={
