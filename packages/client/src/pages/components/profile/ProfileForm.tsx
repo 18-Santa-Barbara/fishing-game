@@ -9,27 +9,12 @@ import { UserToServer } from '../../../types/client';
 import { validateValue } from '../../../utils/validator';
 import { fields } from '../../ProfilePage';
 
-interface ProfilePageState {
+type ProfilePageState = {
   // [key: string]: string | boolean | User;
   error: string;
-  user: {
-    first_name: string;
-    second_name: string;
-    display_name: string;
-    login: string;
-    email: string;
-    phone: string;
-  };
-  check: {
-    first_name: string;
-    second_name: string;
-    display_name: string;
-    login: string;
-    email: string;
-    phone: string;
-  };
-  editMode: boolean;
-}
+  user: UserToServer;
+  check: UserToServer;
+};
 
 const styles: StyleRules = {
   btn: {
@@ -45,14 +30,15 @@ const styles: StyleRules = {
   },
 };
 
-interface IProps {
+type ProfileFormProps = {
   classes: ClassNameMap;
-  user: UserToServer
-} 
+  user: UserToServer;
+  cancel: () => Record<string, never>;
+  changeProfile: (user: UserToServer) => Promise<Response>;
+};
 
-
-class ProfileForm extends Component<IProps, ProfilePageState> {
-  constructor(props: IProps) {
+class ProfileForm extends Component<ProfileFormProps, ProfilePageState> {
+  constructor(props: ProfileFormProps) {
     super(props);
     this.state = {
       user: {
@@ -74,39 +60,44 @@ class ProfileForm extends Component<IProps, ProfilePageState> {
     const {
       target: { name, value },
     } = e;
-    this.setState((oldState: ProfilePageState) => {
-      const newState = { ...oldState };
-      newState.user[name] = value;
-      return newState;
-    });
+    this.setState((prevState: ProfilePageState) => ({
+      ...prevState,
+      user: {
+        ...prevState.user,
+        [name]: value,
+      }
+    }));
   };
 
   checkInput = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
     const checkValue: string = validateValue(name, value);
     if (checkValue) {
-      this.setState((oldState: ProfilePageState) => {
-        const newState = { ...oldState };
-        newState.check[name] = checkValue;
-        return newState;
-      });
+      this.setState((prevState: ProfilePageState) => ({
+      ...prevState,
+      user: {
+        ...prevState.check,
+        [name]: value,
+      }
+    }));
     }
   };
-
   submit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     const { user } = this.state;
     const { cancel, changeProfile } = this.props;
     let isError = false;
     fields.forEach(({ name }) => {
+      // @ts-ignore
       const errorText: string = validateValue(name, user[name]);
       if (errorText !== '') {
-        this.setState((oldState: ProfilePageState) => {
-          //Знаю, что можно собрать объект с ошибками и потом сделать один setState, да, мне стыдно :)
-          const newState = { ...oldState };
-          newState.check[name] = errorText;
-          return newState;
-        });
+        this.setState((prevState: ProfilePageState) => ({
+          ...prevState,
+          user: {
+            ...prevState.check,
+            [name]: errorText,
+          },
+        }));
         isError = true;
       }
     });
@@ -132,8 +123,11 @@ class ProfileForm extends Component<IProps, ProfilePageState> {
               size={'small'}
               margin="normal"
               onBlur={this.checkInput}
+              // @ts-ignore
               error={!!check[name]}
+              // @ts-ignore
               helperText={check[name]}
+              // @ts-ignore
               value={user[name] || ''}
               autoFocus={index === 0}
               onChange={this.handleChange}
@@ -177,4 +171,7 @@ const mapDispatch = {
 export default connect(
   mapState,
   mapDispatch
-)(withStyles(styles)(withNavigation(ProfileForm)));
+)(
+  // @ts-ignore
+  withStyles(styles)(withNavigation(ProfileForm))
+);

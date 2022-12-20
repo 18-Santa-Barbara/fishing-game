@@ -27,7 +27,7 @@ function checkResponseStatus(response: any) {
     return response === 'OK' ? response : response.json();
   } else {
     const error: Error = new Error(response);
-    //@ts-ignore
+    // @ts-ignore
     error.response = response.json();
     throw error;
   }

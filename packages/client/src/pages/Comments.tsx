@@ -82,7 +82,7 @@ function Comments() {
     };
 
     addCommentPost(commentData)
-      .then(response => {
+      .then(() => {
         setBody('');
       })
       .catch(err => console.warn('error: ', err));

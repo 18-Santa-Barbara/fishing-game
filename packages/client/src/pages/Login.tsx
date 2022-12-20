@@ -2,8 +2,8 @@ import { Button, Container, Paper, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { makeStyles } from '@mui/styles';
-import { GAME_URL, SIGNUP_URL } from '../utils/constants';
-import { useLogInMutation } from '../services/userApi';
+import { GAME_URL, SIGNUP_URL, REDIRECT_URI } from '../utils/constants';
+import { useLogInMutation, useServiceIDMutation } from '../services/userApi';
 
 const useStyles = makeStyles(() => ({
   paper: {
@@ -18,7 +18,6 @@ const useStyles = makeStyles(() => ({
   },
   btn: {
     margin: '16px 0',
-    width: '33%',
   },
   err: {
     color: 'red',
@@ -32,7 +31,7 @@ function Login() {
   const classes = useStyles();
   const [logIn] = useLogInMutation();
   const navigator = useNavigate();
-  // const { data } = useGetUserQuery();
+  const [serviceID] = useServiceIDMutation();
 
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -45,15 +44,28 @@ function Login() {
       return;
     }
     logIn({ login, password }).then(response => {
+      // @ts-ignore
       if (response.error) {
+        // @ts-ignore
         if (response.error.data === 'OK') {
           navigator(GAME_URL);
         } else {
+          // @ts-ignore
           setError(response.error.data.reason); //Ну это жесть, как это можно переделать?
         }
       }
     });
   }
+
+  const onYandexClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    const data = await serviceID(REDIRECT_URI);
+    window.open(
+      // @ts-ignore
+      `https://oauth.yandex.ru/authorize?response_type=code&client_id=${data.data.service_id}&redirect_uri=${REDIRECT_URI}`,
+      '_self'
+    );
+  };
 
   return (
     <Container maxWidth={'xs'}>
@@ -99,6 +111,14 @@ function Login() {
             className={classes.btn}>
             Sign In
           </Button>
+        <Button
+          fullWidth
+          variant="contained"
+          color="primary"
+          className={classes.btn}
+          onClick={onYandexClick}>
+          Log in via Yandex
+        </Button>
         </form>
         <Link to={SIGNUP_URL}>Don't have account? Sign up!</Link>
       </Paper>

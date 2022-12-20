@@ -31,11 +31,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-interface IProps {
+type ProfileListProps = {
   editProfile: () => void;
-}
+};
 
-function ProfileList(props: IProps) {
+function ProfileList(props: ProfileListProps) {
   const { editProfile } = props;
   const { data: user } = useGetUserQuery();
   const [logout] = useLogoutMutation();

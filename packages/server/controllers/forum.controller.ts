@@ -1,13 +1,16 @@
 import type { Request, Response } from 'express';
 import { Forum } from '../db';
 
-export const create = (req: Request, res: Response) => {
+export const create = async (req: Request, res: Response) => {
   const forum = {
     title: req.body.title,
     author: req.body.author,
     updateTime: req.body.updateTime,
     body: req.body.body,
   };
+  
+  //TODO: Реализация проверки пользователя, отправка запроса с текущей кукой
+
 
   Forum.create(forum)
     .then((data: any) => {

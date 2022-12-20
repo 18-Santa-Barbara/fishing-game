@@ -125,7 +125,29 @@ const GamePage = () => {
   useEffect(() => {
     context = canvasRef.current.getContext('2d');
     setEnemies(gameData.skeletons.length);
+  // навигация в лидерборд
+  const navigate = () => {
+    navigateTo(LEADERBOARD_URL);
+  };
 
+  // статистика
+  const [diamonds, setDiamonds] = useState(0);
+  const [deadEnemies, setDeadEnemies] = useState(0);
+  const [stopTimer, setStopTimer] = useState(false);
+
+  function resizeCanvas() {
+    canvasRef.width = 1024;
+    canvasRef.height = 900;
+
+    animate();
+  }
+
+  useEffect(() => {
+    context = canvasRef.current.getContext('2d');
+    setEnemies(gameData.skeletons.length);
+
+    resizeCanvas();
+  }, []);
     resizeCanvas();
   }, []);
 
@@ -134,6 +156,10 @@ const GamePage = () => {
     window.scrollTo(0, 0);
 
     document.body.classList.add("no-scroll")
+    requestAnimationFrame(animate);
+    context.fillStyle = 'white';
+    context.fillRect(0, 0, canvasRef.width, canvasRef.height);
+  function animate() {
     requestAnimationFrame(animate);
     context.fillStyle = 'white';
     context.fillRect(0, 0, canvasRef.width, canvasRef.height);
@@ -184,7 +210,11 @@ const GamePage = () => {
 
           if (!finishRun) {
             gameData.player.stop(+1, gameData.keys);
+          if (!finishRun) {
+            gameData.player.stop(+1, gameData.keys);
 
+            // останавливаем таймер
+            setStopTimer(true);
             // останавливаем таймер
             setStopTimer(true);
 
@@ -210,6 +240,8 @@ const GamePage = () => {
 
             console.warn(`Победа!`);
           }
+            alert(`Победа!`);
+          }
 
           setTimeout(() => {
             finishRun = true;
@@ -225,6 +257,31 @@ const GamePage = () => {
 
       gameData.player.velocity.x = 0;
 
+      // при движении игрока окружающие объекты сдвигаются, а offset, пройденный игроком, меняется.
+      if (gameData.keys.right) {
+        offset++;
+        if (!finish) {
+          gameData.backgroundPlatform.forEach(platform => {
+            platform.position.x -= 1;
+          });
+          gameData.backgroundCastle.forEach(castle => {
+            castle.position.x -= 2;
+          });
+          gameData.platforms.forEach(platform => {
+            platform.position.x -= 5;
+          });
+          gameData.coins.forEach(castle => {
+            castle.position.x -= 5;
+          });
+          gameData.skeletons.forEach(castle => {
+            castle.position.x -= 5;
+          });
+          gameData.finalChest[0].position.x -= 5;
+        }
+      } else if (gameData.keys.left) {
+        offset--;
+      }
+    }
       // при движении игрока окружающие объекты сдвигаются, а offset, пройденный игроком, меняется.
       if (gameData.keys.right) {
         offset++;
@@ -455,7 +512,16 @@ const GamePage = () => {
     } else if (keyCode === 39) {
       keyPressed = false;
       gameData.player.stop(1, gameData.keys);
+  // остановка игрока
+  const stopPlayer = ({ keyCode }: any) => {
+    if (keyCode === 37) {
+      keyPressed = false;
+      gameData.player.stop(-1, gameData.keys);
+    } else if (keyCode === 39) {
+      keyPressed = false;
+      gameData.player.stop(1, gameData.keys);
     }
+  };
   };
 
   return (
@@ -483,6 +549,42 @@ const GamePage = () => {
           <button className="game-btn" onClick={fullScreen} id="toggler">
               <p>Fullscreen</p>
           </button>
+          <button className="game-btn" onClick={navigate}>
+            <p>Leaderboard</p>
+          </button>
+        </div>
+        <div className="game-inteface_start">
+          <button
+            className="game-btn"
+            onClick={!start ? startGame : restartGame}>
+            {start ? <p>Reset</p> : <p>Start Game</p>}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+  return (
+    <div
+      className="game-field"
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => movePlayer(e)}
+      onKeyUp={e => stopPlayer(e)}>
+      <canvas width="1024px" height="576px" ref={canvasRef} />
+      <div className="game-interface">
+        <div className="game-interface_statistics">
+          {start ? (
+            <Timer seconds={60} stopTimer={stopTimer}></Timer>
+          ) : (
+            <h1>60</h1>
+          )}
+          <p>DIAMONDS: {diamonds}</p>
+          <p>
+            SKELETONS: {deadEnemies}/{enemies}
+          </p>
+          <p>SCORE: {gameData.final.score}</p>
+          <FullScreenButton></FullScreenButton>
           <button className="game-btn" onClick={navigate}>
             <p>Leaderboard</p>
           </button>
