@@ -14,7 +14,7 @@ export const initialState: ForumPost = {
 export const forumApi = createApi({
   reducerPath: 'forumApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${PORT}/`,
+    baseUrl: `api/`,
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',

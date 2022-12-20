@@ -85,7 +85,7 @@ function Forum() {
   const handleClickNewPost = () => {
     const forumData: PostType = {
       title: title,
-      author: user.login,
+      author: 'test',//user.login,
       updateTime: new Date().toDateString(),
       body: body,
     };
@@ -172,7 +172,7 @@ function Forum() {
             {forum &&
               !!forum.length &&
               forum.map((row: PostType) => (
-                <TableRow key={row.title}>
+                <TableRow key={row.id}>
                   <TableCell component="th" scope="row">
                     {row.title}
                   </TableCell>

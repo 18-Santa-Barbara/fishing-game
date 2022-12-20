@@ -15,7 +15,7 @@ export const initialState: CommentPost = {
 export const commentApi = createApi({
   reducerPath: 'commentApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${PORT}/`,
+    baseUrl: `api/`,
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',

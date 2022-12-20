@@ -1,31 +1,54 @@
+// import fetch from 'node-fetch';
 import type { Request, Response } from 'express';
 import { Forum } from '../db';
+import axios from 'axios';
 
-export const create = async (req: Request, res: Response) => {
-  const forum = {
+type Forum = {
+  title: string;
+  updateTime: string;
+  body: string;
+  author?: string;
+};
+
+export const create = (req: Request, res: Response) => {
+  const forum: Forum = {
     title: req.body.title,
-    author: req.body.author,
     updateTime: req.body.updateTime,
     body: req.body.body,
   };
-  
-  //TODO: Реализация проверки пользователя, отправка запроса с текущей кукой
 
+  const stringCookie = Object.keys(req.cookies)
+    .map(key => `${key}=${req.cookies[key]}`)
+    .join('; ');
 
-  Forum.create(forum)
-    .then((data: any) => {
-      res.send(data);
+  axios
+    .get('https://ya-praktikum.tech/api/v2/auth/user', {
+      headers: { Cookie: stringCookie },
     })
-    .catch((err: { message: any }) => {
-      res.status(500).send({
-        message: err.message || 'Some error occurred while creating a new post.',
+    .then(({ data }) => {
+      forum.author = data.login;
+      Forum.create(forum)
+        .then((data: any) => {
+          res.send(data);
+        })
+        .catch((err: { message: any }) => {
+          res.status(500).send({
+            message:
+              err.message || 'Some error occurred while creating a new post.',
+          });
+        });
+    })
+    .catch(err => {
+      res.status(err?.response?.status || 500).send({
+        message:
+          err?.response?.data?.reason ||
+          'Some error occurred while creating a new post.',
       });
+      return;
     });
 };
 
-export const findAll = (req: Request, res: Response) => {
-  console.log(req.query.title);
-
+export const findAll = (_: Request, res: Response) => {
   Forum.findAll()
     .then((data: any) => {
       res.send(data);
@@ -46,13 +69,13 @@ export const findOne = (req: Request, res: Response) => {
         res.send(data);
       } else {
         res.status(404).send({
-          message: `Cannot find with id=${id}.`
+          message: `Cannot find with id=${id}.`,
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving with id=" + id + err
+        message: 'Error retrieving with id=' + id + err,
       });
     });
 };

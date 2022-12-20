@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import * as path from 'path';
 import * as fs from 'fs';
+import https from 'https';
+import cookieParser from 'cookie-parser';
 dotenv.config();
 
 import express from 'express';
@@ -14,14 +16,20 @@ import { startBackWithBase } from './db';
 import forumRouter from './routes/forum.routes';
 import themeRouter from './routes/theme.routes';
 import commentsRouter from './routes/comments.routes';
+import helmet from 'helmet';
 
+
+const options = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem'),
+};
 const app = express();
 
+app.use(helmet());
 app.use(cors());
+app.use(cookieParser());
 
-app.use(express.json());
-
-const port = Number(process.env.SERVER_PORT) || 3001;
+// const port = Number(process.env.SERVER_PORT) || 3001;
 app.use(express.json());
 
 app.use('/api/forums', forumRouter);
@@ -30,7 +38,6 @@ app.use('/api/comments', commentsRouter);
 
 startBackWithBase();
 app.use(express.static(path.resolve(__dirname, '../client/dist/client')));
-
 app.get('*', async (req, res) => {
   const result = await render(req.url);
   const template = path.resolve(__dirname, '../client/dist/client/index.html');
@@ -39,6 +46,12 @@ app.get('*', async (req, res) => {
   res.send(newString);
 });
 
-app.listen(port, () => {
-  console.log(`  ➜ 🎸 Server is listening on port: ${port}`);
+const server = https.createServer({ key: options.key, cert: options.cert }, app);
+
+server.listen(8000, () => {
+  console.log('listening on 8000'); 
 });
+
+// app.listen(port, () => {
+//   console.log(`  ➜ 🎸 Server is listening on port: ${port}`);
+// });
