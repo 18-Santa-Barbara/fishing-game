@@ -32,12 +32,11 @@ const useStyles = makeStyles(() => ({
 }));
 
 type ProfileListProps = {
-  classes: ClassNameMap;
   editProfile: () => void;
 };
 
 function ProfileList(props: ProfileListProps) {
-  const { classes, editProfile } = props;
+  const { editProfile } = props;
   const { data: user } = useGetUserQuery();
   const [logout] = useLogoutMutation();
   const classes = useStyles();
