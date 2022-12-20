@@ -2,7 +2,8 @@ import { ForumModel } from './models/forum.model';
 import type { SequelizeOptions } from 'sequelize-typescript';
 import { Sequelize } from 'sequelize-typescript';
 import { ThemeModel } from './models/theme.model';
-import { CommentsModel } from './models/comments.routes';
+import { CommentsModel } from './models/comments.model';
+import { LikesModel } from './models/likes.models';
 
 const { POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_PORT } =
   process.env;
@@ -23,6 +24,7 @@ const sequelize = new Sequelize(sequelizeOptions);
 export const Theme = sequelize.define('Theme', ThemeModel, {});
 export const Forum = sequelize.define('Forum', ForumModel, {});
 export const Comments = sequelize.define('Comments', CommentsModel, {});
+export const Like = sequelize.define('Likes', LikesModel, {});
 
 export async function connect() {
   try {

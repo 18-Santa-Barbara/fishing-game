@@ -14,6 +14,7 @@ export const create = (req: Request, res: Response) => {
     postId: req.body.postId,
     body: req.body.body,
     date: req.body.date,
+    comment: req.body.comment,
   };
 
   const stringCookie = Object.keys(req.cookies)

@@ -20,6 +20,8 @@ import {
 } from '../services/commentsApi';
 import { useGetFeaturedForumQuery } from '../services/forumApi';
 import { CommentPost } from '../types/forum';
+import { useGetUserQuery } from '../services/userApi';
+import Likes from './components/forum/Likes';
 
 const useStyles = makeStyles(() => ({
   root: { marginTop: '30px' },
@@ -34,11 +36,14 @@ const useStyles = makeStyles(() => ({
     padding: '16px',
   },
   btn: {
-    margin: '12px 0',
-    width: '33%',
+    margin: '0px 10px',
+    width: '13%',
   },
   centerText: {
     textAlign: 'center',
+  },
+  reply: {
+    opacity: '70%',
   },
   table: {},
 }));
@@ -48,11 +53,14 @@ function Comments() {
   const navigate = useNavigate();
 
   const { id } = useParams();
+  const { data: user } = useGetUserQuery();
   const { data: comments, isLoading } = useGetCommentsByIdQuery({ id });
   const { data: postName } = useGetFeaturedForumQuery(id);
 
   const [addCommentPost] = useSetCommentsMutation();
+
   const [body, setBody] = useState('');
+  const [replyComment, setReplyComment] = useState({});
 
   const navigateBack = () => {
     navigate(FORUM_URL);
@@ -61,14 +69,16 @@ function Comments() {
   const handleClickNewComment = () => {
     const commentData: CommentPost = {
       postId: +id,
-      author: postName.author,
+      author: user.login,
       body,
       date: new Date().toDateString(),
+      comment: replyComment,
     };
 
     addCommentPost(commentData)
       .then(() => {
         setBody('');
+        setReplyComment({});
       })
       .catch(err => console.warn('error: ', err));
   };
@@ -124,23 +134,41 @@ function Comments() {
       </Card>
       {comments &&
         !!comments.length &&
-        comments.map(
-          (comment: {
-            postId: string | number;
-            author: string;
-            date: string;
-            body: string;
-          }) => (
-            <Card className={classes.root}>
-              <CardHeader title={comment.author} subheader={comment.date} />
-              <CardContent>
-                <Typography variant="h5" component="p">
-                  {comment.body}
-                </Typography>
-              </CardContent>
-            </Card>
-          )
-        )}
+        comments
+          .slice(0)
+          .reverse()
+          .map(
+            (post: {
+              id: number;
+              postId: string | number;
+              author: string;
+              date: string;
+              body: string;
+              comment: any;
+            }) => (
+              <Card className={classes.root}>
+                <CardHeader title={post.author} subheader={post.date} />
+                <Button
+                  className={classes.btn}
+                  variant="outlined"
+                  onClick={() => setReplyComment(post)}>
+                  Reply
+                </Button>
+                <CardContent>
+                  <Typography
+                    className={classes.reply}
+                    variant="button"
+                    component="p">
+                    {post.comment.body}
+                  </Typography>
+                  <Typography variant="h5" component="p">
+                    {post.body}
+                  </Typography>
+                  <Likes id={post.id} />
+                </CardContent>
+              </Card>
+            )
+          )}
     </Container>
   );
 }
