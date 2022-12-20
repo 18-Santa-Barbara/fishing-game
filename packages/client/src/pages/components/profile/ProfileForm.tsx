@@ -10,7 +10,6 @@ import { validateValue } from '../../../utils/validator';
 import { fields } from '../../ProfilePage';
 
 type ProfilePageState = {
-  // [key: string]: string | boolean | User;
   error: string;
   user: UserToServer;
   check: UserToServer;
