@@ -11,3 +11,8 @@ export type CommentPost = {
     body: string,
     date: string
 }
+
+export type LikePost = {
+    commentId: number,
+    author: string,
+}

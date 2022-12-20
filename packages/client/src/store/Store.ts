@@ -5,6 +5,7 @@ import { leaderApi } from '../services/leaderApi';
 import { forumApi } from '../services/forumApi';
 import { commentApi } from '../services/commentsApi';
 import { themeApi } from '../services/themeApi';
+import { likesApi } from '../services/likesApi';
 
 export function createStore() {
   const preloadedState =
@@ -18,15 +19,17 @@ export function createStore() {
       [leaderApi.reducerPath]: leaderApi.reducer,
       [forumApi.reducerPath]: forumApi.reducer,
       [commentApi.reducerPath]: commentApi.reducer,
-      [themeApi.reducerPath]: themeApi.reducer
+      [themeApi.reducerPath]: themeApi.reducer,
+      [likesApi.reducerPath]: likesApi.reducer,
     },
-    middleware: getDefaultMiddleware => 
+    middleware: getDefaultMiddleware =>
       getDefaultMiddleware().concat(
-        userApi.middleware, 
+        userApi.middleware,
         forumApi.middleware,
         leaderApi.middleware,
         themeApi.middleware,
-        commentApi.middleware
+        commentApi.middleware,
+        likesApi.middleware
       ),
     preloadedState,
   });

@@ -21,6 +21,8 @@ import {
 } from '../services/commentsApi';
 import { useGetFeaturedForumQuery } from '../services/forumApi';
 import { CommentPost } from '../types/forum';
+import { useGetUserQuery } from '../services/userApi';
+import { useGetLikesQuery, useSetLikesMutation } from '../services/likesApi';
 
 const useStyles = makeStyles(() => ({
   root: { marginTop: '30px' },
@@ -49,9 +51,12 @@ function Comments() {
   const navigate = useNavigate();
 
   const { id } = useParams();
+  const { data: user } = useGetUserQuery();
   const { data: comments, isLoading } = useGetCommentsByIdQuery({ id });
   const { data: postName } = useGetFeaturedForumQuery(id);
+  const { data: likes } = useGetLikesQuery();
 
+  const [addLikes, responseLikes] = useSetLikesMutation();
   const [addCommentPost, responseComment] = useSetCommentsMutation();
   const [body, setBody] = useState('');
 
@@ -59,10 +64,19 @@ function Comments() {
     navigate(FORUM_URL);
   };
 
+  const handleClickLike = (id: number) => {
+    const likeData = {
+      commentId: id,
+      author: user.login,
+    };
+
+    addLikes(likeData).catch(err => console.warn('error: ', err));
+  };
+
   const handleClickNewComment = () => {
     const commentData: CommentPost = {
       postId: +id,
-      author: postName.author,
+      author: user.author,
       body,
       date: new Date().toDateString(),
     };
@@ -78,7 +92,7 @@ function Comments() {
     return <div>Loading...</div>;
   }
 
-  if (!postName) {
+  if (!postName || !likes) {
     return null;
   }
 
@@ -127,6 +141,7 @@ function Comments() {
         !!comments.length &&
         comments.map(
           (comment: {
+            id: number;
             postId: string | number;
             author: string;
             date: string;
@@ -138,8 +153,16 @@ function Comments() {
                 <Typography variant="h5" component="p">
                   {comment.body}
                 </Typography>
-                <IconButton onClick={navigateBack}>
+                <IconButton onClick={() => handleClickLike(comment.id)}>
                   <ThumbUpOffAltIcon />
+                  {likes.map(
+                    (like: { id: number; commentId: number; author: string }) =>
+                      like.commentId === comment.id ? (
+                        <Typography component="p">{comment.id}</Typography>
+                      ) : (
+                        <Typography component="p">{comment.id}</Typography>
+                      )
+                  )}
                 </IconButton>
               </CardContent>
             </Card>
