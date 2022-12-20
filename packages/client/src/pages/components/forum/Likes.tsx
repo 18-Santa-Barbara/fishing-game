@@ -34,7 +34,6 @@ function Likes(id: any) {
         .catch((err: any) => console.warn('error: ', err));
     } else {
       addLikes(likeData)
-        .then(() => (userLiked = false))
         .catch((err: any) => console.warn('error: ', err));
     }
   };
@@ -48,7 +47,7 @@ function Likes(id: any) {
   }
 
   return (
-    <IconButton onClick={() => handleClickLike()}>
+    <IconButton onClick={handleClickLike}>
       <ThumbUpOffAltIcon />
       <Typography component="p">{likes.length}</Typography>
     </IconButton>
