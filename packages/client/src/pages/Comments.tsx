@@ -63,7 +63,7 @@ function Comments() {
   const handleClickNewComment = () => {
     const commentData: CommentPost = {
       postId: +id,
-      author: user.author,
+      author: user.login,
       body,
       date: new Date().toDateString(),
     };
