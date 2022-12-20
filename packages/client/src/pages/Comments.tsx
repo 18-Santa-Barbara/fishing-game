@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import { useState } from 'react';
 import { FORUM_URL } from '../utils/constants';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -22,7 +21,7 @@ import {
 import { useGetFeaturedForumQuery } from '../services/forumApi';
 import { CommentPost } from '../types/forum';
 import { useGetUserQuery } from '../services/userApi';
-import { useGetLikesQuery, useSetLikesMutation } from '../services/likesApi';
+import Likes from './components/forum/Likes';
 
 const useStyles = makeStyles(() => ({
   root: { marginTop: '30px' },
@@ -54,23 +53,11 @@ function Comments() {
   const { data: user } = useGetUserQuery();
   const { data: comments, isLoading } = useGetCommentsByIdQuery({ id });
   const { data: postName } = useGetFeaturedForumQuery(id);
-  const { data: likes } = useGetLikesQuery();
-
-  const [addLikes, responseLikes] = useSetLikesMutation();
-  const [addCommentPost, responseComment] = useSetCommentsMutation();
+  const [addCommentPost] = useSetCommentsMutation();
   const [body, setBody] = useState('');
 
   const navigateBack = () => {
     navigate(FORUM_URL);
-  };
-
-  const handleClickLike = (id: number) => {
-    const likeData = {
-      commentId: id,
-      author: user.login,
-    };
-
-    addLikes(likeData).catch(err => console.warn('error: ', err));
   };
 
   const handleClickNewComment = () => {
@@ -92,7 +79,7 @@ function Comments() {
     return <div>Loading...</div>;
   }
 
-  if (!postName || !likes) {
+  if (!postName) {
     return null;
   }
 
@@ -153,17 +140,7 @@ function Comments() {
                 <Typography variant="h5" component="p">
                   {comment.body}
                 </Typography>
-                <IconButton onClick={() => handleClickLike(comment.id)}>
-                  <ThumbUpOffAltIcon />
-                  {likes.map(
-                    (like: { id: number; commentId: number; author: string }) =>
-                      like.commentId === comment.id ? (
-                        <Typography component="p">{comment.id}</Typography>
-                      ) : (
-                        <Typography component="p">{comment.id}</Typography>
-                      )
-                  )}
-                </IconButton>
+                <Likes id={comment.id} />
               </CardContent>
             </Card>
           )

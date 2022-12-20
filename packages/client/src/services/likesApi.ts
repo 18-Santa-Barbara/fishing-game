@@ -20,10 +20,16 @@ export const likesApi = createApi({
   }),
   tagTypes: ['LIKE'],
   endpoints: builder => ({
-    getLikes: builder.query<any, void>({
-        query: () => 'likes',
-        providesTags: ['LIKE'],
-      }),
+    getLikesById: builder.query<any, { id: string | number }>({
+      query: arg => {
+        const { id } = arg;
+        return {
+          url: 'likes',
+          params: { id },
+        };
+      },
+      providesTags: ['LIKE'],
+    }),
     setLikes: builder.mutation({
       query: payload => ({
         url: `likes`,
@@ -32,7 +38,15 @@ export const likesApi = createApi({
       }),
       invalidatesTags: ['LIKE'],
     }),
+    deleteLikes: builder.mutation({
+      query: payload => ({
+        url: `likes`,
+        method: 'DELETE',
+        body: payload,
+      }),
+      invalidatesTags: ['LIKE'],
+    }),
   }),
 });
 
-export const { useGetLikesQuery, useSetLikesMutation } = likesApi;
+export const { useGetLikesByIdQuery, useSetLikesMutation, useDeleteLikesMutation } = likesApi;
