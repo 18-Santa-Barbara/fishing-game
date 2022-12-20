@@ -6,7 +6,7 @@ export interface IComments {
   author: string;
   body: string;
   date: string;
-  comment: {};
+  comment: Record<string, unknown>;
 }
 
 const { STRING, INTEGER, JSON } = DataType;

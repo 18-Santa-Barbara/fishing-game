@@ -10,7 +10,7 @@ export type CommentPost = {
   author: string;
   body: string;
   date: string;
-  comment?: {};
+  comment?: Record<string, unknown>;
 };
 
 export type LikePost = {
