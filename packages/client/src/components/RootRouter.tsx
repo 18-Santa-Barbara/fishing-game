@@ -60,7 +60,6 @@ const RootRouter = () => {
           />
           <Route path={FORUM_URL} element={<Forum />} />
           <Route path={`${COMMENTS_URL}/:id`} element={<Comments />} />
-          <Route path={`${COMMENTS_URL}/:id`} element={<Comments />} />
           <Route
             path={CHANGE_PASS_URL}
             element={
