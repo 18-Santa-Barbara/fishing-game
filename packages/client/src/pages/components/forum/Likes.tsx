@@ -7,6 +7,8 @@ import {
   useSetLikesMutation,
 } from '../../../services/likesApi';
 
+let userLiked = false;
+
 function Likes(id: any) {
   const { data: user } = useGetUserQuery();
   const { data: likes, isLoading } = useGetLikesByIdQuery(id);
@@ -15,20 +17,26 @@ function Likes(id: any) {
   const [deleteLikes] = useDeleteLikesMutation();
 
   const handleClickLike = () => {
-
     const likeData = {
       commentId: id.id,
       author: user.login,
     };
 
-    addLikes(likeData).catch((err: any) => console.warn('error: ', err));
-
     likes.map((like: any) => {
-      if (like.author === user.login) {
-        deleteLikes(likeData).catch((err: any) => console.warn('error: ', err));
+      if (like.author == user.login) {
+        userLiked = true;
       }
     });
 
+    if (userLiked) {
+      deleteLikes(likeData)
+        .then(() => (userLiked = false))
+        .catch((err: any) => console.warn('error: ', err));
+    } else {
+      addLikes(likeData)
+        .then(() => (userLiked = false))
+        .catch((err: any) => console.warn('error: ', err));
+    }
   };
 
   if (isLoading) {
@@ -36,10 +44,7 @@ function Likes(id: any) {
   }
 
   if (!likes) {
-    <IconButton onClick={() => handleClickLike()}>
-      <ThumbUpOffAltIcon />
-      <Typography component="p">0</Typography>
-    </IconButton>;
+    return null;
   }
 
   return (
