@@ -56,6 +56,8 @@ const GamePage = () => {
 
   // начало игры
   const startGame = () => {
+    
+    Notification.requestPermission();
     gameData.sound.volume = 0.2;
     gameData.sound.play().catch(err => console.warn('error: ', err));
 
@@ -76,6 +78,10 @@ const GamePage = () => {
       (gameData.final.diamonds = 0),
       (gameData.final.time = 0),
       setStopTimer(true);
+  };
+
+  const pointerLock = () => {
+    canvasRef.current.requestPointerLock();
   };
 
   const fullScreen = () => {
@@ -131,8 +137,10 @@ const GamePage = () => {
 
   function animate() {
     window.scrollTo(0, 0);
-
     document.body.classList.add('no-scroll');
+
+    performance.getEntriesByType('resource');
+
     requestAnimationFrame(animate);
     context.fillStyle = 'white';
     context.fillRect(0, 0, canvasRef.width, canvasRef.height);
@@ -207,7 +215,10 @@ const GamePage = () => {
               teamName: 'Santa-Barbara',
             });
 
-            console.warn(`Победа!`);
+            
+            if (Notification.permission === "granted") {
+              const notification = new Notification("Thanks for playing. Check your statistics in Leaderboard.");
+            }
           }
 
           setTimeout(() => {
@@ -474,7 +485,12 @@ const GamePage = () => {
       onKeyDown={e => movePlayer(e)}
       onKeyUp={e => stopPlayer(e)}
       ref={viewTargetRef}>
-      <canvas width="1024px" height="576px" ref={canvasRef} />
+      <canvas
+        width="1024px"
+        height="576px"
+        ref={canvasRef}
+        onClick={pointerLock}
+      />
       <div className="game-interface">
         <div className="game-interface_statistics">
           {start ? (
