@@ -20,12 +20,14 @@ function App() {
   const [signInYandex] = useSignInYandexMutation();
   const appTheme = isDarkTheme?.isDark ? darkTheme : lightTheme;
 
-  const [seacrhParams] = useSearchParams();
+  const [seacrhParams, setSearchParams] = useSearchParams();
   const code = seacrhParams.get('code');
 
   useEffect(() => {
     if (code) {
-      signInYandex(code);
+      signInYandex(code)
+      console.log(code)
+      setSearchParams({});
     }
   }, []);
 
