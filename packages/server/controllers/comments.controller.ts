@@ -7,6 +7,7 @@ type Comment = {
   body: string;
   date: string;
   author?: string;
+  comment: string;
 };
 
 export const create = (req: Request, res: Response) => {

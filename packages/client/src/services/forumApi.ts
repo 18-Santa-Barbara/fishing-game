@@ -14,7 +14,7 @@ export const initialState: ForumPost = {
 export const forumApi = createApi({
   reducerPath: 'forumApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `api/`,
+    baseUrl: `/api/forums`,
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
@@ -24,17 +24,17 @@ export const forumApi = createApi({
   tagTypes: ['FORUM'],
   endpoints: builder => ({
     getForum: builder.query<any, void>({
-      query: () => 'forums',
+      query: () => '',
       providesTags: ['FORUM'],
     }),
     getFeaturedForum: builder.query({
-      query: (id: number) => `forums/${id}`
+      query: (id: number) => `/${id}`,
     }),
     setForum: builder.mutation({
       query: payload => ({
-        url: 'forums',
+        url: '',
         method: 'POST',
-        body: payload
+        body: payload,
       }),
       invalidatesTags: ['FORUM'],
     }),

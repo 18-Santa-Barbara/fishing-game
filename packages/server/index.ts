@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import * as path from 'path';
 import * as fs from 'fs';
-import https from 'https';
+// import https from 'https';
 import cookieParser from 'cookie-parser';
 dotenv.config();
 
@@ -20,17 +20,16 @@ import likesRouter from './routes/likes.routes';
 import helmet from 'helmet';
 
 
-const options = {
-  key: fs.readFileSync('key.pem'),
-  cert: fs.readFileSync('cert.pem'),
-};
+// const options = {
+//   key: fs.readFileSync('key.pem'),
+//   cert: fs.readFileSync('cert.pem'),
+// };
 const app = express();
 
 app.use(helmet());
 app.use(cors());
 app.use(cookieParser());
 
-// const port = Number(process.env.SERVER_PORT) || 3001;
 app.use(express.json());
 
 app.use('/api/forums', forumRouter);
@@ -48,12 +47,13 @@ app.get('*', async (req, res) => {
   res.send(newString);
 });
 
-const server = https.createServer({ key: options.key, cert: options.cert }, app);
+// const server = https.createServer({ key: options.key, cert: options.cert }, app);
 
-server.listen(8000, () => {
-  console.log('listening on 8000'); 
-});
-
-// app.listen(port, () => {
-//   console.log(`  ➜ 🎸 Server is listening on port: ${port}`);
+// server.listen(8000, () => {
+//   console.log('listening on 8000'); 
 // });
+
+const port = Number(process.env.SERVER_PORT) || 3001;
+app.listen(port, () => {
+  console.log(`  ➜ 🎸 Server is listening on port: ${port}`);
+});
