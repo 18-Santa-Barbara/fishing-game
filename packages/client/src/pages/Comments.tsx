@@ -48,12 +48,22 @@ const useStyles = makeStyles(() => ({
   table: {},
 }));
 
+type PostComment = {
+  id?: number;
+  postId: string | number;
+  author: string;
+  date: string;
+  body: string;
+  comment: any;
+};
+
 function Comments() {
   const classes = useStyles();
   const navigate = useNavigate();
 
   const { id } = useParams();
   const { data: user } = useGetUserQuery();
+  const { data: comments, isLoading } = useGetCommentsByIdQuery(id);
   const { data: postName } = useGetFeaturedForumQuery(id);
   const { data: comments, isLoading } = useGetCommentsByIdQuery(id);
 
@@ -132,43 +142,46 @@ function Comments() {
           </CardActions>
         </CardContent>
       </Card>
-      {comments &&
-        !!comments.length &&
-        comments
-          .slice(0)
-          .reverse()
-          .map(
-            (post: {
-              id: number;
-              postId: string | number;
-              author: string;
-              date: string;
-              body: string;
-              comment: any;
-            }) => (
-              <Card className={classes.root}>
-                <CardHeader title={post.author} subheader={post.date} />
-                <Button
-                  className={classes.btn}
-                  variant="outlined"
-                  onClick={() => setReplyComment(post)}>
-                  Reply
-                </Button>
-                <CardContent>
+      {!!comments.length &&
+        [...comments].reverse().map((post: PostComment) => (
+          <Card key={post.id} className={classes.root}>
+            <CardHeader title={post.author} subheader={post.date} />
+            <Button
+              className={classes.btn}
+              variant="outlined"
+              onClick={() => setReplyComment(post)}>
+              Reply
+            </Button>
+            <CardContent>
+              {post.comment.body && (
+                <div
+                  style={{
+                    border: '1px solid #c6c6c6',
+                    borderRadius: '4px',
+                    padding: '4px 12px',
+                  }}>
+                  <Typography variant="caption" className={classes.reply}>
+                    Reply to message from{' '}
+                    <span style={{ fontSize: '14px', fontWeight: 'bold' }}>
+                      {post.comment.author}
+                    </span>
+                    :
+                  </Typography>
                   <Typography
                     className={classes.reply}
-                    variant="button"
+                    variant="body1"
                     component="p">
                     {post.comment.body}
                   </Typography>
-                  <Typography variant="h5" component="p">
-                    {post.body}
-                  </Typography>
-                  <Likes id={post.id} />
-                </CardContent>
-              </Card>
-            )
-          )}
+                </div>
+              )}
+              <pre>
+                <Typography variant="body1">{post.body}</Typography>
+              </pre>
+              <Likes id={post.id} />
+            </CardContent>
+          </Card>
+        ))}
     </Container>
   );
 }

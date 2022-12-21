@@ -11,12 +11,7 @@ type Comment = {
 };
 
 export const create = (req: Request, res: Response) => {
-  const comment: Comment = {
-    postId: req.body.postId,
-    body: req.body.body,
-    date: req.body.date,
-    comment: req.body.comment,
-  };
+  const {postId, author, body, date, comment} = req.body;
 
   const stringCookie = Object.keys(req.cookies)
     .map(key => `${key}=${req.cookies[key]}`)
@@ -28,7 +23,7 @@ export const create = (req: Request, res: Response) => {
     })
     .then(({ data }) => {
       comment.author = data.login;
-      Comments.create(comment)
+      Comments.create({ postId, author, body, date, comment })
         .then((data: any) => {
           res.send(data);
         })
@@ -50,10 +45,9 @@ export const create = (req: Request, res: Response) => {
 };
 
 export const findAll = (req: Request, res: Response) => {
-  console.log(req.query);
-  const id = req.query.id;
+  const {postId} = req.params;
 
-  Comments.findAll({ where: { postId: id } })
+  Comments.findAll({ where: { postId } })
     .then((data: any) => {
       res.send(data);
     })

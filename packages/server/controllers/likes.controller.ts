@@ -39,10 +39,9 @@ export const findOne = (req: Request, res: Response) => {
 };
 
 export const findAll = (req: Request, res: Response) => {
-  const id = req.query.id;
-  console.log(req.query, req.params);
+  const { commentId } = req.params;
 
-  Like.findAll({ where: { commentId: id } })
+  Like.findAll({ where: { commentId } })
     .then((data: any) => {
       res.send(data);
     })

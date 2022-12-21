@@ -1,5 +1,14 @@
 /* eslint-disable no-empty-pattern */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { CommentPost } from '../types/forum';
+
+export const initialState: CommentPost = {
+  postId: 0,
+  author: '',
+  body: '',
+  date: '',
+  comment: {},
+};
 
 export const commentApi = createApi({
   reducerPath: 'commentApi',

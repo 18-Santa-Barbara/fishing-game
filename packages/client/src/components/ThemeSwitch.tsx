@@ -11,7 +11,6 @@ const ThemeSwitch = () => {
     isSuccess ? data.id : skipToken
   );
   const [changeTheme] = useChangeThemeMutation();
-  console.log(data, isError);
   if (!data || isError) {
     return null;
   }

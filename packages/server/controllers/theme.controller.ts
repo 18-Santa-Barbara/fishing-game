@@ -18,7 +18,6 @@ export const getThemeById = (req: Request, res: Response) => {
 
 export const changeThemeById = (req: Request, res: Response) => {
   const { userId, isDark } = req.body;
-  console.log(req.body);
   return Theme.update(
     { isDark },
     {

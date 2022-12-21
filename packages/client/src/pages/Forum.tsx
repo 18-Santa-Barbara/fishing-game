@@ -40,7 +40,7 @@ const useStyles = makeStyles(() => ({
     position: 'absolute',
     top: '50%',
     left: '50%',
-    minWidth: '750px',
+    minWidth: '70%',
     transform: 'translate(-50%, -50%)',
     padding: '16px',
   },
