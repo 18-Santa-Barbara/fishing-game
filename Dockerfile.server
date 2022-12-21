@@ -30,11 +30,13 @@ RUN rm -rf /app/packages/server/dist/ && yarn build --scope=server
 
 
 FROM node:$NODE_VERSION-buster-slim as production
+# RUN npm install -g nc
 WORKDIR /app
 
 COPY --from=client /app/packages/client/dist/ /client/dist/
 COPY --from=builder /app/packages/server/dist/ /app/
 COPY --from=builder /app/packages/server/package.json /app/package.json
+# RUN chmod +x /wait-for.sh
 RUN yarn install --production=true
 
 EXPOSE $SERVER_PORT

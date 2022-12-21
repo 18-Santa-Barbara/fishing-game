@@ -1,7 +1,7 @@
 /* eslint-disable no-empty-pattern */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { User } from '../types/client';
-import { API } from '../utils/constants';
+import { API, REDIRECT_URI } from '../utils/constants';
 
 export const initialState: User = {
   id: null,
@@ -97,6 +97,19 @@ export const userApi = createApi({
       }),
       invalidatesTags: ['USER'],
     }),
+    signInYandex: builder.mutation({
+      query: code => ({
+        url: `oauth/yandex`,
+        method: 'POST',
+        body: { code, redirect_uri: REDIRECT_URI },
+      }),
+      invalidatesTags: (_, res) => {
+        if (res?.data === 'OK') {
+          return ['USER'];
+        }
+        return [];
+      },
+    }),
   }),
 });
 
@@ -110,4 +123,5 @@ export const {
   useChangePassMutation,
   useChangeAvatarMutation,
   useServiceIDMutation,
+  useSignInYandexMutation,
 } = userApi;

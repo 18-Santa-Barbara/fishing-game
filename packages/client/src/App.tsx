@@ -7,15 +7,27 @@ import Header from './components/Header';
 import RootRouter from './components/RootRouter';
 import StartSpinner from './components/StartSpinner';
 import { useGetThemeQuery } from './services/themeApi';
-import { useGetUserQuery } from './services/userApi';
+import { useGetUserQuery, useSignInYandexMutation } from './services/userApi';
 import { darkTheme, lightTheme } from './utils/theme';
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 function App() {
   const { isSuccess, data, isFetching, isError } = useGetUserQuery();
   const { data: isDarkTheme } = useGetThemeQuery(
     isSuccess ? data.id : skipToken
   );
+  const [signInYandex] = useSignInYandexMutation();
   const appTheme = isDarkTheme?.isDark ? darkTheme : lightTheme;
+
+  const [seacrhParams] = useSearchParams();
+  const code = seacrhParams.get('code');
+
+  useEffect(() => {
+    if (code) {
+      signInYandex(code);
+    }
+  }, []);
 
   if (isFetching && isError) {
     return (
