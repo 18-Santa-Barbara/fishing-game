@@ -2,15 +2,9 @@ import type { Request, Response } from 'express';
 import { Comments } from '../db';
 
 export const create = (req: Request, res: Response) => {
-  const comment = {
-    postId: req.body.postId,
-    author: req.body.author,
-    body: req.body.body,
-    date: req.body.date,
-    comment: req.body.comment,
-  };
+  const {postId, author, body, date, comment} = req.body;
 
-  Comments.create(comment)
+  Comments.create({ postId, author, body, date, comment })
     .then((data: any) => {
       res.send(data);
     })
@@ -22,10 +16,9 @@ export const create = (req: Request, res: Response) => {
 };
 
 export const findAll = (req: Request, res: Response) => {
-  console.log(req.query);
-  const id = req.query.id;
+  const {postId} = req.params;
 
-  Comments.findAll({ where: { postId: id } })
+  Comments.findAll({ where: { postId } })
     .then((data: any) => {
       res.send(data);
     })

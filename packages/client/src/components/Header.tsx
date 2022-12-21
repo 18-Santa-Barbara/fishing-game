@@ -1,5 +1,5 @@
 import { AppBar } from '@mui/material';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   GAME_URL,
   BASE_URL,
@@ -29,6 +29,8 @@ function setHeader(link: string) {
   }
 }
 
+const links = [GAME_URL, PROFILE_URL, LEADERBOARD_URL, FORUM_URL];
+
 const Header = () => {
   const data = useLocation();
   return (
@@ -39,7 +41,7 @@ const Header = () => {
         p: '12px',
         mb: '12px',
         minHeight: '64px',
-        flexDirection: 'row'
+        flexDirection: 'row',
       }}
       color="primary">
       <div
@@ -47,9 +49,16 @@ const Header = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          width: '100%'
+          width: '100%',
         }}>
         <span>{setHeader(data.pathname)}</span>
+        <div>
+          {links.map(linkTo => (
+            <Link style={{ margin: '0 12px', color: '#fff' }} to={linkTo}>
+              {setHeader(linkTo)}
+            </Link>
+          ))}
+        </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <ThemeSwitch />
         </div>

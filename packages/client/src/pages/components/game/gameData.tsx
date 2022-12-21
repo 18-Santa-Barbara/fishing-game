@@ -22,7 +22,6 @@ import { Enemy } from './enemy';
 import { Chest } from './chest';
 import { API } from '../../../utils/constants';
 import { Player } from '../../Leaderboard';
-import { useEffect, useState } from 'react';
 
 export function getGameData() {
   // основные переменные

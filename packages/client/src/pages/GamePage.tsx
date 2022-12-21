@@ -31,7 +31,7 @@ const leader: Player = {
 };
 
 const GamePage = () => {
-  const [addNewLeader, response] = useSetLeaderMutation();
+  const [addNewLeader] = useSetLeaderMutation();
   const { data: user } = useGetUserQuery();
   const [toggle, setToggle] = useState(false);
 

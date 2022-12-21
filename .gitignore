@@ -4,3 +4,5 @@ node_modules/
 .vscode
 dist
 tmp
+packages/server/cert.pem
+packages/server/key.pem

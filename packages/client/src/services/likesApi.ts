@@ -1,5 +1,6 @@
 /* eslint-disable no-empty-pattern */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { LikesProps } from '../pages/components/forum/Likes';
 import { LikePost } from '../types/forum';
 import { PORT } from '../utils/constants';
 
@@ -11,7 +12,7 @@ export const initialState: LikePost = {
 export const likesApi = createApi({
   reducerPath: 'likeApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${PORT}/`,
+    baseUrl: `/api/likes`,
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
@@ -20,19 +21,13 @@ export const likesApi = createApi({
   }),
   tagTypes: ['LIKE'],
   endpoints: builder => ({
-    getLikesById: builder.query<any, { id: string | number }>({
-      query: arg => {
-        const { id } = arg;
-        return {
-          url: 'likes',
-          params: { id },
-        };
-      },
+    getLikesById: builder.query<any, LikesProps>({
+      query: id => `/${id}`,
       providesTags: ['LIKE'],
     }),
     setLikes: builder.mutation({
       query: payload => ({
-        url: `likes`,
+        url: ``,
         method: 'POST',
         body: payload,
       }),
@@ -40,7 +35,7 @@ export const likesApi = createApi({
     }),
     deleteLikes: builder.mutation({
       query: payload => ({
-        url: `likes`,
+        url: ``,
         method: 'DELETE',
         body: payload,
       }),

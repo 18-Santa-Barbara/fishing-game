@@ -1,7 +1,6 @@
 /* eslint-disable no-empty-pattern */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { CommentPost } from '../types/forum';
-import { PORT } from '../utils/constants';
 
 export const initialState: CommentPost = {
   postId: 0,
@@ -14,7 +13,7 @@ export const initialState: CommentPost = {
 export const commentApi = createApi({
   reducerPath: 'commentApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${PORT}/`,
+    baseUrl: `/api/comments`,
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
@@ -24,18 +23,12 @@ export const commentApi = createApi({
   tagTypes: ['COMMENT'],
   endpoints: builder => ({
     getCommentsById: builder.query<any, { id: string | number }>({
-      query: arg => {
-        const { id } = arg;
-        return {
-          url: 'comments',
-          params: { id },
-        };
-      },
+      query: id => `/${id}`,
       providesTags: ['COMMENT'],
     }),
     setComments: builder.mutation({
       query: payload => ({
-        url: `comments`,
+        url: ``,
         method: 'POST',
         body: payload,
       }),
@@ -43,7 +36,7 @@ export const commentApi = createApi({
     }),
     setReplyComments: builder.mutation({
       query: payload => ({
-        url: `comments`,
+        url: ``,
         method: 'POST',
         body: payload,
       }),

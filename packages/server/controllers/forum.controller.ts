@@ -23,8 +23,7 @@ export const create = async (req: Request, res: Response) => {
     });
 };
 
-export const findAll = (req: Request, res: Response) => {
-  console.log(req.query.title);
+export const findAll = (_: Request, res: Response) => {
 
   Forum.findAll()
     .then((data: any) => {

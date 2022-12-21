@@ -40,7 +40,7 @@ const useStyles = makeStyles(() => ({
     position: 'absolute',
     top: '50%',
     left: '50%',
-    minWidth: '750px',
+    minWidth: '70%',
     transform: 'translate(-50%, -50%)',
     padding: '16px',
   },
@@ -172,7 +172,7 @@ function Forum() {
             {forum &&
               !!forum.length &&
               forum.map((row: PostType) => (
-                <TableRow key={row.title}>
+                <TableRow key={row.id}>
                   <TableCell component="th" scope="row">
                     {row.title}
                   </TableCell>
