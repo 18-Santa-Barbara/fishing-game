@@ -17,7 +17,7 @@ import forumRouter from './routes/forum.routes';
 import themeRouter from './routes/theme.routes';
 import commentsRouter from './routes/comments.routes';
 import likesRouter from './routes/likes.routes';
-import helmet from 'helmet';
+// import helmet from 'helmet';
 
 
 // const options = {
@@ -26,7 +26,7 @@ import helmet from 'helmet';
 // };
 const app = express();
 
-app.use(helmet());
+// app.use(helmet());
 app.use(cors());
 app.use(cookieParser());
 
