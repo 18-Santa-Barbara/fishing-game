@@ -2,14 +2,6 @@ import axios from 'axios';
 import type { Request, Response } from 'express';
 import { Comments } from '../db';
 
-type Comment = {
-  postId: string;
-  body: string;
-  date: string;
-  author?: string;
-  comment: string;
-};
-
 export const create = (req: Request, res: Response) => {
   const {postId, author, body, date, comment} = req.body;
 

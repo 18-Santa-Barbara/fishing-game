@@ -63,7 +63,6 @@ function Comments() {
 
   const { id } = useParams();
   const { data: user } = useGetUserQuery();
-  const { data: comments, isLoading } = useGetCommentsByIdQuery(id);
   const { data: postName } = useGetFeaturedForumQuery(id);
   const { data: comments, isLoading } = useGetCommentsByIdQuery(id);
 
