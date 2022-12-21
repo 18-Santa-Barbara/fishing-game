@@ -1,5 +1,6 @@
 import { AppBar } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
+import { useGetUserQuery } from '../services/userApi';
 import {
   GAME_URL,
   BASE_URL,
@@ -33,6 +34,7 @@ const links = [GAME_URL, PROFILE_URL, LEADERBOARD_URL, FORUM_URL];
 
 const Header = () => {
   const data = useLocation();
+  const { data: user, isError } = useGetUserQuery();
   return (
     <AppBar
       position="static"
@@ -51,14 +53,23 @@ const Header = () => {
           justifyContent: 'space-between',
           width: '100%',
         }}>
-        <span>{setHeader(data.pathname)}</span>
-        <div>
-          {links.map(linkTo => (
-            <Link style={{ margin: '0 12px', color: '#fff' }} to={linkTo}>
-              {setHeader(linkTo)}
-            </Link>
-          ))}
-        </div>
+        <span style={{color: '#fff'}}>{setHeader(data.pathname)}</span>
+        {user && !isError && (
+          <div>
+            {links.map(linkTo => (
+              <Link
+                key={linkTo}
+                style={{
+                  margin: '0 12px',
+                  color: '#fff',
+                  textDecoration: 'none',
+                }}
+                to={linkTo}>
+                {setHeader(linkTo)}
+              </Link>
+            ))}
+          </div>
+        )}
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <ThemeSwitch />
         </div>
