@@ -31,6 +31,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@@v4
         with:
+          tags: patagys/valkyrie-adventure:latest
           images: petagys/valkyrie-adventure
       
       - name: Build and push Docker image
