@@ -18,7 +18,7 @@ const ThemeSwitch = () => {
     <>
       <IconButton
         onClick={() => {
-          changeTheme({ userId: data.id, isDark: !isDarkTheme.isDark });
+          changeTheme({ userId: data.id, isDark: !isDarkTheme?.isDark });
         }}>
         {isDarkTheme?.isDark ? <Brightness7 /> : <Brightness4 />}
       </IconButton>
