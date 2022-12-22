@@ -12,6 +12,8 @@ RUN yarn install --frozen-lockfile
 
 COPY . .
 
+RUN yarn global add lerna
+
 RUN yarn lerna bootstrap
 RUN rm -rf /app/packages/server/dist/ && yarn build --scope=server
 
@@ -24,7 +26,7 @@ COPY package.json yarn.lock
 RUN yarn install --frozen-lockfile
 
 COPY . .
-
+RUN yarn global add lerna
 RUN yarn lerna bootstrap
 RUN rm -rf /app/packages/server/dist/ && yarn build --scope=server
 
