@@ -26,7 +26,6 @@ function App() {
   useEffect(() => {
     if (code) {
       signInYandex(code)
-      console.log(code)
       setSearchParams({});
     }
   }, []);
