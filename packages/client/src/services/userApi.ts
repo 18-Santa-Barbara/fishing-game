@@ -1,7 +1,7 @@
 /* eslint-disable no-empty-pattern */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { User } from '../types/client';
-import { API } from '../utils/constants';
+import { API, REDIRECT_URI } from '../utils/constants';
 
 export const initialState: User = {
   id: null,
@@ -50,7 +50,7 @@ export const userApi = createApi({
         body: payload,
       }),
       invalidatesTags: (_, res) => {
-        if (res?.data === 'OK') {
+        if (res?.data) {
           return ['USER'];
         }
         return [];
@@ -83,6 +83,12 @@ export const userApi = createApi({
         body: payload,
       }),
     }),
+    serviceID: builder.mutation({
+      query: url => ({
+        url: `${API}/oauth/yandex/service-id?redirect_uri=${url}`,
+        method: 'GET',
+      }),
+    }),
     changeAvatar: builder.mutation({
       query: payload => ({
         url: 'user/profile/avatar',
@@ -90,6 +96,19 @@ export const userApi = createApi({
         body: payload,
       }),
       invalidatesTags: ['USER'],
+    }),
+    signInYandex: builder.mutation({
+      query: code => ({
+        url: `oauth/yandex`,
+        method: 'POST',
+        body: { code, redirect_uri: REDIRECT_URI },
+      }),
+      invalidatesTags: (_, res) => {
+        if (res?.data === 'OK') {
+          return ['USER'];
+        }
+        return [];
+      },
     }),
   }),
 });
@@ -99,7 +118,10 @@ export const {
   useGetUserQuery,
   useLogInMutation,
   useLogoutMutation,
+  useSignUpMutation,
   useChangeProfileMutation,
   useChangePassMutation,
   useChangeAvatarMutation,
+  useServiceIDMutation,
+  useSignInYandexMutation,
 } = userApi;

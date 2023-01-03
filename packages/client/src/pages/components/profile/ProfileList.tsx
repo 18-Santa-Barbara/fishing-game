@@ -4,14 +4,13 @@ import {
   ListItem,
   ListItemText,
   Link as LinkM,
-  ClassNameMap,
 } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { makeStyles } from '@mui/styles';
 import { Link } from 'react-router-dom';
 import { useGetUserQuery, useLogoutMutation } from '../../../services/userApi';
 import { fields } from '../../ProfilePage';
 
-const styles = {
+const useStyles = makeStyles(() => ({
   linkBlock: {
     margin: '0 0 8px',
   },
@@ -21,6 +20,7 @@ const styles = {
   },
   li: {
     width: '40vw',
+    padding: '0 12px',
     '&:not(:last-child)': {
       borderBottom: '1px solid #c6c6c6',
     },
@@ -29,17 +29,17 @@ const styles = {
     margin: '12px 0',
     width: '33%',
   },
-};
+}));
 
 type ProfileListProps = {
-  classes: ClassNameMap;
   editProfile: () => void;
 };
 
 function ProfileList(props: ProfileListProps) {
-  const { classes, editProfile } = props;
+  const { editProfile } = props;
   const { data: user } = useGetUserQuery();
   const [logout] = useLogoutMutation();
+  const classes = useStyles();
 
   const logOut = () => {
     logout();
@@ -62,7 +62,7 @@ function ProfileList(props: ProfileListProps) {
         Edit profile
       </Button>
       <div className={classes.linkBlock}>
-        <Link to={'/pass'}>Change password</Link>
+        <Link  to={'/pass'}>Change password</Link>
       </div>
       <div className={classes.linkBlock}>
         <Link to={'/game'}>Back to the game</Link>
@@ -76,4 +76,4 @@ function ProfileList(props: ProfileListProps) {
   );
 }
 
-export default withStyles(styles)(ProfileList);
+export default ProfileList;

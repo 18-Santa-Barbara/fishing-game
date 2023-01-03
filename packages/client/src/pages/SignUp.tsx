@@ -13,7 +13,7 @@ type SignUpState = {
   form: UserToServer;
   check: UserToServer;
   error: string;
-}
+};
 
 const styles: StyleRules = {
   paper: {
@@ -80,22 +80,20 @@ class SignUp extends Component<SignUpProps, SignUpState> {
       form: {
         ...prevState.form,
         [name]: value,
-      }
+      },
     }));
   };
 
   checkInput = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
     const checkValue: string = validateValue(name, value);
-    if (checkValue) {
-      this.setState((prevState: SignUpState) => ({
-        ...prevState,
-        check: {
-          ...prevState.check,
-          [name]: checkValue
-        }
-      }));
-    }
+    this.setState((prevState: SignUpState) => ({
+      ...prevState,
+      check: {
+        ...prevState.check,
+        [name]: checkValue,
+      },
+    }));
   };
 
   submit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -128,6 +126,9 @@ class SignUp extends Component<SignUpProps, SignUpState> {
               // @ts-ignore
               this.setState({ error: response.error.data.reason }); //Ну это жесть, как это можно переделать?
             }
+            // @ts-ignore
+          } else if (response.data) {
+            navigate(GAME_URL);
           }
         }
       );

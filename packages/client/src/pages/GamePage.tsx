@@ -1,14 +1,16 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import './components/game/styles/game.css';
 
-import { FullScreenButton } from './components/fullScreenApiButton';
-import { apiRequestGet } from '../utils/api';
-import { API, LEADERBOARD_URL } from '../utils/constants';
-import { postLeader } from './Leaderboard';
+import { LEADERBOARD_URL } from '../utils/constants';
+import { Player } from './Leaderboard';
 
-import * as gameData from './components/game/gameData';
+import { getGameData } from './components/game/gameData';
 import { Timer } from './components/game/timer';
 import { useNavigate } from 'react-router-dom';
+
+import { Leader } from './Leaderboard';
+import { useSetLeaderMutation } from '../services/leaderApi';
+import { useGetUserQuery } from '../services/userApi';
 
 let context: any;
 let offset = 0;
@@ -17,27 +19,48 @@ let keyPressed = false;
 // условия финиша
 let finish = false;
 let finishRun = false;
+let gameIsOver = false;
 let skeletonIsDead = false;
+let enemiesAreDead = false;
 
-// самофункция для получения юзернейма лидера
-(function getUser() {
-  apiRequestGet(`${API}/auth/user`)
-    .then(res => {
-      gameData.leader.name = res.login;
-    })
-    .catch(err => {
-      console.warn(111, err);
-    });
-})();
+// дата для лидерборда
+const leader: Player = {
+  name: '',
+  date: '',
+  score: 0,
+};
 
 const GamePage = () => {
+  const [addNewLeader] = useSetLeaderMutation();
+  const { data: user } = useGetUserQuery();
+  const [toggle, setToggle] = useState(false);
+
+  const postLeader = (leader: Leader) => {
+    addNewLeader(JSON.stringify({ ...leader }))
+      .then(res => {
+        console.log(res);
+      })
+      .then(error => {
+        console.log(error);
+      });
+  };
+
   const canvasRef: any = useRef();
+  const viewTargetRef: any = useRef(null);
 
   const [start, setStart] = useState(false);
+  const [gameData, setGameData] = useState(() => {
+    return getGameData();
+  });
   const navigateTo = useNavigate();
 
   // начало игры
   const startGame = () => {
+    
+    Notification.requestPermission();
+    gameData.sound.volume = 0.2;
+    gameData.sound.play().catch(err => console.warn('error: ', err));
+
     setTimeout(() => {
       setStart(true);
     }, 10);
@@ -50,10 +73,41 @@ const GamePage = () => {
 
   // конец игры
   const gameOver = () => {
+    gameIsOver = true;
     (gameData.final.score = 0),
       (gameData.final.diamonds = 0),
       (gameData.final.time = 0),
       setStopTimer(true);
+  };
+
+  const pointerLock = () => {
+    canvasRef.current.requestPointerLock();
+  };
+
+  const fullScreen = () => {
+    if (toggle == false) {
+      if (viewTargetRef.current.requestFullscreen) {
+        viewTargetRef.current.requestFullscreen();
+      } else if (viewTargetRef.current.msRequestFullscreen) {
+        viewTargetRef.current.msRequestFullscreen();
+      } else if (viewTargetRef.current.mozRequestFullScreen) {
+        viewTargetRef.current.mozRequestFullScreen();
+      } else if (viewTargetRef.current.webkitRequestFullscreen) {
+        viewTargetRef.current.webkitRequestFullscreen();
+      }
+      setToggle(true);
+    } else if (toggle == true) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.msexitFullscreen) {
+        document.msexitFullscreen();
+      } else if (document.mozexitFullscreen) {
+        document.mozexitFullscreen();
+      } else if (document.webkitexitFullscreen) {
+        document.webkitexitFullscreen();
+      }
+      setToggle(false);
+    }
   };
 
   // навигация в лидерборд
@@ -82,6 +136,11 @@ const GamePage = () => {
   }, []);
 
   function animate() {
+    window.scrollTo(0, 0);
+    document.body.classList.add('no-scroll');
+
+    performance.getEntriesByType('resource');
+
     requestAnimationFrame(animate);
     context.fillStyle = 'white';
     context.fillRect(0, 0, canvasRef.width, canvasRef.height);
@@ -93,9 +152,6 @@ const GamePage = () => {
     gameData.backgroundCastle.forEach(object => {
       object.draw(context);
     });
-    // startPress.forEach((object) => {
-    //     object.draw(context)
-    // })
     gameData.platforms.forEach(platform => {
       platform.draw(context);
       platform.update(context);
@@ -126,8 +182,12 @@ const GamePage = () => {
         gameData.player.position.x += 5;
         offset++;
 
-        if (offset >= 550 && skeletonIsDead) {
+        if (offset >= 550 && enemiesAreDead) {
           gameData.finalChest[0].update(context);
+
+          gameData.sound.pause();
+          gameData.winSound.volume = 0.1;
+          gameData.winSound.play().catch(err => console.warn('error: ', err));
 
           if (!finishRun) {
             gameData.player.stop(+1, gameData.keys);
@@ -138,25 +198,27 @@ const GamePage = () => {
             // получаем сегодняшнюю дату лидера
             const ldrDate = new Date();
             const frmDate = ldrDate.toLocaleDateString('en-US');
-            gameData.leader.date = frmDate.toString();
+            leader.date = frmDate.toString();
 
             // считаем кол-во очков лидера
-            gameData.final.score =
-              gameData.final.time + gameData.final.diamonds / 2;
-            gameData.leader.score = gameData.final.score;
+            gameData.final.score = gameData.final.diamonds * 4;
+            leader.score = gameData.final.score;
 
             // отправляем лидера в лидерборд
             postLeader({
               data: {
-                name: gameData.leader.name,
-                date: gameData.leader.date,
-                score: gameData.leader.score,
+                name: user.login,
+                date: leader.date,
+                score: leader.score,
               },
               ratingFieldName: 'score',
               teamName: 'Santa-Barbara',
             });
 
-            alert(`Победа!`);
+            
+            if (Notification.permission === "granted") {
+              const notification = new Notification("Thanks for playing. Check your statistics in Leaderboard.");
+            }
           }
 
           setTimeout(() => {
@@ -170,6 +232,7 @@ const GamePage = () => {
           }, 1000);
         }
       }
+
       gameData.player.velocity.x = 0;
 
       // при движении игрока окружающие объекты сдвигаются, а offset, пройденный игроком, меняется.
@@ -199,7 +262,7 @@ const GamePage = () => {
     }
 
     // одно из условий финиша при достижении определенной точки
-    if (offset > 400) {
+    if (offset > 980) {
       finish = true;
     }
 
@@ -241,75 +304,105 @@ const GamePage = () => {
         coin.position.y = -100;
         setDiamonds(diamonds => diamonds + 1);
         gameData.final.diamonds++;
+
+        gameData.coinsEffect.volume = 0.1;
+        gameData.coinsEffect.play().catch(err => console.warn('error: ', err));
       }
     });
 
-    // поворот скелета в зависимости от положения игрока
-    if (gameData.player.position.x > gameData.skeletons[0].position.x) {
-      gameData.skeletons[0].current = gameData.skeletons[0].sprites.stand.right;
-    } else {
-      gameData.skeletons[0].current = gameData.skeletons[0].sprites.stand.left;
-    }
+    // скелеты
+    gameData.skeletons.forEach(skeleton => {
+      // поворот скелета в зависимости от положения игрока
+      if (gameData.player.position.x > skeleton.position.x) {
+        skeleton.current = skeleton.sprites.stand.right;
+      } else {
+        skeleton.current = skeleton.sprites.stand.left;
+      }
 
-    // убийство скелета
-    if (
-      gameData.player.current == gameData.player.sprites.fight.right ||
-      gameData.player.current == gameData.player.sprites.stand.right
-    ) {
+      // убийство скелета
       if (
-        gameData.player.attack.position.x + gameData.player.attack.width + 40 >=
-          gameData.skeletons[0].position.x &&
-        gameData.player.attack.position.x + 40 <=
-          gameData.skeletons[0].position.x + gameData.skeletons[0].width &&
-        gameData.player.attack.position.y + gameData.player.attack.height >=
-          gameData.skeletons[0].position.y &&
-        gameData.player.attack.position.y <=
-          gameData.skeletons[0].position.y + gameData.skeletons[0].height &&
-        gameData.player.doAttack
+        gameData.player.current == gameData.player.sprites.fight.right ||
+        gameData.player.current == gameData.player.sprites.stand.right
       ) {
-        gameData.skeletons[0].fall();
-        if (gameData.skeletons[0].frames >= 0) {
-          gameData.skeletons[0].frames = 0;
+        if (
+          gameData.player.attack.position.x +
+            gameData.player.attack.width +
+            40 >=
+            skeleton.position.x &&
+          gameData.player.attack.position.x + 40 <=
+            skeleton.position.x + skeleton.width &&
+          gameData.player.attack.position.y + gameData.player.attack.height >=
+            skeleton.position.y &&
+          gameData.player.attack.position.y <=
+            skeleton.position.y + skeleton.height &&
+          gameData.player.doAttack
+        ) {
+          gameData.monsterSound.volume = 0.1;
+          gameData.monsterSound
+            .play()
+            .catch(err => console.warn('error: ', err));
+          skeleton.fall();
+          if (skeleton.frames >= 0) {
+            skeleton.frames = 0;
+          }
+          if (skeletonIsDead == false) {
+            skeletonIsDead = true;
+            setDeadEnemies(deadEnemies => deadEnemies + 1);
+            gameData.final.deadSkeletons++;
+            if (gameData.skeletons.length === gameData.final.deadSkeletons) {
+              enemiesAreDead = true;
+            }
+          }
+          setTimeout(() => {
+            skeleton.position.x = -100;
+            skeleton.position.y = -100;
+            skeletonIsDead = false;
+          }, 200);
         }
-        setTimeout(() => {
-          gameData.skeletons[0].position.x = -100;
-          gameData.skeletons[0].position.y = -100;
-        }, 200);
-        skeletonIsDead = true;
-        setDeadEnemies(deadEnemies + 1);
-      }
-    } else if (
-      gameData.player.current == gameData.player.sprites.fight.left ||
-      gameData.player.current == gameData.player.sprites.stand.left
-    ) {
-      if (
-        gameData.player.attack.position.x + gameData.player.attack.width >=
-          gameData.skeletons[0].position.x &&
-        gameData.player.attack.position.x <=
-          gameData.skeletons[0].position.x + gameData.skeletons[0].width &&
-        gameData.player.attack.position.y + gameData.player.attack.height >=
-          gameData.skeletons[0].position.y &&
-        gameData.player.attack.position.y <=
-          gameData.skeletons[0].position.y + gameData.skeletons[0].height &&
-        gameData.player.doAttack
+      } else if (
+        gameData.player.current == gameData.player.sprites.fight.left ||
+        gameData.player.current == gameData.player.sprites.stand.left
       ) {
-        gameData.skeletons[0].fall();
-        if (gameData.skeletons[0].frames >= 0) {
-          gameData.skeletons[0].frames = 2;
+        if (
+          gameData.player.attack.position.x + gameData.player.attack.width >=
+            skeleton.position.x &&
+          gameData.player.attack.position.x <=
+            skeleton.position.x + skeleton.width &&
+          gameData.player.attack.position.y + gameData.player.attack.height >=
+            skeleton.position.y &&
+          gameData.player.attack.position.y <=
+            skeleton.position.y + skeleton.height &&
+          gameData.player.doAttack
+        ) {
+          gameData.monsterSound.volume = 0.1;
+          gameData.monsterSound
+            .play()
+            .catch(err => console.warn('error: ', err));
+          skeleton.fall();
+          if (skeleton.frames >= 0) {
+            skeleton.frames = 0;
+          }
+          if (skeletonIsDead == false) {
+            skeletonIsDead = true;
+            setDeadEnemies(deadEnemies => deadEnemies + 1);
+            gameData.final.deadSkeletons++;
+            if (gameData.skeletons.length === gameData.final.deadSkeletons) {
+              enemiesAreDead = true;
+            }
+          }
+          setTimeout(() => {
+            skeleton.position.x = -100;
+            skeleton.position.y = -100;
+            skeletonIsDead = false;
+          }, 200);
         }
-        setTimeout(() => {
-          gameData.skeletons[0].position.x = -100;
-          gameData.skeletons[0].position.y = -100;
-        }, 200);
-        skeletonIsDead = true;
-        setDeadEnemies(deadEnemies + 1);
       }
-    }
+    });
   }
 
   // движение игрока
   const movePlayer = ({ keyCode }: any) => {
-    if (start) {
+    if (start && !gameIsOver) {
       // движение влево и вправо
       if (keyPressed === false && !finishRun) {
         if (keyCode === 37) {
@@ -328,6 +421,8 @@ const GamePage = () => {
 
       // атака
       if (keyCode === 17) {
+        gameData.hitSound.volume = 0.3;
+        gameData.hitSound.play().catch(err => console.warn('error: ', err));
         gameData.player.doAttack = true;
 
         if (
@@ -381,10 +476,21 @@ const GamePage = () => {
     <div
       className="game-field"
       role="button"
+      style={
+        !toggle
+          ? { justifyContent: 'flex-start' }
+          : { justifyContent: 'center' }
+      }
       tabIndex={0}
       onKeyDown={e => movePlayer(e)}
-      onKeyUp={e => stopPlayer(e)}>
-      <canvas width="1024px" height="576px" ref={canvasRef} />
+      onKeyUp={e => stopPlayer(e)}
+      ref={viewTargetRef}>
+      <canvas
+        width="1024px"
+        height="576px"
+        ref={canvasRef}
+        onClick={pointerLock}
+      />
       <div className="game-interface">
         <div className="game-interface_statistics">
           {start ? (
@@ -397,7 +503,9 @@ const GamePage = () => {
             SKELETONS: {deadEnemies}/{enemies}
           </p>
           <p>SCORE: {gameData.final.score}</p>
-          <FullScreenButton></FullScreenButton>
+          <button className="game-btn" onClick={fullScreen} id="toggler">
+            <p>Fullscreen</p>
+          </button>
           <button className="game-btn" onClick={navigate}>
             <p>Leaderboard</p>
           </button>

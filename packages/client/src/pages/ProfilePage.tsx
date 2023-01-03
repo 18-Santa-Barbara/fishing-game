@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { ClassNameMap, StyleRules, withStyles } from '@mui/styles';
 import withNavigation from '../hocs/with-navigation/WithNavigation';
@@ -52,15 +52,19 @@ class ProfilePage extends Component<ProfilePageProps> {
     const { editMode } = this.state;
     const { classes } = this.props;
     return (
-      <Box className={classes.paper} maxWidth={'md'}>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <PersonAvatar />
-        </div>
-        {editMode ? (
-          <ProfileForm cancel={() => this.setState({ editMode: false })} />
-        ) : (
-          <ProfileList editProfile={() => this.setState({ editMode: true })} />
-        )}
+      <Box maxWidth={'md'}>
+        <Paper className={classes.paper}>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <PersonAvatar />
+          </div>
+          {editMode ? (
+            <ProfileForm cancel={() => this.setState({ editMode: false })} />
+          ) : (
+            <ProfileList
+              editProfile={() => this.setState({ editMode: true })}
+            />
+          )}
+        </Paper>
       </Box>
     );
   }

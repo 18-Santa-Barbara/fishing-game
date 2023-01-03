@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { final } from "./gameData";
+import { getGameData } from "./gameData";
 
 // тип для таймера
 export type Seconds = {
@@ -11,13 +11,16 @@ export type Seconds = {
 export const Timer = ({ seconds, stopTimer }: Seconds) => {
     
     const [timeLeft, setTimeLeft] = useState(seconds);
+    const [gameData, setGameData] = useState(() => {
+      return getGameData();
+    })
   
     useEffect(() => {
       if (!timeLeft || stopTimer) return;
   
       const intervalId = setInterval(() => {
           setTimeLeft(timeLeft - 1);
-          final.time = +timeLeft;
+          gameData.final.time = +timeLeft;
       }, 1000);
   
       return () => clearInterval(intervalId);

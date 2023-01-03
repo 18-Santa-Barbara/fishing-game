@@ -3,6 +3,9 @@ function commonApiRequest(
   method: string,
   body?: Record<string, any>
 ) {
+  if(typeof window === undefined){
+    return null;
+  }
   return fetch(url, {
     method,
     headers: {
@@ -21,7 +24,6 @@ function commonApiRequest(
 
 function checkResponseStatus(response: any) {
   if (response.status >= 200 && response.status < 400) {
-    console.log(response);
     return response === 'OK' ? response : response.json();
   } else {
     const error: Error = new Error(response);
