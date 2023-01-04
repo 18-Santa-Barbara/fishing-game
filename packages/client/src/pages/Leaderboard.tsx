@@ -1,4 +1,4 @@
-import Board from "./components/leaderboard/Board";
+import Board from "././components/leaderboard/board";
 
 export class Player {
     name: string;
