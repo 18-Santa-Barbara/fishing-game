@@ -87,15 +87,13 @@ class SignUp extends Component<SignUpProps, SignUpState> {
   checkInput = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
     const checkValue: string = validateValue(name, value);
-    if (checkValue) {
-      this.setState((prevState: SignUpState) => ({
-        ...prevState,
-        check: {
-          ...prevState.check,
-          [name]: checkValue,
-        },
-      }));
-    }
+    this.setState((prevState: SignUpState) => ({
+      ...prevState,
+      check: {
+        ...prevState.check,
+        [name]: checkValue,
+      },
+    }));
   };
 
   submit = (e: React.FormEvent<HTMLFormElement>) => {

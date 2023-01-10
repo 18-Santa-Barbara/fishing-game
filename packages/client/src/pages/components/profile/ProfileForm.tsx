@@ -64,23 +64,22 @@ class ProfileForm extends Component<ProfileFormProps, ProfilePageState> {
       user: {
         ...prevState.user,
         [name]: value,
-      }
+      },
     }));
   };
 
   checkInput = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
     const checkValue: string = validateValue(name, value);
-    if (checkValue) {
-      this.setState((prevState: ProfilePageState) => ({
+    this.setState((prevState: ProfilePageState) => ({
       ...prevState,
-      user: {
+      check: {
         ...prevState.check,
-        [name]: value,
-      }
+        [name]: checkValue,
+      },
     }));
-    }
   };
+
   submit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     const { user } = this.state;
@@ -122,6 +121,7 @@ class ProfileForm extends Component<ProfileFormProps, ProfilePageState> {
               size={'small'}
               margin="normal"
               onBlur={this.checkInput}
+              // onBlur={this.checkInput}
               // @ts-ignore
               error={!!check[name]}
               // @ts-ignore
