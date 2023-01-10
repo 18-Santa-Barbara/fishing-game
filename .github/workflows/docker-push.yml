@@ -31,12 +31,14 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
+          tags: latest
           images: petagys/valkyrie-adventure
       
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
+          file: ./Dockerfile.server
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
